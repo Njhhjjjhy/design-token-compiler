@@ -8,6 +8,7 @@ import type {
   ResolutionResult,
   ResolutionError,
 } from '@/types'
+import { flattenTokens } from '@/lib/flatten-tokens'
 
 // ============================================================================
 // REFERENCE DETECTION
@@ -42,34 +43,6 @@ function hasEmbeddedReferences(value: TokenValue): boolean {
   // Create a new regex instance to avoid state issues with the global flag
   const regex = /\{([^}]+)\}/g
   return regex.test(value)
-}
-
-// ============================================================================
-// TOKEN FLATTENING
-// ============================================================================
-
-/**
- * Flatten nested token groups into a flat map with dot-notation paths
- */
-function flattenTokens(
-  tokens: Record<string, Token | TokenGroup>,
-  prefix = ''
-): Record<string, Token> {
-  const flattened: Record<string, Token> = {}
-
-  for (const [key, value] of Object.entries(tokens)) {
-    const path = prefix ? `${prefix}.${key}` : key
-
-    if ('tokens' in value) {
-      // It's a group, recurse
-      Object.assign(flattened, flattenTokens(value.tokens, path))
-    } else {
-      // It's a token
-      flattened[path] = value
-    }
-  }
-
-  return flattened
 }
 
 // ============================================================================
