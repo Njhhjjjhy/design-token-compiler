@@ -1,0 +1,249 @@
+import { useState } from 'react'
+import { useTokenStore } from '@/store/useTokenStore'
+import { resolveTokens } from '@/lib/resolver'
+import { compileToCssWithModes } from '@/lib/compilers/css'
+import { compileToScssWithModes } from '@/lib/compilers/scss'
+import { compileToTypeScriptWithModes } from '@/lib/compilers/typescript'
+import { compileToTailwindWithModes } from '@/lib/compilers/tailwind'
+import { compileToW3CJSONWithModes } from '@/lib/compilers/json-w3c'
+import { compileToStyleDictionaryWithModes } from '@/lib/compilers/style-dictionary'
+import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter'
+import { vscDarkPlus } from 'react-syntax-highlighter/dist/esm/styles/prism'
+import { Check, Copy, Download, Package } from 'lucide-react'
+import JSZip from 'jszip'
+import { saveAs } from 'file-saver'
+
+type CompilerFormat = 'css' | 'scss' | 'typescript' | 'tailwind' | 'json-w3c' | 'style-dictionary'
+
+interface CompilerOutput {
+  format: CompilerFormat
+  code: string
+  language: string
+  fileName: string
+  mimeType: string
+}
+
+export function CompilerView() {
+  const tokenSets = useTokenStore((state) => state.tokenSets)
+  const activeSetId = useTokenStore((state) => state.activeSetId)
+  const [activeFormat, setActiveFormat] = useState<CompilerFormat>('css')
+  const [copied, setCopied] = useState(false)
+
+  const activeSet = activeSetId ? tokenSets[activeSetId] : null
+
+  if (!activeSet) {
+    return (
+      <div className="p-8">
+        <h2 className="section-title text-primary mb-6">COMPILER</h2>
+        <p className="font-mono text-sm text-text-secondary">
+          No token set loaded. Create or import a token set to compile.
+        </p>
+      </div>
+    )
+  }
+
+  // Resolve tokens for light and dark modes
+  const lightResult = resolveTokens(activeSet, 'light')
+  const darkResult = resolveTokens(activeSet, 'dark')
+
+  // Compile to all formats
+  const outputs: Record<CompilerFormat, CompilerOutput> = {
+    css: {
+      format: 'css',
+      code: compileToCssWithModes(lightResult.tokens, darkResult.tokens, {
+        includeComments: true,
+        prettify: true,
+      }),
+      language: 'css',
+      fileName: 'tokens.css',
+      mimeType: 'text/css',
+    },
+    scss: {
+      format: 'scss',
+      code: compileToScssWithModes(lightResult.tokens, darkResult.tokens, {
+        includeComments: true,
+        prettify: true,
+      }),
+      language: 'scss',
+      fileName: 'tokens.scss',
+      mimeType: 'text/x-scss',
+    },
+    typescript: {
+      format: 'typescript',
+      code: compileToTypeScriptWithModes(lightResult.tokens, darkResult.tokens, {
+        includeComments: true,
+        prettify: true,
+      }),
+      language: 'typescript',
+      fileName: 'tokens.ts',
+      mimeType: 'text/typescript',
+    },
+    tailwind: {
+      format: 'tailwind',
+      code: compileToTailwindWithModes(lightResult.tokens, darkResult.tokens, {
+        includeComments: true,
+        prettify: true,
+      }),
+      language: 'javascript',
+      fileName: 'tailwind.config.js',
+      mimeType: 'text/javascript',
+    },
+    'json-w3c': {
+      format: 'json-w3c',
+      code: compileToW3CJSONWithModes(lightResult.tokens, darkResult.tokens, {
+        prettify: true,
+      }),
+      language: 'json',
+      fileName: 'tokens.w3c.json',
+      mimeType: 'application/json',
+    },
+    'style-dictionary': {
+      format: 'style-dictionary',
+      code: compileToStyleDictionaryWithModes(lightResult.tokens, darkResult.tokens, {
+        prettify: true,
+      }),
+      language: 'json',
+      fileName: 'tokens.sd.json',
+      mimeType: 'application/json',
+    },
+  }
+
+  const currentOutput = outputs[activeFormat]
+
+  const handleCopy = async () => {
+    await navigator.clipboard.writeText(currentOutput.code)
+    setCopied(true)
+    setTimeout(() => setCopied(false), 2000)
+  }
+
+  const handleDownload = () => {
+    const blob = new Blob([currentOutput.code], { type: currentOutput.mimeType })
+    saveAs(blob, currentOutput.fileName)
+  }
+
+  const handleDownloadAll = async () => {
+    const zip = new JSZip()
+
+    // Add all compiled files to zip
+    Object.values(outputs).forEach((output) => {
+      zip.file(output.fileName, output.code)
+    })
+
+    // Generate and download zip
+    const content = await zip.generateAsync({ type: 'blob' })
+    saveAs(content, `${activeSet.name.toLowerCase().replace(/\s+/g, '-')}-tokens.zip`)
+  }
+
+  return (
+    <div className="h-full flex flex-col">
+      {/* Header */}
+      <div className="p-6 border-b border-border">
+        <div className="flex items-center justify-between">
+          <div>
+            <h2 className="section-title text-primary mb-2">COMPILER</h2>
+            <p className="font-mono text-xs text-text-secondary">
+              {activeSet.name} → Multi-Format Export
+            </p>
+          </div>
+          <div className="flex gap-3">
+            <button
+              onClick={handleCopy}
+              className="flex items-center gap-2 px-4 py-2 bg-surface-elevated border border-border hover:border-primary transition-colors font-mono text-xs text-white"
+            >
+              {copied ? (
+                <>
+                  <Check className="w-4 h-4" />
+                  COPIED
+                </>
+              ) : (
+                <>
+                  <Copy className="w-4 h-4" />
+                  COPY
+                </>
+              )}
+            </button>
+            <button
+              onClick={handleDownload}
+              className="flex items-center gap-2 px-4 py-2 bg-surface-elevated border border-border hover:border-primary transition-colors font-mono text-xs text-white"
+            >
+              <Download className="w-4 h-4" />
+              DOWNLOAD
+            </button>
+            <button
+              onClick={handleDownloadAll}
+              className="flex items-center gap-2 px-4 py-2 bg-primary hover:bg-opacity-90 transition-colors font-mono text-xs text-white"
+            >
+              <Package className="w-4 h-4" />
+              DOWNLOAD ALL
+            </button>
+          </div>
+        </div>
+
+        {/* Stats */}
+        <div className="mt-4 flex gap-6">
+          <div className="font-mono text-xs">
+            <span className="text-text-secondary">TOKENS:</span>{' '}
+            <span className="text-white">{Object.keys(lightResult.tokens).length}</span>
+          </div>
+          <div className="font-mono text-xs">
+            <span className="text-text-secondary">ERRORS:</span>{' '}
+            <span className={lightResult.errors.length > 0 ? 'text-error' : 'text-success'}>
+              {lightResult.errors.length}
+            </span>
+          </div>
+          <div className="font-mono text-xs">
+            <span className="text-text-secondary">SIZE:</span>{' '}
+            <span className="text-white">{(currentOutput.code.length / 1024).toFixed(1)} KB</span>
+          </div>
+        </div>
+      </div>
+
+      {/* Format Tabs */}
+      <div className="flex border-b border-border bg-surface overflow-x-auto">
+        {(['css', 'scss', 'typescript', 'tailwind', 'json-w3c', 'style-dictionary'] as CompilerFormat[]).map((format) => (
+          <button
+            key={format}
+            onClick={() => setActiveFormat(format)}
+            className={`
+              relative px-6 py-3 font-mono text-xs uppercase tracking-wider transition-colors whitespace-nowrap
+              ${activeFormat === format ? 'text-primary' : 'text-text-secondary hover:text-white'}
+            `}
+          >
+            {format === 'css' && 'CSS'}
+            {format === 'scss' && 'SCSS'}
+            {format === 'typescript' && 'TypeScript'}
+            {format === 'tailwind' && 'Tailwind'}
+            {format === 'json-w3c' && 'JSON (W3C)'}
+            {format === 'style-dictionary' && 'Style Dictionary'}
+            {activeFormat === format && (
+              <div className="absolute bottom-0 left-0 right-0 h-[2px] bg-primary" />
+            )}
+          </button>
+        ))}
+      </div>
+
+      {/* Code Output */}
+      <div className="flex-1 overflow-auto bg-[#1e1e1e]">
+        <SyntaxHighlighter
+          language={currentOutput.language}
+          style={vscDarkPlus}
+          showLineNumbers
+          customStyle={{
+            margin: 0,
+            padding: '24px',
+            background: 'transparent',
+            fontSize: '13px',
+            fontFamily: 'JetBrains Mono, monospace',
+          }}
+          lineNumberStyle={{
+            color: '#858585',
+            paddingRight: '24px',
+            userSelect: 'none',
+          }}
+        >
+          {currentOutput.code}
+        </SyntaxHighlighter>
+      </div>
+    </div>
+  )
+}

@@ -1,0 +1,62 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --color-primary: #f40c3f;
+  --color-secondary: #160000;
+  --color-surface: #1e0505;
+  --color-surface-elevated: #2a0a0a;
+  --color-border: #3d1515;
+  --color-border-subtle: #2d0e0e;
+  --color-white: #fff0eb;
+  --color-text-secondary: #b39e9e;
+  --color-text-tertiary: #7a6565;
+  --color-success: #22c55e;
+  --color-warning: #f59e0b;
+  --color-error: #ef4444;
+  --color-info: #3b82f6;
+
+  --font-mono: 'JetBrains Mono', monospace;
+  --font-serif: 'Instrument Serif', serif;
+  --font-sans: 'Inter', system-ui, sans-serif;
+}
+
+html {
+  font: 400 16px/1.48 var(--font-sans);
+  background-color: var(--color-secondary);
+  color: var(--color-white);
+}
+
+body {
+  padding: 1rem;
+  min-height: 100vh;
+  background-color: var(--color-surface);
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+@layer components {
+  .compartment-border {
+    border: 1px solid var(--color-border);
+  }
+
+  .section-title {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    font-weight: 500;
+  }
+
+  .monospace-label {
+    font-family: var(--font-mono);
+    font-size: 8px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+  }
+}
