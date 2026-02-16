@@ -1,0 +1,208 @@
+import type { FlatToken } from '@/lib/flatten-tokens'
+import type { DiffStatus } from '@/lib/diff-engine'
+import { ArrowLeft, ArrowRight, Check, Minus, Plus } from 'lucide-react'
+
+interface SyncTokenRowProps {
+  path: string
+  status: DiffStatus
+  editorToken?: FlatToken
+  fileToken?: FlatToken
+  resolution?: 'editor' | 'imported' | 'discard' | 'add'
+  onResolve: (path: string, choice: 'editor' | 'imported' | 'discard' | 'add') => void
+}
+
+export function SyncTokenRow({
+  path,
+  status,
+  editorToken,
+  fileToken,
+  resolution,
+  onResolve,
+}: SyncTokenRowProps) {
+  const statusColors: Record<DiffStatus, string> = {
+    same: 'border-l-success/30',
+    different: 'border-l-warning/80',
+    editor_only: 'border-l-info/80',
+    file_only: 'border-l-primary/80',
+  }
+
+  const statusBg: Record<DiffStatus, string> = {
+    same: '',
+    different: 'bg-warning/5',
+    editor_only: 'bg-info/5',
+    file_only: 'bg-primary/5',
+  }
+
+  const statusLabels: Record<DiffStatus, string> = {
+    same: 'Same',
+    different: 'Different',
+    editor_only: 'Editor only',
+    file_only: 'File only',
+  }
+
+  const statusLabelColors: Record<DiffStatus, string> = {
+    same: 'text-success',
+    different: 'text-warning',
+    editor_only: 'text-info',
+    file_only: 'text-primary',
+  }
+
+  const shortPath = path.split('.').slice(1).join('.') || path
+
+  return (
+    <div className={`border-l-2 ${statusColors[status]} ${statusBg[status]} ${resolution ? 'opacity-70' : ''}`}>
+      <div className="flex items-center gap-2 px-4 py-2">
+        {/* Token path */}
+        <span className="font-mono text-xs text-text-secondary min-w-[180px] truncate" title={path}>
+          {shortPath}
+        </span>
+
+        {/* Status badge */}
+        <span className={`font-mono text-xs uppercase ${statusLabelColors[status]} min-w-[80px]`}>
+          {statusLabels[status]}
+        </span>
+
+        {/* Editor value */}
+        <div className="flex-1 flex items-center gap-2 min-w-0">
+          {editorToken ? (
+            <>
+              {renderPreview(editorToken)}
+              <span className={`font-mono text-xs truncate ${resolution === 'imported' ? 'line-through text-text-tertiary' : 'text-white'}`}>
+                {editorToken.value}
+              </span>
+            </>
+          ) : (
+            <span className="font-mono text-xs text-text-tertiary italic">&mdash;</span>
+          )}
+        </div>
+
+        {/* Resolution controls */}
+        <div className="flex items-center gap-1 mx-2">
+          {status === 'different' && (
+            <>
+              <button
+                onClick={() => onResolve(path, 'editor')}
+                className={`p-1 rounded transition-colors ${
+                  resolution === 'editor'
+                    ? 'bg-info/20 text-info'
+                    : 'text-text-tertiary hover:text-white hover:bg-white/5'
+                }`}
+                title="Keep editor value"
+              >
+                <ArrowLeft className="w-3 h-3" />
+              </button>
+              <button
+                onClick={() => onResolve(path, 'imported')}
+                className={`p-1 rounded transition-colors ${
+                  resolution === 'imported'
+                    ? 'bg-primary/20 text-primary'
+                    : 'text-text-tertiary hover:text-white hover:bg-white/5'
+                }`}
+                title="Keep imported value"
+              >
+                <ArrowRight className="w-3 h-3" />
+              </button>
+            </>
+          )}
+          {status === 'editor_only' && (
+            <>
+              <button
+                onClick={() => onResolve(path, 'editor')}
+                className={`p-1 rounded transition-colors ${
+                  resolution === 'editor'
+                    ? 'bg-success/20 text-success'
+                    : 'text-text-tertiary hover:text-white hover:bg-white/5'
+                }`}
+                title="Keep in editor"
+              >
+                <Check className="w-3 h-3" />
+              </button>
+              <button
+                onClick={() => onResolve(path, 'discard')}
+                className={`p-1 rounded transition-colors ${
+                  resolution === 'discard'
+                    ? 'bg-error/20 text-error'
+                    : 'text-text-tertiary hover:text-white hover:bg-white/5'
+                }`}
+                title="Remove from editor"
+              >
+                <Minus className="w-3 h-3" />
+              </button>
+            </>
+          )}
+          {status === 'file_only' && (
+            <>
+              <button
+                onClick={() => onResolve(path, 'add')}
+                className={`p-1 rounded transition-colors ${
+                  resolution === 'add'
+                    ? 'bg-success/20 text-success'
+                    : 'text-text-tertiary hover:text-white hover:bg-white/5'
+                }`}
+                title="Add to editor"
+              >
+                <Plus className="w-3 h-3" />
+              </button>
+              <button
+                onClick={() => onResolve(path, 'discard')}
+                className={`p-1 rounded transition-colors ${
+                  resolution === 'discard'
+                    ? 'bg-error/20 text-error'
+                    : 'text-text-tertiary hover:text-white hover:bg-white/5'
+                }`}
+                title="Ignore"
+              >
+                <Minus className="w-3 h-3" />
+              </button>
+            </>
+          )}
+          {status === 'same' && (
+            <Check className="w-3 h-3 text-success/40" />
+          )}
+        </div>
+
+        {/* File value */}
+        <div className="flex-1 flex items-center gap-2 min-w-0">
+          {fileToken ? (
+            <>
+              {renderPreview(fileToken)}
+              <span className={`font-mono text-xs truncate ${resolution === 'editor' ? 'line-through text-text-tertiary' : 'text-white'}`}>
+                {fileToken.value}
+              </span>
+            </>
+          ) : (
+            <span className="font-mono text-xs text-text-tertiary italic">&mdash;</span>
+          )}
+        </div>
+      </div>
+    </div>
+  )
+}
+
+/**
+ * Render a small visual preview for a token value.
+ */
+function renderPreview(token: FlatToken) {
+  if (token.type === 'color' && !token.value.startsWith('{')) {
+    return (
+      <div
+        className="w-3 h-3 rounded-sm border border-white/20 flex-shrink-0"
+        style={{ backgroundColor: token.value }}
+      />
+    )
+  }
+
+  if (token.type === 'dimension') {
+    const match = token.value.match(/(\d+)/)
+    const numValue = match ? parseInt(match[1]) : 0
+    const barWidth = Math.min(numValue, 48)
+    return (
+      <div
+        className="h-2 bg-text-tertiary rounded-sm flex-shrink-0"
+        style={{ width: `${barWidth}px` }}
+      />
+    )
+  }
+
+  return null
+}
