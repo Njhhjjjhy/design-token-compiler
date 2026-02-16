@@ -1,6 +1,12 @@
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
 import type { AppState, Token, TokenGroup, TokenSet, TokenValue, ViewMode } from '@/types'
+import type { FlatToken } from '@/lib/flatten-tokens'
+import type { DiffResult } from '@/lib/diff-engine'
+import type { ImportFormat } from '@/lib/parsers'
+import { flattenTokens, toFlatTokenList } from '@/lib/flatten-tokens'
+import { parseFile } from '@/lib/parsers'
+import { diffTokens } from '@/lib/diff-engine'
 
 interface TokenStoreState extends AppState {
   // UI State
@@ -20,6 +26,25 @@ interface TokenStoreState extends AppState {
 
   // Helpers
   getActiveTokenSet: () => TokenSet | null
+
+  // Sync state
+  importedFileName: string | null
+  importedFormat: ImportFormat | null
+  importedTokens: FlatToken[]
+  importError: string | null
+  diffResult: DiffResult | null
+  resolutions: Record<string, 'editor' | 'imported' | 'discard' | 'add'>
+  syncFilter: 'all' | 'differences'
+
+  // Sync actions
+  importFile: (fileName: string, content: string) => void
+  clearImport: () => void
+  resolveToken: (path: string, choice: 'editor' | 'imported' | 'discard' | 'add') => void
+  setSyncFilter: (filter: 'all' | 'differences') => void
+  applyToEditor: () => void
+  getUnresolvedCount: () => number
+  getResolvedCount: () => number
+  getTotalConflicts: () => number
 }
 
 export const useTokenStore = create<TokenStoreState>()(
@@ -31,6 +56,15 @@ export const useTokenStore = create<TokenStoreState>()(
       versionHistory: {},
       syncResults: {},
       activeView: 'editor',
+
+      // Sync initial state
+      importedFileName: null,
+      importedFormat: null,
+      importedTokens: [],
+      importError: null,
+      diffResult: null,
+      resolutions: {},
+      syncFilter: 'all',
 
       // UI Actions
       setActiveView: (view) => set({ activeView: view }),
@@ -215,6 +249,121 @@ export const useTokenStore = create<TokenStoreState>()(
         if (!state.activeSetId) return null
         return state.tokenSets[state.activeSetId] || null
       },
+
+      // Sync actions
+      importFile: (fileName, content) => {
+        const result = parseFile(fileName, content)
+
+        if (result.error) {
+          set({
+            importedFileName: fileName,
+            importedFormat: result.format,
+            importedTokens: [],
+            importError: result.error,
+            diffResult: null,
+            resolutions: {},
+          })
+          return
+        }
+
+        // Get current editor tokens as flat list
+        const state = get()
+        const activeSet = state.activeSetId ? state.tokenSets[state.activeSetId] : null
+        if (!activeSet) {
+          set({ importError: 'No token set loaded. Create or import a token set first.' })
+          return
+        }
+
+        const editorFlat = flattenTokens(activeSet.tokens)
+        const editorFlatList = toFlatTokenList(editorFlat)
+        const diff = diffTokens(editorFlatList, result.tokens)
+
+        set({
+          importedFileName: fileName,
+          importedFormat: result.format,
+          importedTokens: result.tokens,
+          importError: null,
+          diffResult: diff,
+          resolutions: {},
+        })
+      },
+
+      clearImport: () => set({
+        importedFileName: null,
+        importedFormat: null,
+        importedTokens: [],
+        importError: null,
+        diffResult: null,
+        resolutions: {},
+        syncFilter: 'all',
+      }),
+
+      resolveToken: (path, choice) =>
+        set((state) => ({
+          resolutions: { ...state.resolutions, [path]: choice },
+        })),
+
+      setSyncFilter: (filter) => set({ syncFilter: filter }),
+
+      applyToEditor: () => {
+        const state = get()
+        const activeSet = state.activeSetId ? state.tokenSets[state.activeSetId] : null
+        if (!activeSet || !state.diffResult) return
+
+        // Start with current tokens
+        let updatedTokens = { ...activeSet.tokens }
+
+        for (const row of state.diffResult.rows) {
+          const resolution = state.resolutions[row.path]
+
+          if (row.status === 'different' && resolution === 'imported' && row.fileToken) {
+            updatedTokens = updateTokenInTree(updatedTokens, row.path, row.fileToken.value)
+          }
+
+          if (row.status === 'editor_only' && resolution === 'discard') {
+            updatedTokens = removeTokenFromTree(updatedTokens, row.path)
+          }
+
+          if (row.status === 'file_only' && resolution === 'add' && row.fileToken) {
+            updatedTokens = addTokenToTree(updatedTokens, row.path, row.fileToken)
+          }
+        }
+
+        set({
+          tokenSets: {
+            ...state.tokenSets,
+            [activeSet.id]: {
+              ...activeSet,
+              tokens: updatedTokens,
+              metadata: { ...activeSet.metadata, updatedAt: Date.now() },
+            },
+          },
+          importedFileName: null,
+          importedFormat: null,
+          importedTokens: [],
+          importError: null,
+          diffResult: null,
+          resolutions: {},
+        })
+      },
+
+      getUnresolvedCount: () => {
+        const state = get()
+        if (!state.diffResult) return 0
+        const conflicts = state.diffResult.rows.filter((r) => r.status !== 'same')
+        const resolved = Object.keys(state.resolutions).length
+        return conflicts.length - resolved
+      },
+
+      getResolvedCount: () => {
+        return Object.keys(get().resolutions).length
+      },
+
+      getTotalConflicts: () => {
+        const state = get()
+        if (!state.diffResult) return 0
+        return state.diffResult.rows.filter((r) => r.status !== 'same').length
+      },
     }),
     {
       name: 'token-compiler-storage',
@@ -222,3 +371,95 @@ export const useTokenStore = create<TokenStoreState>()(
     }
   )
 )
+
+/**
+ * Update a token value in the nested tree by dot-separated path.
+ */
+function updateTokenInTree(
+  tokens: Record<string, Token | TokenGroup>,
+  path: string,
+  newValue: string
+): Record<string, Token | TokenGroup> {
+  const parts = path.split('.')
+  if (parts.length === 1) {
+    const token = tokens[parts[0]]
+    if (token && !('tokens' in token)) {
+      return { ...tokens, [parts[0]]: { ...token, value: newValue } }
+    }
+    return tokens
+  }
+
+  const [first, ...rest] = parts
+  const group = tokens[first]
+  if (group && 'tokens' in group) {
+    return {
+      ...tokens,
+      [first]: { ...group, tokens: updateTokenInTree(group.tokens, rest.join('.'), newValue) },
+    }
+  }
+  return tokens
+}
+
+/**
+ * Remove a token from the nested tree by dot-separated path.
+ */
+function removeTokenFromTree(
+  tokens: Record<string, Token | TokenGroup>,
+  path: string
+): Record<string, Token | TokenGroup> {
+  const parts = path.split('.')
+  if (parts.length === 1) {
+    const { [parts[0]]: _removed, ...rest } = tokens
+    return rest
+  }
+
+  const [first, ...restParts] = parts
+  const group = tokens[first]
+  if (group && 'tokens' in group) {
+    return {
+      ...tokens,
+      [first]: { ...group, tokens: removeTokenFromTree(group.tokens, restParts.join('.')) },
+    }
+  }
+  return tokens
+}
+
+/**
+ * Add a new token to the nested tree by dot-separated path.
+ * Creates intermediate groups as needed.
+ */
+function addTokenToTree(
+  tokens: Record<string, Token | TokenGroup>,
+  path: string,
+  flatToken: FlatToken
+): Record<string, Token | TokenGroup> {
+  const parts = path.split('.')
+
+  if (parts.length === 1) {
+    const newToken: Token = {
+      id: `${Date.now()}-${Math.random().toString(36).substring(2, 11)}`,
+      name: flatToken.name,
+      value: flatToken.value,
+      type: flatToken.type as Token['type'],
+    }
+    return { ...tokens, [parts[0]]: newToken }
+  }
+
+  const [first, ...rest] = parts
+  const existing = tokens[first]
+
+  if (existing && 'tokens' in existing) {
+    return {
+      ...tokens,
+      [first]: { ...existing, tokens: addTokenToTree(existing.tokens, rest.join('.'), flatToken) },
+    }
+  }
+
+  const newGroup: TokenGroup = {
+    id: `group-${Date.now()}-${Math.random().toString(36).substring(2, 11)}`,
+    name: first,
+    tokens: addTokenToTree({}, rest.join('.'), flatToken),
+  }
+
+  return { ...tokens, [first]: newGroup }
+}
