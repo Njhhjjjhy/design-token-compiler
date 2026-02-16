@@ -1,6 +1,6 @@
 # Browser, Dashboard & Versioning Implementation Plan
 
-> **For Claude:** REQUIRED SUB-SKILL: Use superpowers:executing-plans to implement this plan task-by-task.
+> **For Claude:** REQUIRED SUB-SKILL: Use superpowers:executing-plans to implement this plan task-by-task. Create a feature branch `feat/browser-dashboard-versioning` before starting. Each task ends with a commit.
 
 **Goal:** Build a dashboard landing page, visual token browser (colors, spacing, typography, shadows), and manual version snapshots with restore.
 
@@ -12,19 +12,14 @@
 
 ---
 
-## Task 1: Add Dashboard to ViewMode and Update Navigation
+## Phase A: Dashboard
 
-Add `'dashboard'` to the ViewMode type and update the Header navigation to include it as the first item.
+### Task 1: Add 'dashboard' to ViewMode type
 
 **Files:**
 - Modify: `src/types/index.ts`
-- Modify: `src/components/Header.tsx`
-- Modify: `src/store/useTokenStore.ts`
-- Modify: `src/App.tsx`
 
-**Step 1: Update ViewMode type**
-
-In `src/types/index.ts`, change line 221 from:
+**Step 1:** In `src/types/index.ts`, change line 221 from:
 
 ```typescript
 export type ViewMode = 'editor' | 'browser' | 'compiler' | 'sync'
@@ -36,9 +31,24 @@ to:
 export type ViewMode = 'dashboard' | 'editor' | 'browser' | 'compiler' | 'sync'
 ```
 
-**Step 2: Update Header NavItem type and navItems array**
+**Step 2:** Verify: `npm run build`
+Expected: Build succeeds (no code references `ViewMode` exhaustively yet).
 
-In `src/components/Header.tsx`, change line 3 from:
+**Step 3:** Commit:
+
+```bash
+git add src/types/index.ts
+git commit -m "feat: add dashboard to ViewMode type"
+```
+
+---
+
+### Task 2: Update Header navigation
+
+**Files:**
+- Modify: `src/components/Header.tsx`
+
+**Step 1:** Change the `NavItem` type (line 3) from:
 
 ```typescript
 type NavItem = 'editor' | 'browser' | 'compiler' | 'sync'
@@ -50,7 +60,7 @@ to:
 type NavItem = 'dashboard' | 'editor' | 'browser' | 'compiler' | 'sync'
 ```
 
-And update the `navItems` array (line 16) to add Dashboard as the first item:
+**Step 2:** Update the `navItems` array (line 16) to add Dashboard as the first item:
 
 ```typescript
 const navItems: { id: NavItem; label: string }[] = [
@@ -62,23 +72,25 @@ const navItems: { id: NavItem; label: string }[] = [
 ]
 ```
 
-**Step 3: Change default view in store**
+**Step 3:** Verify: `npm run build`
 
-In `src/store/useTokenStore.ts`, change line 58 from:
+**Step 4:** Commit:
 
-```typescript
-activeView: 'editor',
+```bash
+git add src/components/Header.tsx
+git commit -m "feat: add HOME nav item to Header"
 ```
 
-to:
+---
 
-```typescript
-activeView: 'dashboard',
-```
+### Task 3: Create DashboardView placeholder and wire into App
 
-**Step 4: Add DashboardView placeholder and wire into App.tsx**
+**Files:**
+- Create: `src/pages/DashboardView.tsx`
+- Modify: `src/App.tsx`
+- Modify: `src/store/useTokenStore.ts`
 
-Create `src/pages/DashboardView.tsx`:
+**Step 1:** Create `src/pages/DashboardView.tsx`:
 
 ```typescript
 export function DashboardView() {
@@ -93,13 +105,13 @@ export function DashboardView() {
 }
 ```
 
-In `src/App.tsx`, add the import at the top:
+**Step 2:** In `src/App.tsx`, add the import at the top:
 
 ```typescript
 import { DashboardView } from './pages/DashboardView'
 ```
 
-And add the case in `renderView()` (inside the switch, before `case 'editor'`):
+Add the case in `renderView()` switch (before `case 'editor'`):
 
 ```typescript
 case 'dashboard':
@@ -108,31 +120,38 @@ case 'dashboard':
 
 Change the default case from `<EditorView />` to `<DashboardView />`.
 
-**Step 5: Verify**
+**Step 3:** In `src/store/useTokenStore.ts`, change line 58 from:
 
-Run: `npm run build`
-Expected: Build succeeds. App starts with "DASHBOARD" placeholder visible. HOME nav item is active by default.
+```typescript
+activeView: 'editor',
+```
 
-**Step 6: Commit**
+to:
+
+```typescript
+activeView: 'dashboard',
+```
+
+**Step 4:** Verify: `npm run build`
+Expected: App starts with Dashboard placeholder. HOME nav item is active.
+
+**Step 5:** Commit:
 
 ```bash
-git add src/types/index.ts src/components/Header.tsx src/store/useTokenStore.ts src/App.tsx src/pages/DashboardView.tsx
-git commit -m "feat: add dashboard to navigation as default landing view"
+git add src/pages/DashboardView.tsx src/App.tsx src/store/useTokenStore.ts
+git commit -m "feat: wire DashboardView as default landing page"
 ```
 
 ---
 
-## Task 2: TokenSetCard Component
-
-A card component that displays a single token set with metadata and quick actions.
+### Task 4: TokenSetCard component
 
 **Files:**
 - Create: `src/components/dashboard/TokenSetCard.tsx`
 
-**Step 1: Create the card component**
+**Step 1:** Create `src/components/dashboard/TokenSetCard.tsx`:
 
 ```typescript
-// src/components/dashboard/TokenSetCard.tsx
 import { Pencil, Eye, Download, Clock } from 'lucide-react'
 import { format } from 'date-fns'
 import type { TokenSet, Token, TokenGroup } from '@/types'
@@ -146,12 +165,8 @@ interface TokenSetCardProps {
   onVersions: () => void
 }
 
-/**
- * Count tokens by type in a nested token tree.
- */
 function countTokensByType(tokens: Record<string, Token | TokenGroup>): Record<string, number> {
   const counts: Record<string, number> = {}
-
   function traverse(node: Record<string, Token | TokenGroup>) {
     for (const value of Object.values(node)) {
       if ('tokens' in value) {
@@ -161,17 +176,12 @@ function countTokensByType(tokens: Record<string, Token | TokenGroup>): Record<s
       }
     }
   }
-
   traverse(tokens)
   return counts
 }
 
-/**
- * Extract the first few color values from a token tree for the preview strip.
- */
 function extractColorPreviews(tokens: Record<string, Token | TokenGroup>, max = 8): string[] {
   const colors: string[] = []
-
   function traverse(node: Record<string, Token | TokenGroup>) {
     if (colors.length >= max) return
     for (const value of Object.values(node)) {
@@ -183,7 +193,6 @@ function extractColorPreviews(tokens: Record<string, Token | TokenGroup>, max = 
       }
     }
   }
-
   traverse(tokens)
   return colors
 }
@@ -218,27 +227,19 @@ export function TokenSetCard({
 
   return (
     <div className="border border-border bg-surface hover:border-primary/40 transition-colors">
-      {/* Color preview strip */}
       {colorPreviews.length > 0 && (
         <div className="flex h-2">
           {colorPreviews.map((color, i) => (
-            <div
-              key={i}
-              className="flex-1"
-              style={{ backgroundColor: color }}
-            />
+            <div key={i} className="flex-1" style={{ backgroundColor: color }} />
           ))}
         </div>
       )}
 
       <div className="p-5">
-        {/* Header */}
         <div className="flex items-start justify-between mb-3">
           <div>
             <h3 className="font-mono text-sm text-white font-medium">{tokenSet.name}</h3>
-            <p className="font-mono text-xs text-text-tertiary mt-1">
-              {totalTokens} tokens
-            </p>
+            <p className="font-mono text-xs text-text-tertiary mt-1">{totalTokens} tokens</p>
           </div>
           {tokenSet.activeMode && (
             <span className="px-2 py-0.5 bg-surface-elevated border border-border font-mono text-xs text-text-secondary">
@@ -247,45 +248,26 @@ export function TokenSetCard({
           )}
         </div>
 
-        {/* Type breakdown */}
         <p className="font-mono text-xs text-text-secondary mb-4">
           {activeCounts.join(' · ') || 'Empty set'}
         </p>
 
-        {/* Footer: date + actions */}
         <div className="flex items-center justify-between pt-3 border-t border-border-subtle">
           <span className="font-mono text-xs text-text-tertiary">
             {format(tokenSet.metadata.updatedAt, 'MMM d, yyyy')}
           </span>
-
           <div className="flex gap-1">
-            <button
-              onClick={onEdit}
-              className="p-1.5 text-text-tertiary hover:text-white hover:bg-white/5 transition-colors"
-              title="Edit tokens"
-            >
+            <button onClick={onEdit} className="p-1.5 text-text-tertiary hover:text-white hover:bg-white/5 transition-colors" title="Edit tokens">
               <Pencil className="w-3.5 h-3.5" />
             </button>
-            <button
-              onClick={onBrowse}
-              className="p-1.5 text-text-tertiary hover:text-white hover:bg-white/5 transition-colors"
-              title="Browse tokens"
-            >
+            <button onClick={onBrowse} className="p-1.5 text-text-tertiary hover:text-white hover:bg-white/5 transition-colors" title="Browse tokens">
               <Eye className="w-3.5 h-3.5" />
             </button>
-            <button
-              onClick={onExport}
-              className="p-1.5 text-text-tertiary hover:text-white hover:bg-white/5 transition-colors"
-              title="Export tokens"
-            >
+            <button onClick={onExport} className="p-1.5 text-text-tertiary hover:text-white hover:bg-white/5 transition-colors" title="Export tokens">
               <Download className="w-3.5 h-3.5" />
             </button>
             {versionCount > 0 && (
-              <button
-                onClick={onVersions}
-                className="p-1.5 text-text-tertiary hover:text-white hover:bg-white/5 transition-colors flex items-center gap-1"
-                title="Version history"
-              >
+              <button onClick={onVersions} className="p-1.5 text-text-tertiary hover:text-white hover:bg-white/5 transition-colors flex items-center gap-1" title="Version history">
                 <Clock className="w-3.5 h-3.5" />
                 <span className="font-mono text-xs">{versionCount}</span>
               </button>
@@ -298,12 +280,9 @@ export function TokenSetCard({
 }
 ```
 
-**Step 2: Verify**
+**Step 2:** Verify: `npm run build`
 
-Run: `npm run build`
-Expected: Build succeeds. Component not rendered yet — that happens in the next task.
-
-**Step 3: Commit**
+**Step 3:** Commit:
 
 ```bash
 git add src/components/dashboard/TokenSetCard.tsx
@@ -312,17 +291,14 @@ git commit -m "feat: add TokenSetCard component for dashboard"
 
 ---
 
-## Task 3: DashboardView Full Implementation
-
-Replace the placeholder dashboard with the full grid layout, token set cards, and global actions.
+### Task 5: DashboardView full implementation
 
 **Files:**
 - Modify: `src/pages/DashboardView.tsx`
 
-**Step 1: Replace DashboardView with full implementation**
+**Step 1:** Replace the full content of `src/pages/DashboardView.tsx`:
 
 ```typescript
-// src/pages/DashboardView.tsx
 import { Plus, Upload } from 'lucide-react'
 import { nanoid } from 'nanoid'
 import { useTokenStore } from '@/store/useTokenStore'
@@ -375,7 +351,6 @@ export function DashboardView() {
       const content = ev.target?.result as string
       if (!content) return
 
-      // Create a new token set and navigate to sync for import
       const newSet: TokenSet = {
         id: nanoid(),
         name: file.name.replace(/\.[^.]+$/, ''),
@@ -392,12 +367,9 @@ export function DashboardView() {
       setActiveView('sync')
     }
     reader.readAsText(file)
-
-    // Reset input so the same file can be re-selected
     e.target.value = ''
   }, [addTokenSet, setActiveView])
 
-  // Empty state
   if (sets.length === 0) {
     return (
       <div className="p-8">
@@ -408,57 +380,37 @@ export function DashboardView() {
             A token set is a collection of design tokens — colors, spacing, typography, and more — that define your design system.
           </p>
           <div className="flex gap-4">
-            <button
-              onClick={handleNewSet}
-              className="flex items-center gap-2 px-6 py-3 bg-primary hover:bg-primary/90 text-white font-mono text-sm transition-colors"
-            >
+            <button onClick={handleNewSet} className="flex items-center gap-2 px-6 py-3 bg-primary hover:bg-primary/90 text-white font-mono text-sm transition-colors">
               <Plus className="w-4 h-4" />
               New Token Set
             </button>
-            <button
-              onClick={handleImportFile}
-              className="flex items-center gap-2 px-6 py-3 bg-surface-elevated border border-border hover:border-primary text-white font-mono text-sm transition-colors"
-            >
+            <button onClick={handleImportFile} className="flex items-center gap-2 px-6 py-3 bg-surface-elevated border border-border hover:border-primary text-white font-mono text-sm transition-colors">
               <Upload className="w-4 h-4" />
               Import File
             </button>
           </div>
         </div>
-        <input
-          ref={fileInputRef}
-          type="file"
-          accept=".json,.css,.scss"
-          onChange={handleFileSelected}
-          className="hidden"
-        />
+        <input ref={fileInputRef} type="file" accept=".json,.css,.scss" onChange={handleFileSelected} className="hidden" />
       </div>
     )
   }
 
   return (
     <div className="p-8">
-      {/* Header */}
       <div className="flex items-center justify-between mb-8">
         <h2 className="section-title text-primary">DASHBOARD</h2>
         <div className="flex gap-3">
-          <button
-            onClick={handleNewSet}
-            className="flex items-center gap-2 px-4 py-2 bg-primary hover:bg-primary/90 text-white font-mono text-xs transition-colors"
-          >
+          <button onClick={handleNewSet} className="flex items-center gap-2 px-4 py-2 bg-primary hover:bg-primary/90 text-white font-mono text-xs transition-colors">
             <Plus className="w-4 h-4" />
             NEW SET
           </button>
-          <button
-            onClick={handleImportFile}
-            className="flex items-center gap-2 px-4 py-2 bg-surface-elevated border border-border hover:border-primary text-white font-mono text-xs transition-colors"
-          >
+          <button onClick={handleImportFile} className="flex items-center gap-2 px-4 py-2 bg-surface-elevated border border-border hover:border-primary text-white font-mono text-xs transition-colors">
             <Upload className="w-4 h-4" />
             IMPORT
           </button>
         </div>
       </div>
 
-      {/* Token Set Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {sets.map((tokenSet) => (
           <TokenSetCard
@@ -473,24 +425,15 @@ export function DashboardView() {
         ))}
       </div>
 
-      <input
-        ref={fileInputRef}
-        type="file"
-        accept=".json,.css,.scss"
-        onChange={handleFileSelected}
-        className="hidden"
-      />
+      <input ref={fileInputRef} type="file" accept=".json,.css,.scss" onChange={handleFileSelected} className="hidden" />
     </div>
   )
 }
 ```
 
-**Step 2: Verify**
+**Step 2:** Verify: `npm run build`
 
-Run: `npm run build`
-Expected: Build succeeds. Dashboard shows token set cards. "New Set" and "Import" buttons work. Card actions navigate to the correct views.
-
-**Step 3: Commit**
+**Step 3:** Commit:
 
 ```bash
 git add src/pages/DashboardView.tsx
@@ -499,17 +442,30 @@ git commit -m "feat: implement DashboardView with token set grid and actions"
 
 ---
 
-## Task 4: BrowserHeader Component
+### Task 6: Dashboard build verification
 
-Tab bar and mode switcher for the token browser.
+**Step 1:** Run: `npm run build`
+Expected: Build succeeds. Dashboard shows as landing page with token set cards.
+
+**Step 2:** If build fails, fix TypeScript errors and commit:
+
+```bash
+git add -A
+git commit -m "fix: resolve Dashboard build errors"
+```
+
+---
+
+## Phase B: Token Browser
+
+### Task 7: BrowserHeader component
 
 **Files:**
 - Create: `src/components/browser/BrowserHeader.tsx`
 
-**Step 1: Create the header component**
+**Step 1:** Create `src/components/browser/BrowserHeader.tsx`:
 
 ```typescript
-// src/components/browser/BrowserHeader.tsx
 import type { ModeMap } from '@/types'
 
 export type BrowserTab = 'colors' | 'spacing' | 'typography' | 'shadows'
@@ -545,8 +501,6 @@ export function BrowserHeader({
     <div className="px-8 pt-8 pb-0">
       <div className="flex items-center justify-between mb-6">
         <h2 className="section-title text-primary">TOKEN BROWSER</h2>
-
-        {/* Mode switcher */}
         {hasModes && (
           <div className="flex border border-border">
             {modeEntries.map((mode) => (
@@ -554,9 +508,7 @@ export function BrowserHeader({
                 key={mode.id}
                 onClick={() => onModeChange(mode.id)}
                 className={`px-3 py-1 font-mono text-xs transition-colors ${
-                  activeMode === mode.id
-                    ? 'bg-surface-elevated text-white'
-                    : 'text-text-secondary hover:text-white'
+                  activeMode === mode.id ? 'bg-surface-elevated text-white' : 'text-text-secondary hover:text-white'
                 } ${mode.id !== modeEntries[0].id ? 'border-l border-border' : ''}`}
               >
                 {mode.name.toUpperCase()}
@@ -565,17 +517,14 @@ export function BrowserHeader({
           </div>
         )}
       </div>
-
-      {/* Tab bar */}
       <div className="flex border-b border-border">
         {tabs.map((tab) => (
           <button
             key={tab.id}
             onClick={() => onTabChange(tab.id)}
-            className={`
-              relative px-5 py-3 font-mono text-xs tracking-wider transition-colors
-              ${activeTab === tab.id ? 'text-white' : 'text-text-secondary hover:text-white'}
-            `}
+            className={`relative px-5 py-3 font-mono text-xs tracking-wider transition-colors ${
+              activeTab === tab.id ? 'text-white' : 'text-text-secondary hover:text-white'
+            }`}
           >
             {tab.label}
             <span className="text-text-tertiary ml-1.5">({tabCounts[tab.id]})</span>
@@ -590,7 +539,9 @@ export function BrowserHeader({
 }
 ```
 
-**Step 2: Commit**
+**Step 2:** Verify: `npm run build`
+
+**Step 3:** Commit:
 
 ```bash
 git add src/components/browser/BrowserHeader.tsx
@@ -599,41 +550,30 @@ git commit -m "feat: add BrowserHeader with tabs and mode switcher"
 
 ---
 
-## Task 5: ColorGrid Component
-
-Grid of color swatch cards showing color fill, hex value, token path, and contrast ratios.
+### Task 8: ColorGrid component
 
 **Files:**
 - Create: `src/components/browser/ColorGrid.tsx`
 
-**Step 1: Create the color grid component**
+**Step 1:** Create `src/components/browser/ColorGrid.tsx`:
 
 ```typescript
-// src/components/browser/ColorGrid.tsx
 import type { ResolvedToken } from '@/types'
 
 interface ColorGridProps {
   tokens: [string, ResolvedToken][]
 }
 
-/**
- * Calculate relative luminance for a hex color.
- */
 function getLuminance(hex: string): number {
   const rgb = hexToRgb(hex)
   if (!rgb) return 0
-
   const [r, g, b] = [rgb.r, rgb.g, rgb.b].map((c) => {
     const s = c / 255
     return s <= 0.03928 ? s / 12.92 : Math.pow((s + 0.055) / 1.055, 2.4)
   })
-
   return 0.2126 * r + 0.7152 * g + 0.0722 * b
 }
 
-/**
- * Calculate contrast ratio between two hex colors.
- */
 function getContrastRatio(hex1: string, hex2: string): number {
   const l1 = getLuminance(hex1)
   const l2 = getLuminance(hex2)
@@ -645,32 +585,22 @@ function getContrastRatio(hex1: string, hex2: string): number {
 function hexToRgb(hex: string): { r: number; g: number; b: number } | null {
   const clean = hex.replace('#', '')
   if (clean.length < 6) return null
-
   const r = parseInt(clean.substring(0, 2), 16)
   const g = parseInt(clean.substring(2, 4), 16)
   const b = parseInt(clean.substring(4, 6), 16)
-
   if (isNaN(r) || isNaN(g) || isNaN(b)) return null
   return { r, g, b }
 }
 
-/**
- * Group tokens by their second-level path segment.
- * e.g. "color.primitive.red.500" groups under "primitive"
- *      "color.semantic.primary" groups under "semantic"
- */
 function groupByCategory(tokens: [string, ResolvedToken][]): Map<string, [string, ResolvedToken][]> {
   const groups = new Map<string, [string, ResolvedToken][]>()
-
   for (const entry of tokens) {
     const parts = entry[0].split('.')
-    // Use second segment as category, or first if only one segment
     const category = parts.length > 1 ? parts[1] : parts[0]
     const existing = groups.get(category) || []
     existing.push(entry)
     groups.set(category, existing)
   }
-
   return groups
 }
 
@@ -693,7 +623,6 @@ export function ColorGrid({ tokens }: ColorGridProps) {
             {category}
             <span className="text-text-tertiary ml-2">({categoryTokens.length})</span>
           </h3>
-
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3">
             {categoryTokens.map(([path, token]) => {
               const value = String(token.resolvedValue)
@@ -704,22 +633,10 @@ export function ColorGrid({ tokens }: ColorGridProps) {
 
               return (
                 <div key={path} className="border border-border-subtle">
-                  {/* Color swatch */}
-                  <div
-                    className="h-20 border-b border-border-subtle"
-                    style={{ backgroundColor: isValidHex ? value : '#000' }}
-                  />
-
-                  {/* Token info */}
+                  <div className="h-20 border-b border-border-subtle" style={{ backgroundColor: isValidHex ? value : '#000' }} />
                   <div className="p-2.5">
-                    <p className="font-mono text-xs text-white truncate" title={path}>
-                      {shortPath}
-                    </p>
-                    <p className="font-mono text-xs text-text-secondary mt-0.5">
-                      {value}
-                    </p>
-
-                    {/* Contrast ratios */}
+                    <p className="font-mono text-xs text-white truncate" title={path}>{shortPath}</p>
+                    <p className="font-mono text-xs text-text-secondary mt-0.5">{value}</p>
                     {isValidHex && (
                       <div className="flex gap-2 mt-1.5">
                         <span className={`font-mono text-xs ${contrastWhite >= 4.5 ? 'text-success' : contrastWhite >= 3 ? 'text-warning' : 'text-error'}`}>
@@ -742,7 +659,9 @@ export function ColorGrid({ tokens }: ColorGridProps) {
 }
 ```
 
-**Step 2: Commit**
+**Step 2:** Verify: `npm run build`
+
+**Step 3:** Commit:
 
 ```bash
 git add src/components/browser/ColorGrid.tsx
@@ -751,35 +670,26 @@ git commit -m "feat: add ColorGrid component with contrast ratios"
 
 ---
 
-## Task 6: SpacingScale Component
-
-Horizontal bar visualization of spacing/dimension tokens sorted by value.
+### Task 9: SpacingScale component
 
 **Files:**
 - Create: `src/components/browser/SpacingScale.tsx`
 
-**Step 1: Create the spacing scale component**
+**Step 1:** Create `src/components/browser/SpacingScale.tsx`:
 
 ```typescript
-// src/components/browser/SpacingScale.tsx
 import type { ResolvedToken } from '@/types'
 
 interface SpacingScaleProps {
   tokens: [string, ResolvedToken][]
 }
 
-/**
- * Parse a CSS dimension value to a number (in px).
- * Handles: 16px, 1rem (assumes 16px base), 1.5em, etc.
- */
 function parseToPixels(value: string): number {
   const str = String(value).trim()
   const match = str.match(/^(-?\d+\.?\d*)(px|rem|em|pt)?$/)
   if (!match) return 0
-
   const num = parseFloat(match[1])
   const unit = match[2] || 'px'
-
   switch (unit) {
     case 'rem':
     case 'em':
@@ -800,12 +710,10 @@ export function SpacingScale({ tokens }: SpacingScaleProps) {
     )
   }
 
-  // Sort by pixel value ascending
   const sorted = [...tokens].sort((a, b) => {
     return parseToPixels(String(a[1].resolvedValue)) - parseToPixels(String(b[1].resolvedValue))
   })
 
-  // Find max value for proportional bars
   const maxPx = Math.max(...sorted.map(([, t]) => parseToPixels(String(t.resolvedValue))), 1)
 
   return (
@@ -818,29 +726,13 @@ export function SpacingScale({ tokens }: SpacingScaleProps) {
 
         return (
           <div key={path} className="flex items-center gap-4 py-2 px-4 border-b border-border-subtle">
-            {/* Token name */}
-            <span className="font-mono text-xs text-text-secondary min-w-[160px] truncate" title={path}>
-              {shortPath}
-            </span>
-
-            {/* Bar */}
+            <span className="font-mono text-xs text-text-secondary min-w-[160px] truncate" title={path}>{shortPath}</span>
             <div className="flex-1">
-              <div
-                className="h-4 bg-primary/30 border border-primary/50 rounded-sm"
-                style={{ width: `${widthPercent}%` }}
-              />
+              <div className="h-4 bg-primary/30 border border-primary/50 rounded-sm" style={{ width: `${widthPercent}%` }} />
             </div>
-
-            {/* Value */}
-            <span className="font-mono text-xs text-white min-w-[60px] text-right">
-              {value}
-            </span>
-
-            {/* Pixel equivalent */}
+            <span className="font-mono text-xs text-white min-w-[60px] text-right">{value}</span>
             {!value.endsWith('px') && (
-              <span className="font-mono text-xs text-text-tertiary min-w-[50px] text-right">
-                {px}px
-              </span>
+              <span className="font-mono text-xs text-text-tertiary min-w-[50px] text-right">{px}px</span>
             )}
           </div>
         )
@@ -850,7 +742,9 @@ export function SpacingScale({ tokens }: SpacingScaleProps) {
 }
 ```
 
-**Step 2: Commit**
+**Step 2:** Verify: `npm run build`
+
+**Step 3:** Commit:
 
 ```bash
 git add src/components/browser/SpacingScale.tsx
@@ -859,29 +753,20 @@ git commit -m "feat: add SpacingScale bar visualization component"
 
 ---
 
-## Task 7: TypographySpecimens Component
-
-Live text samples rendered with actual typography token values.
+### Task 10: TypographySpecimens component
 
 **Files:**
 - Create: `src/components/browser/TypographySpecimens.tsx`
 
-**Step 1: Create the typography specimens component**
+**Step 1:** Create `src/components/browser/TypographySpecimens.tsx`:
 
 ```typescript
-// src/components/browser/TypographySpecimens.tsx
 import type { ResolvedToken } from '@/types'
 
 interface TypographySpecimensProps {
   tokens: [string, ResolvedToken][]
 }
 
-/**
- * Parse a typography token value into style properties.
- * Typography values can be:
- * - A string like "16px/1.5 Inter" or "bold 24px/1.2 'Instrument Serif'"
- * - An object with fontFamily, fontSize, fontWeight, lineHeight
- */
 function parseTypographyValue(value: unknown): React.CSSProperties {
   if (typeof value === 'object' && value !== null) {
     const obj = value as Record<string, unknown>
@@ -893,15 +778,10 @@ function parseTypographyValue(value: unknown): React.CSSProperties {
       letterSpacing: obj.letterSpacing as string | undefined,
     }
   }
-
-  // Parse string format: "[weight] size[/lineHeight] family"
   const str = String(value)
-
-  // Try to extract font-family if it's just a family name
   if (!str.match(/\d/) && str.length > 0) {
     return { fontFamily: str }
   }
-
   return { fontFamily: str }
 }
 
@@ -923,7 +803,6 @@ export function TypographySpecimens({ tokens }: TypographySpecimensProps) {
           ? JSON.stringify(token.resolvedValue, null, 2)
           : String(token.resolvedValue)
 
-        // Build property list for display
         const properties: string[] = []
         if (styles.fontFamily) properties.push(`family: ${styles.fontFamily}`)
         if (styles.fontSize) properties.push(`size: ${styles.fontSize}`)
@@ -933,17 +812,10 @@ export function TypographySpecimens({ tokens }: TypographySpecimensProps) {
 
         return (
           <div key={path} className="border border-border-subtle p-5">
-            {/* Token path */}
-            <p className="font-mono text-xs text-text-secondary mb-3" title={path}>
-              {shortPath}
-            </p>
-
-            {/* Live specimen */}
+            <p className="font-mono text-xs text-text-secondary mb-3" title={path}>{shortPath}</p>
             <p className="text-white mb-3 break-words" style={styles}>
               The quick brown fox jumps over the lazy dog
             </p>
-
-            {/* Properties */}
             <div className="flex flex-wrap gap-x-4 gap-y-1">
               {properties.length > 0 ? (
                 properties.map((prop) => (
@@ -961,7 +833,9 @@ export function TypographySpecimens({ tokens }: TypographySpecimensProps) {
 }
 ```
 
-**Step 2: Commit**
+**Step 2:** Verify: `npm run build`
+
+**Step 3:** Commit:
 
 ```bash
 git add src/components/browser/TypographySpecimens.tsx
@@ -970,17 +844,14 @@ git commit -m "feat: add TypographySpecimens live preview component"
 
 ---
 
-## Task 8: ShadowSamples Component
-
-Cards with actual box-shadow applied for visual preview.
+### Task 11: ShadowSamples component
 
 **Files:**
 - Create: `src/components/browser/ShadowSamples.tsx`
 
-**Step 1: Create the shadow samples component**
+**Step 1:** Create `src/components/browser/ShadowSamples.tsx`:
 
 ```typescript
-// src/components/browser/ShadowSamples.tsx
 import type { ResolvedToken } from '@/types'
 
 interface ShadowSamplesProps {
@@ -1004,23 +875,11 @@ export function ShadowSamples({ tokens }: ShadowSamplesProps) {
 
         return (
           <div key={path} className="border border-border-subtle p-5">
-            {/* Token path */}
-            <p className="font-mono text-xs text-text-secondary mb-4" title={path}>
-              {shortPath}
-            </p>
-
-            {/* Shadow preview card */}
+            <p className="font-mono text-xs text-text-secondary mb-4" title={path}>{shortPath}</p>
             <div className="flex items-center justify-center py-8">
-              <div
-                className="w-24 h-24 bg-surface-elevated rounded"
-                style={{ boxShadow: value }}
-              />
+              <div className="w-24 h-24 bg-surface-elevated rounded" style={{ boxShadow: value }} />
             </div>
-
-            {/* Raw value */}
-            <p className="font-mono text-xs text-text-tertiary mt-4 break-all">
-              {value}
-            </p>
+            <p className="font-mono text-xs text-text-tertiary mt-4 break-all">{value}</p>
           </div>
         )
       })}
@@ -1029,7 +888,9 @@ export function ShadowSamples({ tokens }: ShadowSamplesProps) {
 }
 ```
 
-**Step 2: Commit**
+**Step 2:** Verify: `npm run build`
+
+**Step 3:** Commit:
 
 ```bash
 git add src/components/browser/ShadowSamples.tsx
@@ -1038,17 +899,14 @@ git commit -m "feat: add ShadowSamples visual preview component"
 
 ---
 
-## Task 9: BrowserView Full Implementation
-
-Replace the placeholder BrowserView with the full implementation that resolves tokens and renders the appropriate visualization panel.
+### Task 12: BrowserView full implementation
 
 **Files:**
 - Modify: `src/pages/BrowserView.tsx`
 
-**Step 1: Replace BrowserView with full implementation**
+**Step 1:** Replace the full content of `src/pages/BrowserView.tsx`:
 
 ```typescript
-// src/pages/BrowserView.tsx
 import { useState, useMemo } from 'react'
 import { useTokenStore } from '@/store/useTokenStore'
 import { resolveTokens } from '@/lib/resolver'
@@ -1064,18 +922,14 @@ export function BrowserView() {
   const [activeTab, setActiveTab] = useState<BrowserTab>('colors')
   const [activeMode, setActiveMode] = useState<string | null>(activeSet?.activeMode || null)
 
-  // Resolve all tokens with the selected mode
   const resolved = useMemo(() => {
     if (!activeSet) return null
     return resolveTokens(activeSet, activeMode || undefined)
   }, [activeSet, activeMode])
 
-  // Group resolved tokens by type
   const grouped = useMemo(() => {
     if (!resolved) return { colors: [], spacing: [], typography: [], shadows: [] }
-
     const entries = Object.entries(resolved.tokens) as [string, ResolvedToken][]
-
     return {
       colors: entries.filter(([, t]) => t.type === 'color'),
       spacing: entries.filter(([, t]) => t.type === 'dimension'),
@@ -1104,10 +958,6 @@ export function BrowserView() {
     )
   }
 
-  const handleModeChange = (modeId: string) => {
-    setActiveMode(modeId)
-  }
-
   return (
     <div className="h-full flex flex-col">
       <BrowserHeader
@@ -1116,9 +966,8 @@ export function BrowserView() {
         tabCounts={tabCounts}
         modes={activeSet.modes}
         activeMode={activeMode}
-        onModeChange={handleModeChange}
+        onModeChange={setActiveMode}
       />
-
       <div className="flex-1 overflow-auto px-8 py-6">
         {activeTab === 'colors' && <ColorGrid tokens={grouped.colors} />}
         {activeTab === 'spacing' && <SpacingScale tokens={grouped.spacing} />}
@@ -1130,12 +979,9 @@ export function BrowserView() {
 }
 ```
 
-**Step 2: Verify**
+**Step 2:** Verify: `npm run build`
 
-Run: `npm run build`
-Expected: Build succeeds. Browser view shows color grid by default. Tabs switch between visualization panels. Mode switcher re-resolves tokens.
-
-**Step 3: Commit**
+**Step 3:** Commit:
 
 ```bash
 git add src/pages/BrowserView.tsx
@@ -1144,29 +990,28 @@ git commit -m "feat: implement BrowserView with color, spacing, typography, and 
 
 ---
 
-## Task 10: Version Store State
+### Task 13: Browser build verification
 
-Add version management state and actions to the Zustand store.
+**Step 1:** Run: `npm run build`
+Expected: Build succeeds. Browser shows color grid, spacing bars, typography samples, and shadow previews.
 
-**Files:**
-- Modify: `src/store/useTokenStore.ts`
-- Modify: `src/types/index.ts`
+**Step 2:** If build fails, fix TypeScript errors and commit:
 
-**Step 1: Update Version type in types**
-
-The existing `Version` type in `src/types/index.ts` (lines 175-187) stores a full `TokenSet` snapshot. Simplify the `snapshot` field to just store the token tree (not the whole set — we only need tokens). Replace lines 175-187:
-
-```typescript
-export interface Version {
-  id: string
-  name: string
-  timestamp: number
-  tokenSnapshot: Record<string, import('./index').Token | import('./index').TokenGroup>
-  tokenCount: number
-}
+```bash
+git add -A
+git commit -m "fix: resolve Browser build errors"
 ```
 
-Wait — that creates circular imports. Instead, keep it simple and store the snapshot as the token tree type directly. Replace the Version and VersionHistory interfaces (lines 175-187):
+---
+
+## Phase C: Versioning
+
+### Task 14: Update Version type
+
+**Files:**
+- Modify: `src/types/index.ts`
+
+**Step 1:** Replace the `Version` and `VersionHistory` interfaces (lines 175-187) with:
 
 ```typescript
 export interface Version {
@@ -1178,11 +1023,52 @@ export interface Version {
 }
 ```
 
-Remove the `VersionHistory` interface (lines 184-187) — we won't use it.
+Remove the `VersionHistory` interface entirely.
 
-**Step 2: Add version state and actions to the store**
+**Step 2:** Also remove `versionHistory` from the `AppState` interface (line 196). Change:
 
-In `src/store/useTokenStore.ts`, add to the `TokenStoreState` interface (after the sync actions block):
+```typescript
+export interface AppState {
+  tokenSets: Record<string, TokenSet>
+  activeSetId: string | null
+  versionHistory: Record<string, VersionHistory> // setId -> history
+  syncResults: Record<string, SyncResult> // setId -> last sync
+}
+```
+
+to:
+
+```typescript
+export interface AppState {
+  tokenSets: Record<string, TokenSet>
+  activeSetId: string | null
+  syncResults: Record<string, SyncResult> // setId -> last sync
+}
+```
+
+**Step 3:** Verify: `npm run build`
+
+**Step 4:** Commit:
+
+```bash
+git add src/types/index.ts
+git commit -m "refactor: simplify Version type for snapshot storage"
+```
+
+---
+
+### Task 15: Add version state and actions to store
+
+**Files:**
+- Modify: `src/store/useTokenStore.ts`
+
+**Step 1:** Add `Version` to the import from types:
+
+```typescript
+import type { AppState, Token, TokenGroup, TokenSet, TokenValue, Version, ViewMode } from '@/types'
+```
+
+**Step 2:** Add to the `TokenStoreState` interface (after the sync actions):
 
 ```typescript
 // Version state
@@ -1195,23 +1081,33 @@ deleteVersion: (setId: string, versionId: string) => void
 getVersionsForActiveSet: () => Version[]
 ```
 
-Add the import for Version at the top of the file:
+**Step 3:** Add `countTokensInTree` helper function above the store definition (near the other tree helpers):
 
 ```typescript
-import type { AppState, Token, TokenGroup, TokenSet, TokenValue, Version, ViewMode } from '@/types'
+function countTokensInTree(tokens: Record<string, Token | TokenGroup>): number {
+  let count = 0
+  for (const value of Object.values(tokens)) {
+    if ('tokens' in value) {
+      count += countTokensInTree(value.tokens)
+    } else {
+      count++
+    }
+  }
+  return count
+}
 ```
 
-Add initial state in the store (after `syncFilter: 'all'`):
+**Step 4:** Add initial state (after `syncFilter: 'all'`):
 
 ```typescript
-// Version initial state
 versions: {},
 ```
 
-Add the action implementations (after `getTotalConflicts`):
+**Step 5:** Remove the existing `versionHistory: {},` line from the initial state if it exists.
+
+**Step 6:** Add the action implementations (after `getTotalConflicts`):
 
 ```typescript
-// Version actions
 saveVersion: (name) => {
   const state = get()
   const activeSet = state.activeSetId ? state.tokenSets[state.activeSetId] : null
@@ -1228,7 +1124,6 @@ saveVersion: (name) => {
     tokenCount: countTokensInTree(activeSet.tokens),
   }
 
-  // Keep max 50 versions per set
   const updated = [...setVersions, version]
   if (updated.length > 50) {
     updated.splice(0, updated.length - 50)
@@ -1250,7 +1145,6 @@ restoreVersion: (setId, versionId) => {
 
   if (!tokenSet || !version) return
 
-  // Auto-save current state before restoring
   const currentVersions = state.versions[setId] || []
   const autoSave: Version = {
     id: `${Date.now()}-${Math.random().toString(36).substring(2, 11)}`,
@@ -1279,7 +1173,6 @@ restoreVersion: (setId, versionId) => {
 deleteVersion: (setId, versionId) => {
   const state = get()
   const setVersions = state.versions[setId] || []
-
   set({
     versions: {
       ...state.versions,
@@ -1295,52 +1188,25 @@ getVersionsForActiveSet: () => {
 },
 ```
 
-**Step 3: Add countTokensInTree helper**
+**Step 7:** Verify: `npm run build`
 
-Add this helper function above the store definition (near the other tree helpers):
-
-```typescript
-/**
- * Count all leaf tokens in a nested token tree.
- */
-function countTokensInTree(tokens: Record<string, Token | TokenGroup>): number {
-  let count = 0
-  for (const value of Object.values(tokens)) {
-    if ('tokens' in value) {
-      count += countTokensInTree(value.tokens)
-    } else {
-      count++
-    }
-  }
-  return count
-}
-```
-
-**Step 4: Verify**
-
-Run: `npm run build`
-Expected: Build succeeds. No runtime errors.
-
-**Step 5: Commit**
+**Step 8:** Commit:
 
 ```bash
-git add src/types/index.ts src/store/useTokenStore.ts
+git add src/store/useTokenStore.ts
 git commit -m "feat: add version management state and actions to store"
 ```
 
 ---
 
-## Task 11: VersionEntry Component
-
-A single row in the version timeline showing version info and actions.
+### Task 16: VersionEntry component
 
 **Files:**
 - Create: `src/components/versioning/VersionEntry.tsx`
 
-**Step 1: Create the version entry component**
+**Step 1:** Create `src/components/versioning/VersionEntry.tsx`:
 
 ```typescript
-// src/components/versioning/VersionEntry.tsx
 import { RotateCcw, Trash2 } from 'lucide-react'
 import { format } from 'date-fns'
 import type { Version } from '@/types'
@@ -1354,10 +1220,7 @@ interface VersionEntryProps {
 export function VersionEntry({ version, onRestore, onDelete }: VersionEntryProps) {
   return (
     <div className="flex items-center gap-3 px-4 py-3 border-b border-border-subtle hover:bg-white/[0.02] transition-colors">
-      {/* Timeline dot */}
       <div className="w-2 h-2 rounded-full bg-primary/60 flex-shrink-0" />
-
-      {/* Version info */}
       <div className="flex-1 min-w-0">
         <p className="font-mono text-xs text-white truncate">{version.name}</p>
         <p className="font-mono text-xs text-text-tertiary mt-0.5">
@@ -1365,21 +1228,11 @@ export function VersionEntry({ version, onRestore, onDelete }: VersionEntryProps
           <span className="ml-2">{version.tokenCount} tokens</span>
         </p>
       </div>
-
-      {/* Actions */}
       <div className="flex gap-1 flex-shrink-0">
-        <button
-          onClick={onRestore}
-          className="p-1.5 text-text-tertiary hover:text-success hover:bg-success/10 transition-colors rounded"
-          title="Restore this version"
-        >
+        <button onClick={onRestore} className="p-1.5 text-text-tertiary hover:text-success hover:bg-success/10 transition-colors rounded" title="Restore this version">
           <RotateCcw className="w-3.5 h-3.5" />
         </button>
-        <button
-          onClick={onDelete}
-          className="p-1.5 text-text-tertiary hover:text-error hover:bg-error/10 transition-colors rounded"
-          title="Delete this version"
-        >
+        <button onClick={onDelete} className="p-1.5 text-text-tertiary hover:text-error hover:bg-error/10 transition-colors rounded" title="Delete this version">
           <Trash2 className="w-3.5 h-3.5" />
         </button>
       </div>
@@ -1388,7 +1241,9 @@ export function VersionEntry({ version, onRestore, onDelete }: VersionEntryProps
 }
 ```
 
-**Step 2: Commit**
+**Step 2:** Verify: `npm run build`
+
+**Step 3:** Commit:
 
 ```bash
 git add src/components/versioning/VersionEntry.tsx
@@ -1397,17 +1252,14 @@ git commit -m "feat: add VersionEntry timeline row component"
 
 ---
 
-## Task 12: VersionPanel Component
-
-Slide-in panel showing version timeline with save and restore controls.
+### Task 17: VersionPanel component
 
 **Files:**
 - Create: `src/components/versioning/VersionPanel.tsx`
 
-**Step 1: Create the version panel component**
+**Step 1:** Create `src/components/versioning/VersionPanel.tsx`:
 
 ```typescript
-// src/components/versioning/VersionPanel.tsx
 import { useState } from 'react'
 import { X, Save } from 'lucide-react'
 import { useTokenStore } from '@/store/useTokenStore'
@@ -1445,23 +1297,17 @@ export function VersionPanel({ isOpen, onClose }: VersionPanelProps) {
     deleteVersion(activeSetId, versionId)
   }
 
-  // Show newest first
   const sortedVersions = [...versions].reverse()
 
   return (
     <div className="fixed inset-y-0 right-0 w-80 bg-surface border-l border-border z-50 flex flex-col shadow-2xl">
-      {/* Header */}
       <div className="flex items-center justify-between px-4 py-3 border-b border-border">
         <h3 className="section-title text-primary">VERSIONS</h3>
-        <button
-          onClick={onClose}
-          className="p-1 text-text-tertiary hover:text-white transition-colors"
-        >
+        <button onClick={onClose} className="p-1 text-text-tertiary hover:text-white transition-colors">
           <X className="w-4 h-4" />
         </button>
       </div>
 
-      {/* Save new version */}
       <div className="px-4 py-3 border-b border-border">
         <div className="flex gap-2">
           <input
@@ -1472,23 +1318,17 @@ export function VersionPanel({ isOpen, onClose }: VersionPanelProps) {
             className="flex-1 px-3 py-1.5 bg-surface-elevated border border-border font-mono text-xs text-white placeholder:text-text-tertiary focus:border-primary focus:outline-none"
             onKeyDown={(e) => e.key === 'Enter' && handleSave()}
           />
-          <button
-            onClick={handleSave}
-            className="flex items-center gap-1.5 px-3 py-1.5 bg-primary hover:bg-primary/90 text-white font-mono text-xs transition-colors"
-          >
+          <button onClick={handleSave} className="flex items-center gap-1.5 px-3 py-1.5 bg-primary hover:bg-primary/90 text-white font-mono text-xs transition-colors">
             <Save className="w-3.5 h-3.5" />
             SAVE
           </button>
         </div>
       </div>
 
-      {/* Version list */}
       <div className="flex-1 overflow-auto">
         {sortedVersions.length === 0 ? (
           <div className="flex items-center justify-center py-12">
-            <p className="font-mono text-xs text-text-secondary">
-              No versions saved yet.
-            </p>
+            <p className="font-mono text-xs text-text-secondary">No versions saved yet.</p>
           </div>
         ) : (
           sortedVersions.map((version) => (
@@ -1502,7 +1342,6 @@ export function VersionPanel({ isOpen, onClose }: VersionPanelProps) {
         )}
       </div>
 
-      {/* Footer */}
       {sortedVersions.length > 0 && (
         <div className="px-4 py-2 border-t border-border">
           <p className="font-mono text-xs text-text-tertiary">
@@ -1515,7 +1354,9 @@ export function VersionPanel({ isOpen, onClose }: VersionPanelProps) {
 }
 ```
 
-**Step 2: Commit**
+**Step 2:** Verify: `npm run build`
+
+**Step 3:** Commit:
 
 ```bash
 git add src/components/versioning/VersionPanel.tsx
@@ -1524,17 +1365,12 @@ git commit -m "feat: add VersionPanel slide-in with save and restore"
 
 ---
 
-## Task 13: Wire VersionPanel into EditorView
-
-Add a "Versions" button to the editor header that opens the version panel.
+### Task 18: Update EditorHeader with Versions button
 
 **Files:**
 - Modify: `src/components/editor/EditorHeader.tsx`
-- Modify: `src/pages/EditorView.tsx`
 
-**Step 1: Add Versions button to EditorHeader**
-
-Replace the full content of `src/components/editor/EditorHeader.tsx`:
+**Step 1:** Replace the full content of `src/components/editor/EditorHeader.tsx`:
 
 ```typescript
 import { Plus, Clock } from 'lucide-react'
@@ -1573,9 +1409,23 @@ export function EditorHeader({ onAddToken, onOpenVersions, versionCount }: Edito
 }
 ```
 
-**Step 2: Update EditorView to include VersionPanel**
+**Step 2:** Verify: `npm run build`
 
-Replace the full content of `src/pages/EditorView.tsx`:
+**Step 3:** Commit:
+
+```bash
+git add src/components/editor/EditorHeader.tsx
+git commit -m "feat: add Versions button to EditorHeader"
+```
+
+---
+
+### Task 19: Wire VersionPanel into EditorView
+
+**Files:**
+- Modify: `src/pages/EditorView.tsx`
+
+**Step 1:** Replace the full content of `src/pages/EditorView.tsx`:
 
 ```typescript
 import { useState } from 'react'
@@ -1609,16 +1459,13 @@ export function EditorView() {
         onOpenVersions={() => setIsVersionPanelOpen(true)}
         versionCount={versionCount}
       />
-
       <div className="mt-6">
         <TokenTree tokenSet={activeSet} />
       </div>
-
       <AddTokenDialog
         isOpen={isAddDialogOpen}
         onClose={() => setIsAddDialogOpen(false)}
       />
-
       <VersionPanel
         isOpen={isVersionPanelOpen}
         onClose={() => setIsVersionPanelOpen(false)}
@@ -1628,60 +1475,54 @@ export function EditorView() {
 }
 ```
 
-**Step 3: Verify**
+**Step 2:** Verify: `npm run build`
 
-Run: `npm run build`
-Expected: Build succeeds. "Versions" button visible in editor header. Clicking it opens the side panel. Saving a version works. Restoring a version prompts for confirmation and restores tokens.
-
-**Step 4: Commit**
+**Step 3:** Commit:
 
 ```bash
-git add src/components/editor/EditorHeader.tsx src/pages/EditorView.tsx
-git commit -m "feat: wire VersionPanel into EditorView with versions button"
+git add src/pages/EditorView.tsx
+git commit -m "feat: wire VersionPanel into EditorView"
 ```
 
 ---
 
-## Task 14: Build Verification
+### Task 20: Final build verification
 
-Ensure the full app builds without TypeScript or bundler errors.
-
-**Step 1: Run the build**
-
-Run: `npm run build`
+**Step 1:** Run: `npm run build`
 Expected: Build succeeds with no errors.
 
-**Step 2: Fix any TypeScript errors**
-
-Common issues:
-- Missing imports for `Version` type
-- Zustand persist middleware needing updated storage version for new state fields
-- Any missing `versions` property in the store initial state
-
-**Step 3: Final commit (if fixes were needed)**
+**Step 2:** If any errors, fix them and commit:
 
 ```bash
 git add -A
-git commit -m "fix: resolve build errors for Phase 5"
+git commit -m "fix: resolve Phase 5 build errors"
 ```
+
+**Step 3:** Use `superpowers:finishing-a-development-branch` to complete the work.
 
 ---
 
 ## Summary
 
-| Task | Description | Files |
-|------|-------------|-------|
-| 1 | ViewMode + navigation update | `types/index.ts`, `Header.tsx`, `useTokenStore.ts`, `App.tsx`, `DashboardView.tsx` |
-| 2 | TokenSetCard component | `components/dashboard/TokenSetCard.tsx` |
-| 3 | DashboardView full implementation | `pages/DashboardView.tsx` |
-| 4 | BrowserHeader tabs + mode switcher | `components/browser/BrowserHeader.tsx` |
-| 5 | ColorGrid with contrast ratios | `components/browser/ColorGrid.tsx` |
-| 6 | SpacingScale bar visualization | `components/browser/SpacingScale.tsx` |
-| 7 | TypographySpecimens live preview | `components/browser/TypographySpecimens.tsx` |
-| 8 | ShadowSamples visual preview | `components/browser/ShadowSamples.tsx` |
-| 9 | BrowserView full implementation | `pages/BrowserView.tsx` |
-| 10 | Version store state + actions | `types/index.ts`, `useTokenStore.ts` |
-| 11 | VersionEntry timeline row | `components/versioning/VersionEntry.tsx` |
-| 12 | VersionPanel slide-in panel | `components/versioning/VersionPanel.tsx` |
-| 13 | Wire versions into EditorView | `EditorHeader.tsx`, `EditorView.tsx` |
-| 14 | Build verification | All files |
+| Task | Phase | Description | Files |
+|------|-------|-------------|-------|
+| 1 | A | Add `dashboard` to ViewMode | `types/index.ts` |
+| 2 | A | Update Header nav | `Header.tsx` |
+| 3 | A | DashboardView placeholder + App wiring | `DashboardView.tsx`, `App.tsx`, `useTokenStore.ts` |
+| 4 | A | TokenSetCard component | `dashboard/TokenSetCard.tsx` |
+| 5 | A | DashboardView full implementation | `DashboardView.tsx` |
+| 6 | A | Dashboard build verification | — |
+| 7 | B | BrowserHeader tabs + mode switcher | `browser/BrowserHeader.tsx` |
+| 8 | B | ColorGrid with contrast ratios | `browser/ColorGrid.tsx` |
+| 9 | B | SpacingScale bar visualization | `browser/SpacingScale.tsx` |
+| 10 | B | TypographySpecimens live preview | `browser/TypographySpecimens.tsx` |
+| 11 | B | ShadowSamples visual preview | `browser/ShadowSamples.tsx` |
+| 12 | B | BrowserView full implementation | `BrowserView.tsx` |
+| 13 | B | Browser build verification | — |
+| 14 | C | Update Version type | `types/index.ts` |
+| 15 | C | Version store state + actions | `useTokenStore.ts` |
+| 16 | C | VersionEntry timeline row | `versioning/VersionEntry.tsx` |
+| 17 | C | VersionPanel slide-in panel | `versioning/VersionPanel.tsx` |
+| 18 | C | EditorHeader versions button | `EditorHeader.tsx` |
+| 19 | C | Wire VersionPanel into EditorView | `EditorView.tsx` |
+| 20 | C | Final build verification | — |
