@@ -218,7 +218,7 @@ export interface ExportOptions {
 // UI STATE TYPES
 // ============================================================================
 
-export type ViewMode = 'editor' | 'browser' | 'compiler' | 'sync'
+export type ViewMode = 'dashboard' | 'editor' | 'browser' | 'compiler' | 'sync'
 
 export interface EditorState {
   selectedTokenId: string | null
