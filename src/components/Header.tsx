@@ -1,6 +1,6 @@
 import { useState } from 'react'
 
-type NavItem = 'editor' | 'browser' | 'compiler' | 'sync'
+type NavItem = 'dashboard' | 'editor' | 'browser' | 'compiler' | 'sync'
 
 interface HeaderProps {
   activeView: NavItem
@@ -14,6 +14,7 @@ interface HeaderProps {
 
 export function Header({ activeView, onViewChange, activeSetName, syncStatus }: HeaderProps) {
   const navItems: { id: NavItem; label: string }[] = [
+    { id: 'dashboard', label: 'HOME' },
     { id: 'editor', label: 'EDITOR' },
     { id: 'browser', label: 'BROWSER' },
     { id: 'compiler', label: 'COMPILER' },
