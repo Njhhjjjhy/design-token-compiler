@@ -18,7 +18,7 @@ The Design Token Compiler solves the **$58,500/month problem** of design-code dr
 
 ## Current Build Status
 
-✅ **What Works Now:**
+ **What Works Now:**
 - Token resolution engine (the core logic)
 - Three compiler outputs: CSS, TypeScript, Tailwind
 - Light/Dark theme support
@@ -304,22 +304,22 @@ src/
 │   ├── Header.tsx              # Top navigation
 │   └── BinarySeparator.tsx     # Scrolling binary strip
 ├── pages/
-│   ├── CompilerView.tsx        # ✅ Compiler UI (complete)
+│   ├── CompilerView.tsx        #  Compiler UI (complete)
 │   ├── EditorView.tsx          # ⬜ Token editor (placeholder)
 │   ├── BrowserView.tsx         # ⬜ Visual browser (placeholder)
 │   └── SyncView.tsx            # ⬜ Sync/diff (placeholder)
 ├── lib/
-│   ├── resolver.ts             # ✅ Resolution engine
+│   ├── resolver.ts             #  Resolution engine
 │   └── compilers/
-│       ├── css.ts              # ✅ CSS compiler
-│       ├── typescript.ts       # ✅ TypeScript compiler
-│       └── tailwind.ts         # ✅ Tailwind compiler
+│       ├── css.ts              #  CSS compiler
+│       ├── typescript.ts       #  TypeScript compiler
+│       └── tailwind.ts         #  Tailwind compiler
 ├── store/
-│   └── useTokenStore.ts        # ✅ Zustand state
+│   └── useTokenStore.ts        #  Zustand state
 ├── data/
-│   └── sampleTokens.ts         # ✅ Sample token set
+│   └── sampleTokens.ts         #  Sample token set
 └── types/
-    └── index.ts                # ✅ TypeScript definitions
+    └── index.ts                #  TypeScript definitions
 ```
 
 ---

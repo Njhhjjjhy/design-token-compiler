@@ -1109,13 +1109,13 @@ git add -A
 git commit -m "test: verify Token Editor MVP functionality
 
 Manual testing complete:
-- Token tree rendering ✓
-- Expand/collapse ✓
-- Inline editing ✓
-- Visual previews ✓
-- Add token ✓
-- Delete token ✓
-- Persistence ✓
+- Token tree rendering 
+- Expand/collapse 
+- Inline editing 
+- Visual previews 
+- Add token 
+- Delete token 
+- Persistence 
 
 Token Editor MVP is complete and functional.
 
@@ -1134,22 +1134,22 @@ Co-Authored-By: Claude Sonnet 4.5 <noreply@anthropic.com>"
 Find the section "Phase 1 — Token Editor (Not Started)" and update to:
 
 ```markdown
-### Phase 1 — Token Editor (100% Complete) ✅
+### Phase 1 — Token Editor (100% Complete) 
 
-#### Token Tree View ✅
-- ✅ Recursive tree component with expand/collapse
-- ✅ Visual previews (color swatches, spacing bars)
-- ✅ Inline editing (click to edit values)
-- ✅ Drag-to-reorder tokens — Deferred to V2
-- ✅ Search and filter — Deferred to V2
+#### Token Tree View 
+-  Recursive tree component with expand/collapse
+-  Visual previews (color swatches, spacing bars)
+-  Inline editing (click to edit values)
+-  Drag-to-reorder tokens — Deferred to V2
+-  Search and filter — Deferred to V2
 
 #### Detail Panel
-- ✅ Inline editing replaces need for detail panel in MVP
+-  Inline editing replaces need for detail panel in MVP
 - ⬜ Reference autocomplete (type `{` to search tokens) — Deferred to V2
 - ⬜ Color picker integration — Deferred to V2
 
 #### Editor State
-- ✅ Expanded groups persistence (local component state)
+-  Expanded groups persistence (local component state)
 - ⬜ Undo/redo functionality — Deferred to V2
 
 **Completed:** February 16, 2026
@@ -1189,15 +1189,15 @@ Co-Authored-By: Claude Sonnet 4.5 <noreply@anthropic.com>"
 
 ## Success Criteria Checklist
 
-- ✅ Users can view all tokens in a nested tree structure
-- ✅ Users can expand/collapse token groups
-- ✅ Users can edit any token value inline (click, type, save)
-- ✅ Color tokens show a color swatch preview
-- ✅ Spacing tokens show a size bar preview
-- ✅ Users can add new tokens via a modal dialog
-- ✅ Users can delete tokens with confirmation
-- ✅ All changes persist to the Zustand store and localStorage
-- ✅ Changes are immediately reflected in the Compiler view
+-  Users can view all tokens in a nested tree structure
+-  Users can expand/collapse token groups
+-  Users can edit any token value inline (click, type, save)
+-  Color tokens show a color swatch preview
+-  Spacing tokens show a size bar preview
+-  Users can add new tokens via a modal dialog
+-  Users can delete tokens with confirmation
+-  All changes persist to the Zustand store and localStorage
+-  Changes are immediately reflected in the Compiler view
 
 ---
 

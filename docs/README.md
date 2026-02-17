@@ -4,11 +4,11 @@ This folder contains all project documentation for the **Design Token Compiler**
 
 ---
 
-## 📚 Documentation Files
+##  Documentation Files
 
 ### [PROJECT-PROGRESS.md](./PROJECT-PROGRESS.md)
 **Complete project status and roadmap**
-- ✅ What's been completed
+-  What's been completed
 - 🚧 What's in progress
 - ⬜ What's not started
 - Feature checklist by phase
@@ -32,7 +32,7 @@ This folder contains all project documentation for the **Design Token Compiler**
 
 ---
 
-## 🎯 Quick Reference
+##  Quick Reference
 
 ### Project Overview
 **What:** Web-based design token compiler
@@ -40,16 +40,16 @@ This folder contains all project documentation for the **Design Token Compiler**
 **How:** One token set → multi-format compilation → automatic sync
 
 ### Current Status
-- **Phase 1 Foundation:** ✅ 100% Complete
-- **Phase 2 Compilers:** ✅ 75% Complete (3 of 7 formats)
+- **Phase 1 Foundation:**  100% Complete
+- **Phase 2 Compilers:**  75% Complete (3 of 7 formats)
 - **Overall Project:** ~30% Complete
 
 ### What Works Now
-✅ Token resolution engine (tested)
-✅ CSS, TypeScript, Tailwind compilers
-✅ Light/Dark theme support
-✅ Copy, download, ZIP export
-✅ Sample token set
+ Token resolution engine (tested)
+ CSS, TypeScript, Tailwind compilers
+ Light/Dark theme support
+ Copy, download, ZIP export
+ Sample token set
 
 ### What Doesn't Work Yet
 ⬜ Token editor UI
@@ -66,7 +66,7 @@ npm run dev
 
 ---
 
-## 📖 Additional Resources
+##  Additional Resources
 
 ### Source Files
 - **Spec:** `design-token-compiler.md` (root) — Visual design spec
@@ -80,7 +80,7 @@ npm run dev
 
 ---
 
-## 🔄 Documentation Updates
+##  Documentation Updates
 
 **Last Updated:** February 16, 2026
 
@@ -91,12 +91,12 @@ npm run dev
 
 ---
 
-## 📝 Contributing to Docs
+##  Contributing to Docs
 
 When adding or modifying features:
 
 1. **Update PROJECT-PROGRESS.md**
-   - Mark completed features with ✅
+   - Mark completed features with 
    - Update completion percentages
    - Add new features to roadmap if needed
 
@@ -112,7 +112,7 @@ When adding or modifying features:
 
 ---
 
-## 🎓 Learning Path
+##  Learning Path
 
 **New to the project?** Read in this order:
 
@@ -143,7 +143,7 @@ When adding or modifying features:
 
 ---
 
-## 🚀 Quick Links
+##  Quick Links
 
 - **Dev Server:** http://localhost:5174/
 - **Repository:** (Add GitHub URL when created)

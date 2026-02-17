@@ -162,11 +162,11 @@ The tree displays tokens in nested groups with visual indentation:
   ▼ primitive                     (group - expanded)
     ▶ blue                        (group - collapsed)
   ▼ semantic                      (group - expanded)
-      primary     color  #2563eb  [blue swatch]  🗑️
-      error       color  #dc2626  [red swatch]   🗑️
+      primary     color  #2563eb  [blue swatch]  ️
+      error       color  #dc2626  [red swatch]   ️
 ▼ spacing                         (group - expanded)
   ▼ primitive                     (group - expanded)
-      4           dimension  16px [bar]          🗑️
+      4           dimension  16px [bar]          ️
 ```
 
 ### Recursive Rendering
@@ -258,9 +258,9 @@ The tree displays tokens in nested groups with visual indentation:
 
 **Example:**
 ```
-  primary        color      #2563eb   [blue swatch]   🗑️
-  spacing-4      dimension  16px      [small bar]     🗑️
-  font-heading   typography "Inter"                   🗑️
+  primary        color      #2563eb   [blue swatch]   ️
+  spacing-4      dimension  16px      [small bar]     ️
+  font-heading   typography "Inter"                   ️
 ```
 
 ---
@@ -364,15 +364,15 @@ These features are deferred to future iterations:
 
 The Token Editor MVP is complete when:
 
-1. ✅ Users can view all tokens in a nested tree structure
-2. ✅ Users can expand/collapse token groups
-3. ✅ Users can edit any token value inline (click, type, save)
-4. ✅ Color tokens show a color swatch preview
-5. ✅ Spacing tokens show a size bar preview
-6. ✅ Users can add new tokens via a modal dialog
-7. ✅ Users can delete tokens with confirmation
-8. ✅ All changes persist to the Zustand store and localStorage
-9. ✅ Changes are immediately reflected in the Compiler view (multi-format output updates)
+1.  Users can view all tokens in a nested tree structure
+2.  Users can expand/collapse token groups
+3.  Users can edit any token value inline (click, type, save)
+4.  Color tokens show a color swatch preview
+5.  Spacing tokens show a size bar preview
+6.  Users can add new tokens via a modal dialog
+7.  Users can delete tokens with confirmation
+8.  All changes persist to the Zustand store and localStorage
+9.  Changes are immediately reflected in the Compiler view (multi-format output updates)
 
 ---
 
