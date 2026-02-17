@@ -1,7 +1,7 @@
 # Design Token Compiler — Project Progress
 
 **Last Updated:** February 18, 2026
-**Current Status:** Phases 1–3 Complete, Phase 5A (Dashboard) Complete, Phase 5B (Token Browser) Complete — Versioning In Progress
+**Current Status:** Phases 1–3 Complete, Phase 5A–5C Complete (Dashboard, Browser, Versioning) — Branch ready for merge
 **Dev Server:** http://localhost:5176/
 **Active Branch:** `feat/browser-dashboard-versioning`
 
@@ -26,7 +26,7 @@
   - ResolvedToken, ResolutionResult, ResolutionError
   - CompilationFormat, CompilationTarget, CompilationResult
   - DiffStatus, TokenDiff, SyncResult, SyncSource
-  - Version, VersionHistory
+  - Version (snapshot-based)
   - AppState, ViewMode, EditorState, BrowserState, CompilerState, SyncState
 
 #### 3. Token Resolution Engine
@@ -157,19 +157,18 @@
 
 ---
 
-## In Progress
+### Phase 5C — Versioning (100% Complete)
 
-### Phase 5C — Versioning (Next Up)
+#### Version Snapshots
+- Simplified Version type with deep-cloned token snapshots
+- Version store state with save, restore, delete actions (max 50 per set)
+- Auto-backup before restore (creates "Before restore" snapshot)
+- VersionEntry — timeline row with timestamp, token count, restore/delete buttons
+- VersionPanel — slide-in panel with save input, version list, and footer count
+- Versions button in EditorHeader with badge count
+- VersionPanel wired into EditorView
 
-Implementation plan: Tasks 14–20
-
-#### Components to build:
-- ⬜ Update Version type (simplify for snapshot storage)
-- ⬜ Add version state + actions to store (save, restore, delete, max 50)
-- ⬜ VersionEntry — timeline row component
-- ⬜ VersionPanel — slide-in panel with save/restore/delete
-- ⬜ Wire versions button into EditorHeader
-- ⬜ Wire VersionPanel into EditorView
+**Location:** `src/components/versioning/*`, `src/store/useTokenStore.ts`
 
 ---
 
@@ -208,13 +207,13 @@ Implementation plan: Tasks 14–20
 3. **Token Browser** — Visual browser with color grids, spacing bars, typography specimens, shadow previews
 4. **Multi-Format Compiler** — 6 formats (CSS, SCSS, TS, Tailwind, W3C JSON, Style Dictionary)
 5. **Sync & Diff** — Import CSS/SCSS/JSON, compare tokens, resolve conflicts, apply changes
-6. **Reference Resolution** — Simple refs, embedded refs, circular detection, mode overrides
-7. **Theme Support** — Light/dark mode overrides, mode-aware compilation
+6. **Versioning** — Save/restore token snapshots, auto-backup before restore, max 50 per set
+7. **Reference Resolution** — Simple refs, embedded refs, circular detection, mode overrides
+8. **Theme Support** — Light/dark mode overrides, mode-aware compilation
 
 ### What Doesn't Work Yet
 
-1. **Versioning** — Can't save snapshots or restore previous versions (in progress)
-2. **Figma Direct Sync** — Parser exists but no live connection
+1. **Figma Direct Sync** — Parser exists but no live connection
 
 ---
 
@@ -242,6 +241,9 @@ src/
 │   │   ├── TokenTree.tsx
 │   │   ├── EditorHeader.tsx
 │   │   └── AddTokenDialog.tsx
+│   ├── versioning/
+│   │   ├── VersionEntry.tsx
+│   │   └── VersionPanel.tsx
 │   └── sync/             (4 components)
 │       ├── SyncDropZone.tsx
 │       ├── SyncHeader.tsx
@@ -306,11 +308,26 @@ src/
 - **Phases 1–3: 100%**
 - **Phase 5A (Dashboard): 100%**
 - **Phase 5B (Token Browser): 100%**
-- **Overall project: ~75% complete**
+- **Phase 5C (Versioning): 100%**
+- **Overall project: ~80% complete**
 
 ---
 
 ## Recent Updates
+
+### February 18, 2026 — Phase 5C Versioning Complete
+**Completed:** Manual version snapshots with save, restore, and delete
+- Simplified Version type for deep-cloned token snapshots
+- Version store actions: save (with optional name), restore (with auto-backup), delete
+- Max 50 versions per token set with automatic pruning
+- VersionEntry timeline row with timestamp, token count, restore/delete actions
+- VersionPanel slide-in with save input and version list
+- Versions button in EditorHeader with count badge
+- VersionPanel wired into EditorView
+
+**Branch:** `feat/browser-dashboard-versioning` — all 3 phases (5A, 5B, 5C) complete, ready for merge
+
+---
 
 ### February 18, 2026 — Phase 5B Token Browser Complete
 **Completed:** Visual token browser with four panel types
@@ -366,4 +383,4 @@ src/
 
 ---
 
-**Next session:** Continue with Phase 5C (Versioning) — Tasks 14–20 of the implementation plan.
+**Next session:** Merge `feat/browser-dashboard-versioning` branch into main, or continue with optional enhancements.
