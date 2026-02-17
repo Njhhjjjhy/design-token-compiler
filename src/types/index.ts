@@ -175,15 +175,9 @@ export interface SyncSource {
 export interface Version {
   id: string
   name: string
-  snapshot: TokenSet
-  createdAt: number
-  description?: string
-  tags?: string[]
-}
-
-export interface VersionHistory {
-  versions: Version[]
-  current: string | null
+  timestamp: number
+  tokenSnapshot: Record<string, Token | TokenGroup>
+  tokenCount: number
 }
 
 // ============================================================================
@@ -193,7 +187,6 @@ export interface VersionHistory {
 export interface AppState {
   tokenSets: Record<string, TokenSet>
   activeSetId: string | null
-  versionHistory: Record<string, VersionHistory> // setId -> history
   syncResults: Record<string, SyncResult> // setId -> last sync
 }
 
