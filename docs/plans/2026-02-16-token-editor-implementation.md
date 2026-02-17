@@ -1145,12 +1145,12 @@ Find the section "Phase 1 — Token Editor (Not Started)" and update to:
 
 #### Detail Panel
 -  Inline editing replaces need for detail panel in MVP
-- ⬜ Reference autocomplete (type `{` to search tokens) — Deferred to V2
-- ⬜ Color picker integration — Deferred to V2
+- [ ]Reference autocomplete (type `{` to search tokens) — Deferred to V2
+- [ ]Color picker integration — Deferred to V2
 
 #### Editor State
 -  Expanded groups persistence (local component state)
-- ⬜ Undo/redo functionality — Deferred to V2
+- [ ]Undo/redo functionality — Deferred to V2
 
 **Completed:** February 16, 2026
 **Location:** `src/pages/EditorView.tsx`, `src/components/editor/*`

@@ -305,9 +305,9 @@ src/
 │   └── BinarySeparator.tsx     # Scrolling binary strip
 ├── pages/
 │   ├── CompilerView.tsx        #  Compiler UI (complete)
-│   ├── EditorView.tsx          # ⬜ Token editor (placeholder)
-│   ├── BrowserView.tsx         # ⬜ Visual browser (placeholder)
-│   └── SyncView.tsx            # ⬜ Sync/diff (placeholder)
+│   ├── EditorView.tsx          # [ ]Token editor (placeholder)
+│   ├── BrowserView.tsx         # [ ]Visual browser (placeholder)
+│   └── SyncView.tsx            # [ ]Sync/diff (placeholder)
 ├── lib/
 │   ├── resolver.ts             #  Resolution engine
 │   └── compilers/

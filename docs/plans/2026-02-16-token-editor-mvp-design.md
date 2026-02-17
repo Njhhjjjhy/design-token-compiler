@@ -162,11 +162,11 @@ The tree displays tokens in nested groups with visual indentation:
   ▼ primitive                     (group - expanded)
     ▶ blue                        (group - collapsed)
   ▼ semantic                      (group - expanded)
-      primary     color  #2563eb  [blue swatch]  ️
-      error       color  #dc2626  [red swatch]   ️
+      primary     color  #2563eb  [blue swatch]
+      error       color  #dc2626  [red swatch]
 ▼ spacing                         (group - expanded)
   ▼ primitive                     (group - expanded)
-      4           dimension  16px [bar]          ️
+      4           dimension  16px [bar]
 ```
 
 ### Recursive Rendering
@@ -258,9 +258,9 @@ The tree displays tokens in nested groups with visual indentation:
 
 **Example:**
 ```
-  primary        color      #2563eb   [blue swatch]   ️
-  spacing-4      dimension  16px      [small bar]     ️
-  font-heading   typography "Inter"                   ️
+  primary        color      #2563eb   [blue swatch]
+  spacing-4      dimension  16px      [small bar]
+  font-heading   typography "Inter"
 ```
 
 ---

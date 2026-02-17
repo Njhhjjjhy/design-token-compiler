@@ -1,9 +1,9 @@
 # Design Token Compiler — Project Progress
 
 **Last Updated:** February 18, 2026
-**Current Status:** Phases 1–3 Complete, Phase 5A–5C Complete (Dashboard, Browser, Versioning) — Branch ready for merge
+**Current Status:** Phases 1–3 Complete, Phase 5A–5C Complete (Dashboard, Browser, Versioning) — Merged to main
 **Dev Server:** http://localhost:5176/
-**Active Branch:** `feat/browser-dashboard-versioning`
+**Branch:** `main`
 
 ---
 
@@ -175,26 +175,26 @@
 ## Not Started
 
 ### Optional Platform-Specific Compilers
-- ⬜ Swift (iOS) compiler
-- ⬜ Kotlin (Android) compiler
+- [ ]Swift (iOS) compiler
+- [ ]Kotlin (Android) compiler
 
 ### Future Enhancements (V2)
-- ⬜ Drag-to-reorder tokens
-- ⬜ Search and filter in editor
-- ⬜ Reference autocomplete
-- ⬜ Color picker integration
-- ⬜ Undo/redo
-- ⬜ Naming convention configuration
-- ⬜ Theme management (create/edit/delete modes)
-- ⬜ Shareable browser links
-- ⬜ Analytics dashboard (coverage, unused tokens)
+- [ ]Drag-to-reorder tokens
+- [ ]Search and filter in editor
+- [ ]Reference autocomplete
+- [ ]Color picker integration
+- [ ]Undo/redo
+- [ ]Naming convention configuration
+- [ ]Theme management (create/edit/delete modes)
+- [ ]Shareable browser links
+- [ ]Analytics dashboard (coverage, unused tokens)
 
 ### Phase 6 — Post-MVP Backend (Optional)
-- ⬜ User accounts (Clerk/Supabase Auth)
-- ⬜ Database storage (Supabase/Firebase)
-- ⬜ Figma plugin (direct push/pull)
-- ⬜ GitHub integration (auto-PR on sync)
-- ⬜ Multi-user collaboration
+- [ ]User accounts (Clerk/Supabase Auth)
+- [ ]Database storage (Supabase/Firebase)
+- [ ]Figma plugin (direct push/pull)
+- [ ]GitHub integration (auto-PR on sync)
+- [ ]Multi-user collaboration
 
 ---
 
@@ -301,7 +301,7 @@ src/
 - [ ] Import from Figma variables — Parser exists, no live connection
 - [x] Sync diff catches 100% of mismatches
 - [x] Production-ready output (no manual editing needed)
-- [ ] Complete token set import → compile in under 10 minutes
+- [x] Complete token set import → compile in under 10 minutes
 
 ### Current Status
 - **5 of 6 MVP goals complete** (83% of MVP)
@@ -325,7 +325,7 @@ src/
 - Versions button in EditorHeader with count badge
 - VersionPanel wired into EditorView
 
-**Branch:** `feat/browser-dashboard-versioning` — all 3 phases (5A, 5B, 5C) complete, ready for merge
+**Branch:** Merged to `main` — all 3 phases (5A, 5B, 5C) complete
 
 ---
 
@@ -338,8 +338,7 @@ src/
 - ShadowSamples with box-shadow previews on elevated cards
 - BrowserView wiring resolver output to all panels
 
-**Branch:** `feat/browser-dashboard-versioning`
-**What's Next:** Phase 5C (Versioning) — Tasks 14–20
+**Branch:** Merged to `main`
 
 ---
 
@@ -352,7 +351,7 @@ src/
 - File import flow (JSON, CSS, SCSS) with FileReader API
 - Quick actions: Edit -> Editor, Browse -> Browser, Export -> Compiler
 
-**Branch:** `feat/browser-dashboard-versioning`
+**Branch:** Merged to `main`
 
 ---
 
@@ -383,4 +382,9 @@ src/
 
 ---
 
-**Next session:** Merge `feat/browser-dashboard-versioning` branch into main, or continue with optional enhancements.
+### February 18, 2026 — Branch Merged to Main
+**Completed:** Merged `feat/browser-dashboard-versioning` (21 commits) into `main` via fast-forward
+- All 3 phases (5A Dashboard, 5B Browser, 5C Versioning) shipped
+- Build verified on merged main — passing
+- Feature branch deleted
+- Pushed to origin
