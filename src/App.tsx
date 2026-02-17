@@ -1,6 +1,7 @@
 import { useEffect } from 'react'
 import { Header } from './components/Header'
 import { BinarySeparator } from './components/BinarySeparator'
+import { DashboardView } from './pages/DashboardView'
 import { EditorView } from './pages/EditorView'
 import { BrowserView } from './pages/BrowserView'
 import { CompilerView } from './pages/CompilerView'
@@ -25,6 +26,8 @@ function App() {
 
   const renderView = () => {
     switch (activeView) {
+      case 'dashboard':
+        return <DashboardView />
       case 'editor':
         return <EditorView />
       case 'browser':
@@ -34,7 +37,7 @@ function App() {
       case 'sync':
         return <SyncView />
       default:
-        return <EditorView />
+        return <DashboardView />
     }
   }
 

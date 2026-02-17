@@ -55,7 +55,7 @@ export const useTokenStore = create<TokenStoreState>()(
       activeSetId: null,
       versionHistory: {},
       syncResults: {},
-      activeView: 'editor',
+      activeView: 'dashboard',
 
       // Sync initial state
       importedFileName: null,
