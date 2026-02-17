@@ -1,6 +1,6 @@
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
-import type { AppState, Token, TokenGroup, TokenSet, TokenValue, ViewMode } from '@/types'
+import type { AppState, Token, TokenGroup, TokenSet, TokenValue, Version, ViewMode } from '@/types'
 import type { FlatToken } from '@/lib/flatten-tokens'
 import type { DiffResult } from '@/lib/diff-engine'
 import type { ImportFormat } from '@/lib/parsers'
@@ -45,6 +45,27 @@ interface TokenStoreState extends AppState {
   getUnresolvedCount: () => number
   getResolvedCount: () => number
   getTotalConflicts: () => number
+
+  // Version state
+  versions: Record<string, Version[]>
+
+  // Version actions
+  saveVersion: (name?: string) => void
+  restoreVersion: (setId: string, versionId: string) => void
+  deleteVersion: (setId: string, versionId: string) => void
+  getVersionsForActiveSet: () => Version[]
+}
+
+function countTokensInTree(tokens: Record<string, Token | TokenGroup>): number {
+  let count = 0
+  for (const value of Object.values(tokens)) {
+    if ('tokens' in value) {
+      count += countTokensInTree(value.tokens)
+    } else {
+      count++
+    }
+  }
+  return count
 }
 
 export const useTokenStore = create<TokenStoreState>()(
@@ -53,8 +74,8 @@ export const useTokenStore = create<TokenStoreState>()(
       // Initial state
       tokenSets: {},
       activeSetId: null,
-      versionHistory: {},
       syncResults: {},
+      versions: {},
       activeView: 'dashboard',
 
       // Sync initial state
@@ -363,6 +384,85 @@ export const useTokenStore = create<TokenStoreState>()(
         const state = get()
         if (!state.diffResult) return 0
         return state.diffResult.rows.filter((r) => r.status !== 'same').length
+      },
+
+      saveVersion: (name) => {
+        const state = get()
+        const activeSet = state.activeSetId ? state.tokenSets[state.activeSetId] : null
+        if (!activeSet) return
+
+        const setVersions = state.versions[activeSet.id] || []
+        const versionNumber = setVersions.length + 1
+
+        const version: Version = {
+          id: `${Date.now()}-${Math.random().toString(36).substring(2, 11)}`,
+          name: name || `v${versionNumber} — ${new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}`,
+          timestamp: Date.now(),
+          tokenSnapshot: JSON.parse(JSON.stringify(activeSet.tokens)),
+          tokenCount: countTokensInTree(activeSet.tokens),
+        }
+
+        const updated = [...setVersions, version]
+        if (updated.length > 50) {
+          updated.splice(0, updated.length - 50)
+        }
+
+        set({
+          versions: {
+            ...state.versions,
+            [activeSet.id]: updated,
+          },
+        })
+      },
+
+      restoreVersion: (setId, versionId) => {
+        const state = get()
+        const tokenSet = state.tokenSets[setId]
+        const setVersions = state.versions[setId] || []
+        const version = setVersions.find((v) => v.id === versionId)
+
+        if (!tokenSet || !version) return
+
+        const currentVersions = state.versions[setId] || []
+        const autoSave: Version = {
+          id: `${Date.now()}-${Math.random().toString(36).substring(2, 11)}`,
+          name: `Before restore — ${new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}`,
+          timestamp: Date.now(),
+          tokenSnapshot: JSON.parse(JSON.stringify(tokenSet.tokens)),
+          tokenCount: countTokensInTree(tokenSet.tokens),
+        }
+
+        set({
+          tokenSets: {
+            ...state.tokenSets,
+            [setId]: {
+              ...tokenSet,
+              tokens: JSON.parse(JSON.stringify(version.tokenSnapshot)),
+              metadata: { ...tokenSet.metadata, updatedAt: Date.now() },
+            },
+          },
+          versions: {
+            ...state.versions,
+            [setId]: [...currentVersions, autoSave],
+          },
+        })
+      },
+
+      deleteVersion: (setId, versionId) => {
+        const state = get()
+        const setVersions = state.versions[setId] || []
+        set({
+          versions: {
+            ...state.versions,
+            [setId]: setVersions.filter((v) => v.id !== versionId),
+          },
+        })
+      },
+
+      getVersionsForActiveSet: () => {
+        const state = get()
+        if (!state.activeSetId) return []
+        return state.versions[state.activeSetId] || []
       },
     }),
     {
