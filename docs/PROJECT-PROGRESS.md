@@ -1,7 +1,7 @@
 # Design Token Compiler — Project Progress
 
 **Last Updated:** February 18, 2026
-**Current Status:** Phases 1–3 Complete, Phase 5A (Dashboard) Complete — Browser & Versioning In Progress
+**Current Status:** Phases 1–3 Complete, Phase 5A (Dashboard) Complete, Phase 5B (Token Browser) Complete — Versioning In Progress
 **Dev Server:** http://localhost:5176/
 **Active Branch:** `feat/browser-dashboard-versioning`
 
@@ -143,23 +143,23 @@
 
 ---
 
-## 🚧 In Progress
+### Phase 5B — Token Browser (100% Complete)
 
-### Phase 5B — Token Browser (Next Up)
+#### Browser Components
+- BrowserHeader -- tabs (Colors, Spacing, Typography, Shadows) + mode switcher
+- ColorGrid -- color swatches grouped by category with contrast ratios (W/B)
+- SpacingScale -- horizontal bar visualization sorted by size with unit conversion
+- TypographySpecimens -- live rendered type samples with property breakdown
+- ShadowSamples -- shadow applied to preview cards with raw value display
+- BrowserView -- full implementation resolving tokens and routing to panels
 
-Implementation plan: `docs/plans/2026-02-16-browser-dashboard-versioning-implementation.md` — Tasks 7–13
-
-#### Components to build:
-- ⬜ BrowserHeader — tabs (Colors, Spacing, Typography, Shadows) + mode switcher
-- ⬜ ColorGrid — color swatches with contrast ratios (W/B)
-- ⬜ SpacingScale — horizontal bar visualization sorted by size
-- ⬜ TypographySpecimens — live rendered type samples
-- ⬜ ShadowSamples — shadow applied to preview cards
-- ⬜ BrowserView — full implementation wiring all panels
+**Location:** `src/pages/BrowserView.tsx`, `src/components/browser/*`
 
 ---
 
-### Phase 5C — Versioning (After Browser)
+## In Progress
+
+### Phase 5C — Versioning (Next Up)
 
 Implementation plan: Tasks 14–20
 
@@ -205,16 +205,16 @@ Implementation plan: Tasks 14–20
 
 1. **Dashboard** — Landing page with token set cards, quick actions, new/import
 2. **Token Editor** — Recursive tree with inline editing, add/delete, visual previews
-3. **Multi-Format Compiler** — 6 formats (CSS, SCSS, TS, Tailwind, W3C JSON, Style Dictionary)
-4. **Sync & Diff** — Import CSS/SCSS/JSON, compare tokens, resolve conflicts, apply changes
-5. **Reference Resolution** — Simple refs, embedded refs, circular detection, mode overrides
-6. **Theme Support** — Light/dark mode overrides, mode-aware compilation
+3. **Token Browser** — Visual browser with color grids, spacing bars, typography specimens, shadow previews
+4. **Multi-Format Compiler** — 6 formats (CSS, SCSS, TS, Tailwind, W3C JSON, Style Dictionary)
+5. **Sync & Diff** — Import CSS/SCSS/JSON, compare tokens, resolve conflicts, apply changes
+6. **Reference Resolution** — Simple refs, embedded refs, circular detection, mode overrides
+7. **Theme Support** — Light/dark mode overrides, mode-aware compilation
 
 ### What Doesn't Work Yet
 
-1. **Visual Browser** — Can't see palette grids or type specimens (in progress)
-2. **Versioning** — Can't save snapshots or restore previous versions (in progress)
-3. **Figma Direct Sync** — Parser exists but no live connection
+1. **Versioning** — Can't save snapshots or restore previous versions (in progress)
+2. **Figma Direct Sync** — Parser exists but no live connection
 
 ---
 
@@ -226,6 +226,12 @@ src/
 ├── components/
 │   ├── Header.tsx
 │   ├── BinarySeparator.tsx
+│   ├── browser/            (5 components)
+│   │   ├── BrowserHeader.tsx
+│   │   ├── ColorGrid.tsx
+│   │   ├── SpacingScale.tsx
+│   │   ├── TypographySpecimens.tsx
+│   │   └── ShadowSamples.tsx
 │   ├── dashboard/
 │   │   └── TokenSetCard.tsx
 │   ├── editor/           (7 components)
@@ -244,7 +250,7 @@ src/
 ├── pages/
 │   ├── DashboardView.tsx  (complete)
 │   ├── EditorView.tsx     (complete)
-│   ├── BrowserView.tsx    (placeholder — next)
+│   ├── BrowserView.tsx    (complete)
 │   ├── CompilerView.tsx   (complete)
 │   └── SyncView.tsx       (complete)
 ├── lib/
@@ -299,11 +305,26 @@ src/
 - **5 of 6 MVP goals complete** (83% of MVP)
 - **Phases 1–3: 100%**
 - **Phase 5A (Dashboard): 100%**
-- **Overall project: ~65% complete**
+- **Phase 5B (Token Browser): 100%**
+- **Overall project: ~75% complete**
 
 ---
 
 ## Recent Updates
+
+### February 18, 2026 — Phase 5B Token Browser Complete
+**Completed:** Visual token browser with four panel types
+- BrowserHeader with tab navigation (Colors, Spacing, Typography, Shadows) and mode switcher
+- ColorGrid with grouped swatches, hex values, and WCAG contrast ratios (W/B)
+- SpacingScale with sorted horizontal bars and unit conversion (rem/em/pt to px)
+- TypographySpecimens with live rendered text and property breakdown
+- ShadowSamples with box-shadow previews on elevated cards
+- BrowserView wiring resolver output to all panels
+
+**Branch:** `feat/browser-dashboard-versioning`
+**What's Next:** Phase 5C (Versioning) — Tasks 14–20
+
+---
 
 ### February 18, 2026 — Phase 5A Dashboard Complete
 **Completed:** Dashboard landing page with token set cards
@@ -312,10 +333,9 @@ src/
 - Empty state with "Create Your First Token Set" prompt
 - New Token Set creation with auto-navigation to editor
 - File import flow (JSON, CSS, SCSS) with FileReader API
-- Quick actions: Edit → Editor, Browse → Browser, Export → Compiler
+- Quick actions: Edit -> Editor, Browse -> Browser, Export -> Compiler
 
 **Branch:** `feat/browser-dashboard-versioning`
-**What's Next:** Phase 5B (Token Browser) — Tasks 7–13
 
 ---
 
@@ -346,4 +366,4 @@ src/
 
 ---
 
-**Next session:** Continue with Phase 5B (Token Browser) — Tasks 7–13 of the implementation plan.
+**Next session:** Continue with Phase 5C (Versioning) — Tasks 14–20 of the implementation plan.
