@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useCallback, useState } from 'react'
 import { AlertTriangle, X } from 'lucide-react'
 import { Header } from './components/Header'
 import { BinarySeparator } from './components/BinarySeparator'
@@ -39,6 +39,31 @@ function App() {
       return useTokenStore.persist.onFinishHydration(initSampleData)
     }
   }, [])
+
+  // Global keyboard shortcuts: Ctrl/Cmd+1-5 to switch views
+  const viewKeys: Record<string, typeof activeView> = {
+    '1': 'dashboard',
+    '2': 'editor',
+    '3': 'browser',
+    '4': 'compiler',
+    '5': 'sync',
+  }
+
+  const handleKeyDown = useCallback((e: KeyboardEvent) => {
+    // Skip when typing in inputs
+    const tag = (e.target as HTMLElement)?.tagName
+    if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT') return
+
+    if ((e.ctrlKey || e.metaKey) && viewKeys[e.key]) {
+      e.preventDefault()
+      setActiveView(viewKeys[e.key])
+    }
+  }, [setActiveView])
+
+  useEffect(() => {
+    window.addEventListener('keydown', handleKeyDown)
+    return () => window.removeEventListener('keydown', handleKeyDown)
+  }, [handleKeyDown])
 
   const renderView = () => {
     switch (activeView) {
