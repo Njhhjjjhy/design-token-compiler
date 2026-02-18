@@ -1,4 +1,4 @@
-import { Sun, Moon } from 'lucide-react'
+import { Sun, Moon, HelpCircle } from 'lucide-react'
 
 type NavItem = 'dashboard' | 'editor' | 'browser' | 'compiler' | 'sync'
 type Theme = 'light' | 'dark'
@@ -14,9 +14,10 @@ interface HeaderProps {
   }
   theme: Theme
   onToggleTheme: () => void
+  onStartTour?: () => void
 }
 
-export function Header({ activeView, onViewChange, activeSetName, activeModeName, syncStatus, theme, onToggleTheme }: HeaderProps) {
+export function Header({ activeView, onViewChange, activeSetName, activeModeName, syncStatus, theme, onToggleTheme, onStartTour }: HeaderProps) {
   const navItems: { id: NavItem; label: string; shortcut: string }[] = [
     { id: 'dashboard', label: 'HOME', shortcut: 'Meta+1' },
     { id: 'editor', label: 'EDITOR', shortcut: 'Meta+2' },
@@ -90,6 +91,17 @@ export function Header({ activeView, onViewChange, activeSetName, activeModeName
           </span>
         </div>
       )}
+
+      {/* Help Button */}
+      <div className="px-4 flex items-center border-l border-border h-full">
+        <button
+          onClick={onStartTour}
+          className="p-2 text-text-secondary hover:text-white transition-colors"
+          aria-label="Start guided tour"
+        >
+          <HelpCircle className="w-4 h-4" />
+        </button>
+      </div>
 
       {/* Theme Toggle */}
       <div className="px-4 flex items-center border-l border-border h-full">
