@@ -61,6 +61,13 @@ function App() {
 
   return (
     <div className="min-h-screen">
+      <a
+        href="#main-content"
+        className="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-[100] focus:px-4 focus:py-2 focus:bg-primary focus:text-white focus:font-mono focus:text-sm focus:rounded"
+      >
+        Skip to main content
+      </a>
+
       {storageWarning && (
         <div className="bg-yellow-900/80 border-b border-yellow-700 px-4 py-2 flex items-center justify-between">
           <div className="flex items-center gap-2">
@@ -87,7 +94,7 @@ function App() {
 
       <BinarySeparator />
 
-      <main className="min-h-[calc(100vh-10rem)]">
+      <main id="main-content" className="min-h-[calc(100vh-10rem)]">
         {renderView()}
       </main>
 
