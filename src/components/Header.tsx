@@ -54,6 +54,7 @@ export function Header({ activeView, onViewChange, activeSetName, syncStatus }: 
           <button
             key={item.id}
             onClick={() => onViewChange(item.id)}
+            aria-current={activeView === item.id ? 'page' : undefined}
             className={`
               relative h-full px-6 font-mono text-[11px] tracking-wider
               transition-colors hover:text-white
