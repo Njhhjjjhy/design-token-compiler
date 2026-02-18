@@ -66,15 +66,15 @@ export function BrowserHeader({
           />
         </div>
       </div>
-      <div className="flex border-b border-border" role="tablist">
+      <div className="flex border-b border-border bg-surface overflow-x-auto" role="tablist">
         {tabs.map((tab) => (
           <button
             key={tab.id}
             role="tab"
             aria-selected={activeTab === tab.id}
             onClick={() => onTabChange(tab.id)}
-            className={`relative px-5 py-3 font-mono text-xs tracking-wider transition-colors ${
-              activeTab === tab.id ? 'text-white' : 'text-text-secondary hover:text-white'
+            className={`relative px-6 py-3 font-mono text-xs tracking-wider transition-colors whitespace-nowrap ${
+              activeTab === tab.id ? 'text-primary' : 'text-text-secondary hover:text-white'
             }`}
           >
             {tab.label}
