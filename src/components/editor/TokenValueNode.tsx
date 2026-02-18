@@ -195,7 +195,7 @@ export function TokenValueNode({ token, depth, activeMode, modeOverrides }: Toke
       {/* Delete / Remove Override Button */}
       <button
         onClick={handleDelete}
-        className="opacity-0 group-hover:opacity-100 p-1 hover:text-red-400 transition-all"
+        className="opacity-0 group-hover:opacity-100 focus:opacity-100 p-1 hover:text-red-400 transition-all"
         title={activeMode && hasOverride ? 'Remove override' : 'Delete token'}
         aria-label={activeMode && hasOverride ? 'Remove override' : 'Delete token'}
       >
