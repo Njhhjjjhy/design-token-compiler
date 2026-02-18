@@ -34,7 +34,7 @@ export function SyncHeader({
       {/* Top row: title, file info, actions */}
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-4">
-          <h2 className="section-title text-primary">SYNC & DIFF</h2>
+          <h2 className="section-title text-primary">COMPARE & MERGE</h2>
           <div className="flex items-center gap-2 px-3 py-1 bg-surface-elevated border border-border font-mono text-xs">
             <span className="text-text-secondary">{format.toUpperCase()}</span>
             <span className="text-white">{fileName}</span>

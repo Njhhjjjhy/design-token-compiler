@@ -25,7 +25,7 @@ export function SyncView() {
   if (!activeSet) {
     return (
       <div className="p-8">
-        <h2 className="section-title text-primary mb-6">SYNC & DIFF</h2>
+        <h2 className="section-title text-primary mb-6">COMPARE & MERGE</h2>
         <p className="font-mono text-sm text-text-secondary">
           No token set loaded. Create or import a token set first.
         </p>
@@ -69,7 +69,7 @@ export function SyncView() {
       <div className="h-full flex flex-col">
         <div className="p-6 border-b border-border">
           <div className="flex items-center justify-between">
-            <h2 className="section-title text-primary">SYNC & DIFF</h2>
+            <h2 className="section-title text-primary">COMPARE & MERGE</h2>
             <button
               onClick={clearImport}
               className="px-4 py-2 bg-surface-elevated border border-border hover:border-primary transition-colors font-mono text-xs text-white"
@@ -113,7 +113,7 @@ export function SyncView() {
     return (
       <div className="h-full flex flex-col">
         <div className="p-6 border-b border-border">
-          <h2 className="section-title text-primary">SYNC & DIFF</h2>
+          <h2 className="section-title text-primary">COMPARE & MERGE</h2>
           <p className="font-mono text-xs text-text-secondary mt-2">
             Compare {activeSet.name} against an external file
           </p>
