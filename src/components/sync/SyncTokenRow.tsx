@@ -86,26 +86,26 @@ export function SyncTokenRow({
             <>
               <button
                 onClick={() => onResolve(path, 'editor')}
-                className={`p-1 rounded transition-colors ${
+                className={`flex items-center gap-1 px-1.5 py-0.5 rounded font-mono text-[10px] transition-colors ${
                   resolution === 'editor'
                     ? 'bg-info/20 text-info'
                     : 'text-text-tertiary hover:text-white hover:bg-white/5'
                 }`}
-                title="Keep editor value"
                 aria-label="Keep editor value"
               >
                 <ArrowLeft className="w-3 h-3" />
+                Keep editor
               </button>
               <button
                 onClick={() => onResolve(path, 'imported')}
-                className={`p-1 rounded transition-colors ${
+                className={`flex items-center gap-1 px-1.5 py-0.5 rounded font-mono text-[10px] transition-colors ${
                   resolution === 'imported'
                     ? 'bg-primary/20 text-primary'
                     : 'text-text-tertiary hover:text-white hover:bg-white/5'
                 }`}
-                title="Keep imported value"
                 aria-label="Keep imported value"
               >
+                Keep imported
                 <ArrowRight className="w-3 h-3" />
               </button>
             </>
@@ -114,27 +114,27 @@ export function SyncTokenRow({
             <>
               <button
                 onClick={() => onResolve(path, 'editor')}
-                className={`p-1 rounded transition-colors ${
+                className={`flex items-center gap-1 px-1.5 py-0.5 rounded font-mono text-[10px] transition-colors ${
                   resolution === 'editor'
                     ? 'bg-success/20 text-success'
                     : 'text-text-tertiary hover:text-white hover:bg-white/5'
                 }`}
-                title="Keep in editor"
                 aria-label="Keep in editor"
               >
                 <Check className="w-3 h-3" />
+                Keep
               </button>
               <button
                 onClick={() => onResolve(path, 'discard')}
-                className={`p-1 rounded transition-colors ${
+                className={`flex items-center gap-1 px-1.5 py-0.5 rounded font-mono text-[10px] transition-colors ${
                   resolution === 'discard'
                     ? 'bg-error/20 text-error'
                     : 'text-text-tertiary hover:text-white hover:bg-white/5'
                 }`}
-                title="Remove from editor"
                 aria-label="Remove from editor"
               >
                 <Minus className="w-3 h-3" />
+                Remove
               </button>
             </>
           )}
@@ -142,27 +142,27 @@ export function SyncTokenRow({
             <>
               <button
                 onClick={() => onResolve(path, 'add')}
-                className={`p-1 rounded transition-colors ${
+                className={`flex items-center gap-1 px-1.5 py-0.5 rounded font-mono text-[10px] transition-colors ${
                   resolution === 'add'
                     ? 'bg-success/20 text-success'
                     : 'text-text-tertiary hover:text-white hover:bg-white/5'
                 }`}
-                title="Add to editor"
                 aria-label="Add to editor"
               >
                 <Plus className="w-3 h-3" />
+                Add
               </button>
               <button
                 onClick={() => onResolve(path, 'discard')}
-                className={`p-1 rounded transition-colors ${
+                className={`flex items-center gap-1 px-1.5 py-0.5 rounded font-mono text-[10px] transition-colors ${
                   resolution === 'discard'
                     ? 'bg-error/20 text-error'
                     : 'text-text-tertiary hover:text-white hover:bg-white/5'
                 }`}
-                title="Ignore"
                 aria-label="Ignore"
               >
                 <Minus className="w-3 h-3" />
+                Ignore
               </button>
             </>
           )}
