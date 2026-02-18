@@ -58,6 +58,15 @@ export function ColorGrid({ tokens }: ColorGridProps) {
 
   return (
     <div className="space-y-8">
+      <div className="flex items-center gap-4 font-mono text-[10px] text-text-tertiary">
+        <span>Contrast ratio vs:</span>
+        <span>W = white</span>
+        <span>B = black</span>
+        <span className="text-text-tertiary">|</span>
+        <span className="text-success">AA pass (4.5+)</span>
+        <span className="text-warning">AA large (3+)</span>
+        <span className="text-error">fail (&lt;3)</span>
+      </div>
       {Array.from(groups.entries()).map(([category, categoryTokens]) => (
         <div key={category}>
           <h3 className="font-mono text-xs text-primary uppercase tracking-wider mb-4">
