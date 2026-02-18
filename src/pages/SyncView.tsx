@@ -1,3 +1,4 @@
+import { AlertTriangle } from 'lucide-react'
 import { useTokenStore } from '@/store/useTokenStore'
 import { SyncDropZone } from '@/components/sync/SyncDropZone'
 import { SyncHeader } from '@/components/sync/SyncHeader'
@@ -78,11 +79,29 @@ export function SyncView() {
           </div>
         </div>
         <div className="flex-1 flex items-center justify-center p-12">
-          <div className="text-center">
-            <p className="font-mono text-sm text-error mb-2">{importError}</p>
+          <div className="max-w-md">
+            <div className="flex items-start gap-3 mb-4">
+              <div className="w-8 h-8 rounded-full bg-error/10 flex items-center justify-center flex-shrink-0 mt-0.5">
+                <AlertTriangle className="w-4 h-4 text-error" />
+              </div>
+              <div>
+                <p className="font-mono text-sm text-error mb-1">Import failed</p>
+                <p className="font-mono text-xs text-text-secondary">{importError}</p>
+              </div>
+            </div>
             {importedFileName && (
-              <p className="font-mono text-xs text-text-secondary">File: {importedFileName}</p>
+              <p className="font-mono text-xs text-text-tertiary mb-4 ml-11">
+                File: {importedFileName}
+              </p>
             )}
+            <div className="ml-11 p-3 bg-surface-elevated border border-border rounded">
+              <p className="font-mono text-xs text-text-secondary mb-2">Supported formats:</p>
+              <ul className="font-mono text-xs text-text-tertiary space-y-1">
+                <li>.json -- W3C Design Token format or Figma variables export</li>
+                <li>.css -- CSS custom properties (--variable: value)</li>
+                <li>.scss -- SCSS variables ($variable: value)</li>
+              </ul>
+            </div>
           </div>
         </div>
       </div>
