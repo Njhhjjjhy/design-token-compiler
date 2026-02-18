@@ -67,15 +67,23 @@ export function ColorGrid({ tokens }: ColorGridProps) {
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3">
             {categoryTokens.map(([path, token]) => {
               const value = String(token.resolvedValue)
+              const isReference = /\{[^}]+\}/.test(value)
               const isValidHex = /^#(?:[0-9a-fA-F]{3}|[0-9a-fA-F]{4}|[0-9a-fA-F]{6}|[0-9a-fA-F]{8})$/.test(value)
               const contrastWhite = isValidHex ? getContrastRatio(value, '#ffffff') : 0
               const contrastBlack = isValidHex ? getContrastRatio(value, '#000000') : 0
               const shortPath = path.split('.').slice(-2).join('.')
 
               return (
-                <div key={path} className="border border-border-subtle">
+                <div key={path} className={`border ${isReference ? 'border-dashed border-amber-700' : 'border-border-subtle'}`}>
                   {isValidHex ? (
                     <div className="h-20 border-b border-border-subtle" style={{ backgroundColor: value }} />
+                  ) : isReference ? (
+                    <div className="h-20 border-b border-dashed border-amber-700 bg-amber-950/30 flex items-center justify-center relative">
+                      <span className="font-mono text-xs text-amber-400/60 truncate px-2">{value}</span>
+                      <span className="absolute bottom-1 right-1 px-1.5 py-0.5 bg-amber-900/80 text-amber-300 font-mono text-[10px] rounded">
+                        ref
+                      </span>
+                    </div>
                   ) : (
                     <div
                       className="h-20 border-b border-border-subtle relative"

@@ -137,13 +137,18 @@ export function TokenValueNode({ token, depth, activeMode, modeOverrides }: Toke
     const previewValue = typeof displayValue === 'string' ? displayValue : String(displayValue)
 
     if (token.type === 'color' && typeof previewValue === 'string') {
-      const colorValue = previewValue.startsWith('{')
-        ? '#cccccc'
-        : previewValue
+      if (previewValue.startsWith('{')) {
+        return (
+          <div
+            className="w-4 h-4 rounded border border-dashed border-amber-600"
+            title="Unresolved reference"
+          />
+        )
+      }
       return (
         <div
           className="w-4 h-4 rounded border border-gray-600"
-          style={{ backgroundColor: colorValue }}
+          style={{ backgroundColor: previewValue }}
         />
       )
     }
