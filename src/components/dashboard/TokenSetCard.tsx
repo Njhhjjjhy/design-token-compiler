@@ -114,20 +114,20 @@ export function TokenSetCard({
           <div className="flex gap-1">
             <button onClick={(e) => { e.stopPropagation(); onEdit() }} className="flex items-center gap-1 px-1.5 py-1 text-text-tertiary hover:text-white hover:bg-white/5 transition-colors" title="Edit tokens" aria-label="Edit tokens">
               <Pencil className="w-3.5 h-3.5" />
-              <span className="font-mono text-[10px]">Edit</span>
+              <span className="font-mono text-mini">Edit</span>
             </button>
             <button onClick={(e) => { e.stopPropagation(); onBrowse() }} className="flex items-center gap-1 px-1.5 py-1 text-text-tertiary hover:text-white hover:bg-white/5 transition-colors" title="Browse tokens" aria-label="Browse tokens">
               <Eye className="w-3.5 h-3.5" />
-              <span className="font-mono text-[10px]">Browse</span>
+              <span className="font-mono text-mini">Browse</span>
             </button>
             <button onClick={(e) => { e.stopPropagation(); onExport() }} className="flex items-center gap-1 px-1.5 py-1 text-text-tertiary hover:text-white hover:bg-white/5 transition-colors" title="Export tokens" aria-label="Export tokens">
               <Download className="w-3.5 h-3.5" />
-              <span className="font-mono text-[10px]">Export</span>
+              <span className="font-mono text-mini">Export</span>
             </button>
             {versionCount > 0 && (
               <button onClick={(e) => { e.stopPropagation(); onVersions() }} className="flex items-center gap-1 px-1.5 py-1 text-text-tertiary hover:text-white hover:bg-white/5 transition-colors" title="Version history" aria-label="Version history">
                 <Clock className="w-3.5 h-3.5" />
-                <span className="font-mono text-[10px]">{versionCount}</span>
+                <span className="font-mono text-mini">{versionCount}</span>
               </button>
             )}
           </div>

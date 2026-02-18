@@ -111,7 +111,7 @@ export function EditorHeader({
         <div className="flex border border-border">
           <button
             onClick={onExpandAll}
-            className="flex items-center gap-1 px-2 py-1 font-mono text-[10px] text-text-secondary hover:text-white transition-colors"
+            className="flex items-center gap-1 px-2 py-1 font-mono text-mini text-text-secondary hover:text-white transition-colors"
             title="Expand all groups"
           >
             <ChevronsUpDown className="w-3 h-3" />
@@ -119,7 +119,7 @@ export function EditorHeader({
           </button>
           <button
             onClick={onCollapseAll}
-            className="px-2 py-1 font-mono text-[10px] text-text-secondary hover:text-white border-l border-border transition-colors"
+            className="px-2 py-1 font-mono text-mini text-text-secondary hover:text-white border-l border-border transition-colors"
             title="Collapse all groups"
           >
             Collapse

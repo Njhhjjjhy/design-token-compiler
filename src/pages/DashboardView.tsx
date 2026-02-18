@@ -212,7 +212,7 @@ export function DashboardView() {
       {/* Clear All Confirmation Modal */}
       {showClearConfirm && (
         <div
-          className="fixed inset-0 bg-black/50 flex items-center justify-center z-50"
+          className="fixed inset-0 bg-black/50 flex items-center justify-center z-modal"
           onClick={(e) => { if (e.target === e.currentTarget) setShowClearConfirm(false) }}
         >
           <div
@@ -255,7 +255,7 @@ export function DashboardView() {
       {/* Load Sample Data Confirmation Modal */}
       {showSampleConfirm && (
         <div
-          className="fixed inset-0 bg-black/50 flex items-center justify-center z-50"
+          className="fixed inset-0 bg-black/50 flex items-center justify-center z-modal"
           onClick={(e) => { if (e.target === e.currentTarget) setShowSampleConfirm(false) }}
         >
           <div

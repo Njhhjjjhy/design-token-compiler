@@ -33,11 +33,29 @@ export default {
         warning: 'rgb(var(--color-warning) / <alpha-value>)',
         error: 'rgb(var(--color-error) / <alpha-value>)',
         info: 'rgb(var(--color-info) / <alpha-value>)',
+        'code-bg': 'rgb(var(--color-code-bg) / <alpha-value>)',
       },
       fontFamily: {
         sans: ['Inter', 'system-ui', 'sans-serif'],
         mono: ['JetBrains Mono', 'monospace'],
         serif: ['Instrument Serif', 'serif'],
+      },
+      fontSize: {
+        'micro': ['8px', { lineHeight: '1.2', letterSpacing: '0.1em' }],
+        'mini': ['10px', { lineHeight: '1.3' }],
+        'nav': ['11px', { lineHeight: '1.3', letterSpacing: '0.08em' }],
+      },
+      zIndex: {
+        'sticky': '10',
+        'modal': '50',
+        'overlay': '60',
+        'skiplink': '100',
+      },
+      width: {
+        'sidebar': '20rem',
+      },
+      spacing: {
+        'indent': '16px',
       },
     },
   },

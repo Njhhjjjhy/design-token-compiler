@@ -18,6 +18,8 @@
   --color-error: 185 28 28;
   --color-info: 29 78 216;
 
+  --color-code-bg: 30 30 30;
+
   --font-mono: 'JetBrains Mono', monospace;
   --font-serif: 'Instrument Serif', serif;
   --font-sans: 'Inter', system-ui, sans-serif;
@@ -38,6 +40,7 @@
   --color-warning: 245 158 11;
   --color-error: 239 68 68;
   --color-info: 59 130 246;
+  --color-code-bg: 30 30 30;
 }
 
 html {

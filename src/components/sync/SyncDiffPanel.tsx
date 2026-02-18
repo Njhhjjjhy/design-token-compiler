@@ -43,7 +43,7 @@ export function SyncDiffPanel({
   return (
     <div className="flex-1 overflow-auto">
       <table className="w-full" aria-label="Token comparison">
-        <thead className="sticky top-0 z-10">
+        <thead className="sticky top-0 z-sticky">
           <tr className="bg-surface border-b border-border">
             <th scope="col" className="text-left px-4 py-2 font-mono text-xs text-text-tertiary uppercase tracking-wider font-normal min-w-[180px]">
               Token

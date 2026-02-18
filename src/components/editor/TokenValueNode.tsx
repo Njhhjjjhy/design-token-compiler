@@ -223,7 +223,7 @@ export function TokenValueNode({ token, depth, activeMode, modeOverrides }: Toke
 
       {/* Override indicator */}
       {activeMode && hasOverride && (
-        <span className="px-1.5 py-0.5 text-[10px] font-mono uppercase rounded bg-warning/20 text-warning">
+        <span className="px-1.5 py-0.5 text-mini font-mono uppercase rounded bg-warning/20 text-warning">
           override
         </span>
       )}
@@ -294,7 +294,7 @@ export function TokenValueNode({ token, depth, activeMode, modeOverrides }: Toke
 
       {showDeleteConfirm && (
         <div
-          className="fixed inset-0 bg-black/50 flex items-center justify-center z-50"
+          className="fixed inset-0 bg-black/50 flex items-center justify-center z-modal"
           onClick={(e) => { if (e.target === e.currentTarget) setShowDeleteConfirm(false) }}
         >
           <div

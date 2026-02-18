@@ -28,7 +28,7 @@ export function BinarySeparator() {
   return (
     <div aria-hidden="true" role="presentation" className="h-9 border-t border-b border-border bg-secondary overflow-hidden relative">
       <div
-        className="absolute whitespace-nowrap font-mono text-[8px] text-text-tertiary leading-9"
+        className="absolute whitespace-nowrap font-mono text-micro text-text-tertiary leading-9"
         style={{
           transform: `translateX(-${offset}%)`,
           willChange: 'transform',

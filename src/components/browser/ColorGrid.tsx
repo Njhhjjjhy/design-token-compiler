@@ -58,7 +58,7 @@ export function ColorGrid({ tokens }: ColorGridProps) {
 
   return (
     <div className="space-y-8">
-      <div className="flex items-center gap-4 font-mono text-[10px] text-text-tertiary">
+      <div className="flex items-center gap-4 font-mono text-mini text-text-tertiary">
         <span>Contrast ratio vs:</span>
         <span>W = white</span>
         <span>B = black</span>
@@ -89,7 +89,7 @@ export function ColorGrid({ tokens }: ColorGridProps) {
                   ) : isReference ? (
                     <div className="h-20 border-b border-dashed border-warning bg-warning/10 flex items-center justify-center relative">
                       <span className="font-mono text-xs text-warning/60 truncate px-2">{value}</span>
-                      <span className="absolute bottom-1 right-1 px-1.5 py-0.5 bg-warning/20 text-warning font-mono text-[10px] rounded">
+                      <span className="absolute bottom-1 right-1 px-1.5 py-0.5 bg-warning/20 text-warning font-mono text-mini rounded">
                         ref
                       </span>
                     </div>
@@ -100,7 +100,7 @@ export function ColorGrid({ tokens }: ColorGridProps) {
                         background: 'repeating-linear-gradient(45deg, rgb(var(--color-surface-elevated)), rgb(var(--color-surface-elevated)) 6px, rgb(var(--color-surface-sunken)) 6px, rgb(var(--color-surface-sunken)) 12px)',
                       }}
                     >
-                      <span className="absolute bottom-1 right-1 px-1.5 py-0.5 bg-error/20 text-error font-mono text-[10px] rounded">
+                      <span className="absolute bottom-1 right-1 px-1.5 py-0.5 bg-error/20 text-error font-mono text-mini rounded">
                         invalid
                       </span>
                     </div>

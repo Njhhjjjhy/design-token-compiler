@@ -51,7 +51,7 @@ export function Header({ activeView, onViewChange, activeSetName, activeModeName
           <div className="flex items-center gap-2 text-xs font-mono text-text-secondary">
             <span>{activeSetName}</span>
             {activeModeName && (
-              <span className="px-1.5 py-0.5 bg-surface-elevated border border-border text-text-tertiary text-[10px] uppercase">
+              <span className="px-1.5 py-0.5 bg-surface-elevated border border-border text-text-tertiary text-mini uppercase">
                 {activeModeName}
               </span>
             )}
@@ -67,7 +67,7 @@ export function Header({ activeView, onViewChange, activeSetName, activeModeName
             onClick={() => onViewChange(item.id)}
             aria-current={activeView === item.id ? 'page' : undefined}
             className={`
-              relative h-full px-6 font-mono text-[11px] tracking-wider
+              relative h-full px-6 font-mono text-nav tracking-wider
               transition-colors hover:text-white
               ${activeView === item.id ? 'text-primary' : 'text-text-secondary'}
             `}

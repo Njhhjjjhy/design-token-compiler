@@ -90,7 +90,7 @@ export function SyncTokenRow({
             <>
               <button
                 onClick={() => onResolve(path, 'editor')}
-                className={`flex items-center gap-1 px-1.5 py-0.5 rounded font-mono text-[10px] transition-colors ${
+                className={`flex items-center gap-1 px-1.5 py-0.5 rounded font-mono text-mini transition-colors ${
                   resolution === 'editor'
                     ? 'bg-info/20 text-info'
                     : 'text-text-tertiary hover:text-white hover:bg-white/5'
@@ -102,7 +102,7 @@ export function SyncTokenRow({
               </button>
               <button
                 onClick={() => onResolve(path, 'imported')}
-                className={`flex items-center gap-1 px-1.5 py-0.5 rounded font-mono text-[10px] transition-colors ${
+                className={`flex items-center gap-1 px-1.5 py-0.5 rounded font-mono text-mini transition-colors ${
                   resolution === 'imported'
                     ? 'bg-primary/20 text-primary'
                     : 'text-text-tertiary hover:text-white hover:bg-white/5'
@@ -118,7 +118,7 @@ export function SyncTokenRow({
             <>
               <button
                 onClick={() => onResolve(path, 'editor')}
-                className={`flex items-center gap-1 px-1.5 py-0.5 rounded font-mono text-[10px] transition-colors ${
+                className={`flex items-center gap-1 px-1.5 py-0.5 rounded font-mono text-mini transition-colors ${
                   resolution === 'editor'
                     ? 'bg-success/20 text-success'
                     : 'text-text-tertiary hover:text-white hover:bg-white/5'
@@ -130,7 +130,7 @@ export function SyncTokenRow({
               </button>
               <button
                 onClick={() => onResolve(path, 'discard')}
-                className={`flex items-center gap-1 px-1.5 py-0.5 rounded font-mono text-[10px] transition-colors ${
+                className={`flex items-center gap-1 px-1.5 py-0.5 rounded font-mono text-mini transition-colors ${
                   resolution === 'discard'
                     ? 'bg-error/20 text-error'
                     : 'text-text-tertiary hover:text-white hover:bg-white/5'
@@ -146,7 +146,7 @@ export function SyncTokenRow({
             <>
               <button
                 onClick={() => onResolve(path, 'add')}
-                className={`flex items-center gap-1 px-1.5 py-0.5 rounded font-mono text-[10px] transition-colors ${
+                className={`flex items-center gap-1 px-1.5 py-0.5 rounded font-mono text-mini transition-colors ${
                   resolution === 'add'
                     ? 'bg-success/20 text-success'
                     : 'text-text-tertiary hover:text-white hover:bg-white/5'
@@ -158,7 +158,7 @@ export function SyncTokenRow({
               </button>
               <button
                 onClick={() => onResolve(path, 'discard')}
-                className={`flex items-center gap-1 px-1.5 py-0.5 rounded font-mono text-[10px] transition-colors ${
+                className={`flex items-center gap-1 px-1.5 py-0.5 rounded font-mono text-mini transition-colors ${
                   resolution === 'discard'
                     ? 'bg-error/20 text-error'
                     : 'text-text-tertiary hover:text-white hover:bg-white/5'

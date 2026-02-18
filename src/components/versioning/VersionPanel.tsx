@@ -59,7 +59,7 @@ export function VersionPanel({ isOpen, onClose }: VersionPanelProps) {
   const sortedVersions = [...versions].reverse()
 
   return (
-    <div className="fixed inset-y-0 right-0 w-80 bg-surface border-l border-border z-50 flex flex-col shadow-2xl">
+    <div className="fixed inset-y-0 right-0 w-sidebar bg-surface border-l border-border z-modal flex flex-col shadow-2xl">
       <div className="flex items-center justify-between px-4 py-3 border-b border-border">
         <h3 className="section-title text-primary">VERSIONS</h3>
         <button onClick={onClose} className="p-1 text-text-tertiary hover:text-white transition-colors" aria-label="Close versions panel">
@@ -121,7 +121,7 @@ export function VersionPanel({ isOpen, onClose }: VersionPanelProps) {
 
       {confirmAction && (
         <div
-          className="fixed inset-0 bg-black/50 flex items-center justify-center z-[60]"
+          className="fixed inset-0 bg-black/50 flex items-center justify-center z-overlay"
           onClick={(e) => { if (e.target === e.currentTarget) setConfirmAction(null) }}
         >
           <div

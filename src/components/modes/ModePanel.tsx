@@ -64,7 +64,7 @@ export function ModePanel({ isOpen, onClose }: ModePanelProps) {
   }
 
   return (
-    <div className="fixed inset-y-0 right-0 w-80 bg-surface border-l border-border z-50 flex flex-col shadow-2xl">
+    <div className="fixed inset-y-0 right-0 w-sidebar bg-surface border-l border-border z-modal flex flex-col shadow-2xl">
       <div className="flex items-center justify-between px-4 py-3 border-b border-border">
         <h3 className="section-title text-primary">MODES</h3>
         <button onClick={onClose} className="p-1 text-text-tertiary hover:text-white transition-colors">
@@ -130,7 +130,7 @@ export function ModePanel({ isOpen, onClose }: ModePanelProps) {
                       <>
                         <span className="font-mono text-xs text-white truncate">{mode.name}</span>
                         {mode.isDefault && (
-                          <span className="px-1.5 py-0.5 bg-primary/20 text-primary font-mono text-[10px] leading-none">
+                          <span className="px-1.5 py-0.5 bg-primary/20 text-primary font-mono text-mini leading-none">
                             DEFAULT
                           </span>
                         )}
@@ -159,7 +159,7 @@ export function ModePanel({ isOpen, onClose }: ModePanelProps) {
                 </div>
 
                 {!isEditing && (
-                  <p className="font-mono text-[10px] text-text-tertiary mt-1">
+                  <p className="font-mono text-mini text-text-tertiary mt-1">
                     {overrideCount} override{overrideCount !== 1 ? 's' : ''}
                   </p>
                 )}

@@ -136,13 +136,13 @@ export function SyncHeader({
             <div className="flex gap-1 ml-2">
               <button
                 onClick={() => onResolveAll('editor')}
-                className="px-2 py-0.5 font-mono text-[10px] text-text-tertiary hover:text-white hover:bg-white/5 rounded transition-colors"
+                className="px-2 py-0.5 font-mono text-mini text-text-tertiary hover:text-white hover:bg-white/5 rounded transition-colors"
               >
                 Keep all editor
               </button>
               <button
                 onClick={() => onResolveAll('imported')}
-                className="px-2 py-0.5 font-mono text-[10px] text-text-tertiary hover:text-white hover:bg-white/5 rounded transition-colors"
+                className="px-2 py-0.5 font-mono text-mini text-text-tertiary hover:text-white hover:bg-white/5 rounded transition-colors"
               >
                 Keep all imported
               </button>

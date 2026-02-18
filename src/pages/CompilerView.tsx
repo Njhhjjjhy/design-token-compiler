@@ -282,7 +282,7 @@ export function CompilerView() {
       </div>
 
       {/* Code Output */}
-      <div className="flex-1 overflow-auto bg-[#1e1e1e]" role="tabpanel" id="compiler-tabpanel" aria-labelledby={`compiler-tab-${activeFormat}`} aria-label={`Generated ${activeFormat} code`}>
+      <div className="flex-1 overflow-auto bg-code-bg" role="tabpanel" id="compiler-tabpanel" aria-labelledby={`compiler-tab-${activeFormat}`} aria-label={`Generated ${activeFormat} code`}>
         <SyntaxHighlighter
           language={currentOutput.language}
           style={vscDarkPlus}
