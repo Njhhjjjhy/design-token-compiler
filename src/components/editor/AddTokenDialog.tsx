@@ -113,6 +113,7 @@ export function AddTokenDialog({ isOpen, onClose }: AddTokenDialogProps) {
         role="dialog"
         aria-modal="true"
         aria-labelledby="add-token-dialog-title"
+        aria-describedby="add-token-dialog-desc"
         className="bg-surface border border-border rounded-lg p-6 w-full max-w-md"
         onKeyDown={handleKeyDown}
       >
@@ -129,6 +130,10 @@ export function AddTokenDialog({ isOpen, onClose }: AddTokenDialogProps) {
             <X className="w-5 h-5" />
           </button>
         </div>
+
+        <p id="add-token-dialog-desc" className="sr-only">
+          Fill in the name, type, and value to create a new design token. Use reference syntax to link to other tokens.
+        </p>
 
         {/* Form */}
         <div className="space-y-4">

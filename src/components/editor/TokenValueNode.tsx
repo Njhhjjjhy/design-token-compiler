@@ -281,6 +281,11 @@ export function TokenValueNode({ token, depth, activeMode, modeOverrides }: Toke
         </button>
       )}
 
+      {/* Screen reader announcement for edit mode */}
+      <span className="sr-only" aria-live="polite">
+        {isEditing ? `Editing ${token.name}. Enter to save, Escape to cancel.` : ''}
+      </span>
+
       {/* Preview */}
       <div className="w-16 flex items-center justify-center">
         {renderPreview()}
