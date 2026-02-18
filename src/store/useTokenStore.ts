@@ -1,5 +1,5 @@
 import { create } from 'zustand'
-import { persist } from 'zustand/middleware'
+import { persist, createJSONStorage } from 'zustand/middleware'
 import type { AppState, Mode, Token, TokenGroup, TokenSet, TokenValue, Version, ViewMode } from '@/types'
 import type { FlatToken } from '@/lib/flatten-tokens'
 import type { DiffResult } from '@/lib/diff-engine'
@@ -63,6 +63,21 @@ interface TokenStoreState extends AppState {
   deleteVersion: (setId: string, versionId: string) => void
   getVersionsForActiveSet: () => Version[]
 }
+
+// Storage quota error detection
+export const STORAGE_ERROR_EVENT = 'dtc-storage-error'
+
+const safeStorage = createJSONStorage(() => ({
+  getItem: (name: string) => localStorage.getItem(name),
+  setItem: (name: string, value: string) => {
+    try {
+      localStorage.setItem(name, value)
+    } catch {
+      window.dispatchEvent(new Event(STORAGE_ERROR_EVENT))
+    }
+  },
+  removeItem: (name: string) => localStorage.removeItem(name),
+}))
 
 function countTokensInTree(tokens: Record<string, Token | TokenGroup>): number {
   let count = 0
@@ -602,6 +617,7 @@ export const useTokenStore = create<TokenStoreState>()(
     {
       name: 'token-compiler-storage',
       version: 1,
+      storage: safeStorage,
     }
   )
 )
