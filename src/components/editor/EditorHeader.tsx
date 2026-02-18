@@ -1,4 +1,4 @@
-import { Plus, Clock, Layers } from 'lucide-react'
+import { Plus, Clock, Layers, Search } from 'lucide-react'
 import type { ModeMap } from '@/types'
 
 interface EditorHeaderProps {
@@ -10,6 +10,8 @@ interface EditorHeaderProps {
   modes: ModeMap
   activeMode: string | null
   onModeChange: (modeId: string | null) => void
+  searchQuery: string
+  onSearchChange: (query: string) => void
 }
 
 export function EditorHeader({
@@ -21,12 +23,15 @@ export function EditorHeader({
   modes,
   activeMode,
   onModeChange,
+  searchQuery,
+  onSearchChange,
 }: EditorHeaderProps) {
   const modeEntries = Object.values(modes)
   const hasModes = modeEntries.length > 0
 
   return (
-    <div className="flex items-center justify-between pb-6 border-b border-border-default">
+    <div className="pb-6 border-b border-border-default">
+      <div className="flex items-center justify-between">
       <div className="flex items-center gap-4">
         <h2 className="section-title text-primary">TOKEN EDITOR</h2>
         {hasModes && (
@@ -81,6 +86,17 @@ export function EditorHeader({
           <Plus className="w-4 h-4" />
           Add Token
         </button>
+      </div>
+      </div>
+      <div className="relative mt-4 max-w-xs">
+        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-text-tertiary" />
+        <input
+          type="text"
+          value={searchQuery}
+          onChange={(e) => onSearchChange(e.target.value)}
+          placeholder="Filter tokens..."
+          className="w-full pl-9 pr-3 py-1.5 bg-surface-sunken border border-border font-mono text-xs text-white placeholder:text-text-tertiary focus:outline-none focus:border-primary transition-colors"
+        />
       </div>
     </div>
   )

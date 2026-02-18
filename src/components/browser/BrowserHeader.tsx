@@ -1,3 +1,4 @@
+import { Search } from 'lucide-react'
 import type { ModeMap } from '@/types'
 
 export type BrowserTab = 'colors' | 'spacing' | 'typography' | 'shadows'
@@ -9,6 +10,8 @@ interface BrowserHeaderProps {
   modes: ModeMap
   activeMode: string | null
   onModeChange: (modeId: string) => void
+  searchQuery: string
+  onSearchChange: (query: string) => void
 }
 
 export function BrowserHeader({
@@ -18,6 +21,8 @@ export function BrowserHeader({
   modes,
   activeMode,
   onModeChange,
+  searchQuery,
+  onSearchChange,
 }: BrowserHeaderProps) {
   const tabs: { id: BrowserTab; label: string }[] = [
     { id: 'colors', label: 'COLORS' },
@@ -48,6 +53,18 @@ export function BrowserHeader({
             ))}
           </div>
         )}
+      </div>
+      <div className="flex items-center gap-4 mb-4">
+        <div className="relative flex-1 max-w-xs">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-text-tertiary" />
+          <input
+            type="text"
+            value={searchQuery}
+            onChange={(e) => onSearchChange(e.target.value)}
+            placeholder="Filter tokens..."
+            className="w-full pl-9 pr-3 py-1.5 bg-surface-sunken border border-border font-mono text-xs text-white placeholder:text-text-tertiary focus:outline-none focus:border-primary transition-colors"
+          />
+        </div>
       </div>
       <div className="flex border-b border-border">
         {tabs.map((tab) => (

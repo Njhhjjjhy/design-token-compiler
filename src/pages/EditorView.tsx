@@ -10,6 +10,7 @@ export function EditorView() {
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false)
   const [isVersionPanelOpen, setIsVersionPanelOpen] = useState(false)
   const [isModePanelOpen, setIsModePanelOpen] = useState(false)
+  const [searchQuery, setSearchQuery] = useState('')
   const activeSet = useTokenStore((state) => state.getActiveTokenSet())
   const storeSetActiveMode = useTokenStore((s) => s.setActiveMode)
   const versionCount = useTokenStore((s) => s.getVersionsForActiveSet().length)
@@ -45,9 +46,11 @@ export function EditorView() {
         modes={activeSet.modes}
         activeMode={activeMode}
         onModeChange={handleModeChange}
+        searchQuery={searchQuery}
+        onSearchChange={setSearchQuery}
       />
       <div className="mt-6">
-        <TokenTree tokenSet={activeSet} activeMode={activeMode} />
+        <TokenTree tokenSet={activeSet} activeMode={activeMode} searchQuery={searchQuery} />
       </div>
       <AddTokenDialog
         isOpen={isAddDialogOpen}

@@ -12,6 +12,7 @@ export function BrowserView() {
   const activeSet = useTokenStore((s) => s.getActiveTokenSet())
   const storeSetActiveMode = useTokenStore((s) => s.setActiveMode)
   const [activeTab, setActiveTab] = useState<BrowserTab>('colors')
+  const [searchQuery, setSearchQuery] = useState('')
   const activeMode = activeSet?.activeMode ?? null
   const handleModeChange = useCallback(
     (modeId: string) => {
@@ -40,11 +41,23 @@ export function BrowserView() {
     }
   }, [resolved])
 
+  const filtered = useMemo(() => {
+    if (!searchQuery) return grouped
+    const q = searchQuery.toLowerCase()
+    const match = ([path]: [string, ResolvedToken]) => path.toLowerCase().includes(q)
+    return {
+      colors: grouped.colors.filter(match),
+      spacing: grouped.spacing.filter(match),
+      typography: grouped.typography.filter(match),
+      shadows: grouped.shadows.filter(match),
+    }
+  }, [grouped, searchQuery])
+
   const tabCounts: Record<BrowserTab, number> = {
-    colors: grouped.colors.length,
-    spacing: grouped.spacing.length,
-    typography: grouped.typography.length,
-    shadows: grouped.shadows.length,
+    colors: filtered.colors.length,
+    spacing: filtered.spacing.length,
+    typography: filtered.typography.length,
+    shadows: filtered.shadows.length,
   }
 
   if (!activeSet) {
@@ -67,12 +80,14 @@ export function BrowserView() {
         modes={activeSet.modes}
         activeMode={activeMode}
         onModeChange={handleModeChange}
+        searchQuery={searchQuery}
+        onSearchChange={setSearchQuery}
       />
       <div className="flex-1 overflow-auto px-8 py-6">
-        {activeTab === 'colors' && <ColorGrid tokens={grouped.colors} />}
-        {activeTab === 'spacing' && <SpacingScale tokens={grouped.spacing} />}
-        {activeTab === 'typography' && <TypographySpecimens tokens={grouped.typography} />}
-        {activeTab === 'shadows' && <ShadowSamples tokens={grouped.shadows} />}
+        {activeTab === 'colors' && <ColorGrid tokens={filtered.colors} />}
+        {activeTab === 'spacing' && <SpacingScale tokens={filtered.spacing} />}
+        {activeTab === 'typography' && <TypographySpecimens tokens={filtered.typography} />}
+        {activeTab === 'shadows' && <ShadowSamples tokens={filtered.shadows} />}
       </div>
     </div>
   )
