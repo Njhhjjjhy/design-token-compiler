@@ -3,6 +3,8 @@ import { useFocusTrap } from '@/hooks/useFocusTrap'
 import { Trash2, Check, AlertTriangle } from 'lucide-react'
 import type { Token, TokenValue } from '@/types'
 import { useTokenStore } from '@/store/useTokenStore'
+import { useTreeNavigationContext } from './TreeNavigationContext'
+import { sanitizeNodeId } from '@/lib/build-visible-node-list'
 
 const typeDisplayNames: Record<string, string> = {
   color: 'color',
@@ -56,6 +58,8 @@ export function TokenValueNode({ token, depth, activeMode, modeOverrides }: Toke
   const updateModeOverride = useTokenStore((state) => state.updateModeOverride)
   const removeModeOverride = useTokenStore((state) => state.removeModeOverride)
   const activeSetId = useTokenStore((state) => state.activeSetId)
+  const { focusedNodeId, setIsEditing: setTreeEditing, returnFocusToTree } = useTreeNavigationContext()
+  const isFocused = focusedNodeId === token.id
 
   const paddingLeft = depth * 16
 
@@ -81,6 +85,7 @@ export function TokenValueNode({ token, depth, activeMode, modeOverrides }: Toke
   const handleEditStart = () => {
     setEditValue(valueString)
     setIsEditing(true)
+    setTreeEditing(true)
   }
 
   const handleEditSave = () => {
@@ -110,6 +115,8 @@ export function TokenValueNode({ token, depth, activeMode, modeOverrides }: Toke
     }
     setIsEditing(false)
     setIsInvalid(false)
+    setTreeEditing(false)
+    returnFocusToTree()
 
     // Flash save indicator with context-aware label
     setSaveLabel(savedViaEnterRef.current ? 'Saved' : 'Auto-saved')
@@ -122,6 +129,8 @@ export function TokenValueNode({ token, depth, activeMode, modeOverrides }: Toke
     cancelledRef.current = true
     setIsEditing(false)
     setIsInvalid(false)
+    setTreeEditing(false)
+    returnFocusToTree()
   }
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
@@ -205,7 +214,11 @@ export function TokenValueNode({ token, depth, activeMode, modeOverrides }: Toke
   return (
     <div
       role="treeitem"
-      className="group flex items-center gap-3 py-2 hover:bg-white/5 transition-colors"
+      id={sanitizeNodeId(token.id)}
+      data-node-id={token.id}
+      className={`group flex items-center gap-3 py-2 hover:bg-white/5 transition-colors ${
+        isFocused ? 'outline outline-2 outline-primary outline-offset-[-2px] rounded' : ''
+      }`}
       style={{ paddingLeft: `${paddingLeft}px` }}
     >
       {/* Token Name */}
@@ -255,6 +268,8 @@ export function TokenValueNode({ token, depth, activeMode, modeOverrides }: Toke
       ) : (
         <button
           onClick={handleEditStart}
+          data-role="edit-trigger"
+          tabIndex={-1}
           className={`flex-1 text-left px-2 py-1 font-mono text-sm rounded cursor-text ${
             activeMode && !hasOverride
               ? 'text-text-tertiary hover:bg-white/10'
@@ -285,6 +300,7 @@ export function TokenValueNode({ token, depth, activeMode, modeOverrides }: Toke
       {/* Delete / Remove Override Button */}
       <button
         onClick={handleDelete}
+        tabIndex={-1}
         className="opacity-0 group-hover:opacity-100 focus:opacity-100 p-1 hover:text-error transition-all"
         title={activeMode && hasOverride ? 'Remove override' : 'Delete token'}
         aria-label={activeMode && hasOverride ? 'Remove override' : 'Delete token'}

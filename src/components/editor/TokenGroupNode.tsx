@@ -1,26 +1,8 @@
-import { useState, useCallback } from 'react'
 import { ChevronRight } from 'lucide-react'
 import type { TokenGroup, TokenValue } from '@/types'
 import { TokenTreeNode } from './TokenTreeNode'
-
-const STORAGE_KEY = 'dtc-expanded-groups'
-
-function getExpandedGroups(): Set<string> {
-  try {
-    const raw = localStorage.getItem(STORAGE_KEY)
-    return raw ? new Set(JSON.parse(raw)) : new Set()
-  } catch {
-    return new Set()
-  }
-}
-
-function saveExpandedGroups(groups: Set<string>) {
-  try {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify([...groups]))
-  } catch {
-    // Ignore quota errors
-  }
-}
+import { useTreeNavigationContext } from './TreeNavigationContext'
+import { sanitizeNodeId } from '@/lib/build-visible-node-list'
 
 interface TokenGroupNodeProps {
   group: TokenGroup
@@ -33,35 +15,26 @@ interface TokenGroupNodeProps {
 
 export function TokenGroupNode({ group, groupKey, depth, activeMode, modeOverrides, path }: TokenGroupNodeProps) {
   const groupPath = path || groupKey
-  const [isExpanded, setIsExpanded] = useState(() => {
-    const saved = getExpandedGroups()
-    if (saved.has(groupPath)) return true
-    if (saved.size === 0) return depth === 0
-    return false
-  })
+  const { expandedGroups, toggleGroup, focusedNodeId } = useTreeNavigationContext()
+  const isExpanded = expandedGroups.has(groupPath)
+  const isFocused = focusedNodeId === groupPath
   const paddingLeft = depth * 16
 
-  const toggleExpand = useCallback(() => {
-    setIsExpanded((prev) => {
-      const next = !prev
-      const groups = getExpandedGroups()
-      if (next) {
-        groups.add(groupPath)
-      } else {
-        groups.delete(groupPath)
-      }
-      saveExpandedGroups(groups)
-      return next
-    })
-  }, [groupPath])
-
   return (
-    <div role="treeitem" aria-expanded={isExpanded}>
+    <div
+      role="treeitem"
+      aria-expanded={isExpanded}
+      id={sanitizeNodeId(groupPath)}
+      data-node-id={groupPath}
+    >
       {/* Group Header */}
       <button
-        onClick={toggleExpand}
+        onClick={() => toggleGroup(groupPath)}
         aria-expanded={isExpanded}
-        className="w-full flex items-center gap-2 py-2 hover:bg-white/5 transition-colors text-left"
+        tabIndex={-1}
+        className={`w-full flex items-center gap-2 py-2 hover:bg-white/5 transition-colors text-left ${
+          isFocused ? 'outline outline-2 outline-primary outline-offset-[-2px] rounded' : ''
+        }`}
         style={{ paddingLeft: `${paddingLeft}px` }}
       >
         <ChevronRight
