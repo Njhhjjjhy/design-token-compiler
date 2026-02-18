@@ -5,6 +5,7 @@ import type { TokenSet, Token, TokenGroup } from '@/types'
 interface TokenSetCardProps {
   tokenSet: TokenSet
   versionCount: number
+  onClick: () => void
   onEdit: () => void
   onBrowse: () => void
   onExport: () => void
@@ -46,6 +47,7 @@ function extractColorPreviews(tokens: Record<string, Token | TokenGroup>, max = 
 export function TokenSetCard({
   tokenSet,
   versionCount,
+  onClick,
   onEdit,
   onBrowse,
   onExport,
@@ -72,7 +74,7 @@ export function TokenSetCard({
     .map(([type, label]) => `${typeCounts[type]} ${label}`)
 
   return (
-    <div className="border border-border bg-surface hover:border-primary/40 transition-colors">
+    <div onClick={onClick} className="border border-border bg-surface hover:border-primary/40 transition-colors cursor-pointer">
       {colorPreviews.length > 0 && (
         <div className="flex h-2">
           {colorPreviews.map((color, i) => (
@@ -103,17 +105,17 @@ export function TokenSetCard({
             {format(tokenSet.metadata.updatedAt, 'MMM d, yyyy')}
           </span>
           <div className="flex gap-1">
-            <button onClick={onEdit} className="p-1.5 text-text-tertiary hover:text-white hover:bg-white/5 transition-colors" title="Edit tokens">
+            <button onClick={(e) => { e.stopPropagation(); onEdit() }} className="p-1.5 text-text-tertiary hover:text-white hover:bg-white/5 transition-colors" title="Edit tokens">
               <Pencil className="w-3.5 h-3.5" />
             </button>
-            <button onClick={onBrowse} className="p-1.5 text-text-tertiary hover:text-white hover:bg-white/5 transition-colors" title="Browse tokens">
+            <button onClick={(e) => { e.stopPropagation(); onBrowse() }} className="p-1.5 text-text-tertiary hover:text-white hover:bg-white/5 transition-colors" title="Browse tokens">
               <Eye className="w-3.5 h-3.5" />
             </button>
-            <button onClick={onExport} className="p-1.5 text-text-tertiary hover:text-white hover:bg-white/5 transition-colors" title="Export tokens">
+            <button onClick={(e) => { e.stopPropagation(); onExport() }} className="p-1.5 text-text-tertiary hover:text-white hover:bg-white/5 transition-colors" title="Export tokens">
               <Download className="w-3.5 h-3.5" />
             </button>
             {versionCount > 0 && (
-              <button onClick={onVersions} className="p-1.5 text-text-tertiary hover:text-white hover:bg-white/5 transition-colors flex items-center gap-1" title="Version history">
+              <button onClick={(e) => { e.stopPropagation(); onVersions() }} className="p-1.5 text-text-tertiary hover:text-white hover:bg-white/5 transition-colors flex items-center gap-1" title="Version history">
                 <Clock className="w-3.5 h-3.5" />
                 <span className="font-mono text-xs">{versionCount}</span>
               </button>

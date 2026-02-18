@@ -147,6 +147,7 @@ export function DashboardView() {
             key={tokenSet.id}
             tokenSet={tokenSet}
             versionCount={(versions[tokenSet.id] || []).length}
+            onClick={() => navigateTo(tokenSet.id, 'browser')}
             onEdit={() => navigateTo(tokenSet.id, 'editor')}
             onBrowse={() => navigateTo(tokenSet.id, 'browser')}
             onExport={() => navigateTo(tokenSet.id, 'compiler')}

@@ -137,6 +137,7 @@ function buildSpacingGroup(): TokenGroup {
 function buildFontGroup(): TokenGroup {
   return grp('font', {
     'family': grp('family', {
+      'heading': tok('heading', 'REM', 'fontFamily'),
       'body': tok('body', 'Noto Sans JP', 'fontFamily'),
     }),
     'size': grp('size', {
@@ -167,6 +168,26 @@ function buildFontGroup(): TokenGroup {
     }),
     'letterSpacing': grp('letterSpacing', {
       'default': tok('default', '0.25%', 'dimension'),
+    }),
+  })
+}
+
+// ---------------------------------------------------------------------------
+// Shadow group
+// ---------------------------------------------------------------------------
+
+function buildShadowGroup(): TokenGroup {
+  return grp('shadow', {
+    'primitive': grp('primitive', {
+      'sm': tok('sm', '0 1px 2px 0 rgba(0, 0, 0, 0.05)', 'shadow'),
+      'md': tok('md', '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1)', 'shadow'),
+      'lg': tok('lg', '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1)', 'shadow'),
+      'xl': tok('xl', '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1)', 'shadow'),
+    }),
+    'semantic': grp('semantic', {
+      'elevation-low': tok('elevation-low', '{shadow.primitive.sm}', 'shadow'),
+      'elevation-mid': tok('elevation-mid', '{shadow.primitive.md}', 'shadow'),
+      'elevation-high': tok('elevation-high', '{shadow.primitive.lg}', 'shadow'),
     }),
   })
 }
@@ -224,6 +245,7 @@ export function createSampleDesignSystem(): TokenSet {
   const colorGroup = buildColorGroup()
   const spacingGroup = buildSpacingGroup()
   const fontGroup = buildFontGroup()
+  const shadowGroup = buildShadowGroup()
   const responsiveGroup = buildResponsiveGroup()
   const semanticSpacingGroup = buildSemanticSpacingGroup()
 
@@ -237,6 +259,7 @@ export function createSampleDesignSystem(): TokenSet {
       'color': colorGroup,
       'spacing': spacingGroup,
       'font': fontGroup,
+      'shadow': shadowGroup,
       'responsive': responsiveGroup,
       'semantic-spacing': semanticSpacingGroup,
     },

@@ -13,14 +13,21 @@ function App() {
   const activeView = useTokenStore((state) => state.activeView)
   const setActiveView = useTokenStore((state) => state.setActiveView)
   const tokenSets = useTokenStore((state) => state.tokenSets)
-  const addTokenSet = useTokenStore((state) => state.addTokenSet)
   const activeSetId = useTokenStore((state) => state.activeSetId)
 
-  // Initialize with sample data if no token sets exist
+  // Initialize with sample data if no token sets exist (after hydration)
   useEffect(() => {
-    if (Object.keys(tokenSets).length === 0) {
-      const sampleSet = createSampleTokenSet()
-      addTokenSet(sampleSet)
+    function initSampleData() {
+      const { tokenSets: sets, addTokenSet } = useTokenStore.getState()
+      if (Object.keys(sets).length === 0) {
+        addTokenSet(createSampleTokenSet())
+      }
+    }
+
+    if (useTokenStore.persist.hasHydrated()) {
+      initSampleData()
+    } else {
+      return useTokenStore.persist.onFinishHydration(initSampleData)
     }
   }, [])
 
