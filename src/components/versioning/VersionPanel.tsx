@@ -117,7 +117,7 @@ export function VersionPanel({ isOpen, onClose }: VersionPanelProps) {
       {sortedVersions.length > 0 && (
         <div className="px-4 py-2 border-t border-border">
           <p className="font-mono text-xs text-text-tertiary">
-            {sortedVersions.length} version{sortedVersions.length !== 1 ? 's' : ''} · max 50
+            {sortedVersions.length} version{sortedVersions.length !== 1 ? 's' : ''} · oldest auto-removed after 50
           </p>
         </div>
       )}
