@@ -120,25 +120,26 @@ export function AddTokenDialog({ isOpen, onClose }: AddTokenDialogProps) {
 
   if (!isOpen) return null
 
-  // Get available parent paths from token set
+  // Get available parent paths from token set with depth info for visual hierarchy
   const getParentPaths = (
     tokens: Record<string, any>,
-    prefix: string = ''
-  ): string[] => {
-    const paths: string[] = [''] // Root level
+    prefix: string = '',
+    depth: number = 0
+  ): { path: string; label: string; depth: number }[] => {
+    const paths: { path: string; label: string; depth: number }[] = []
 
     for (const [key, item] of Object.entries(tokens)) {
       const currentPath = prefix ? `${prefix}.${key}` : key
       if ('tokens' in item) {
-        paths.push(currentPath)
-        paths.push(...getParentPaths(item.tokens, currentPath))
+        paths.push({ path: currentPath, label: key, depth })
+        paths.push(...getParentPaths(item.tokens, currentPath, depth + 1))
       }
     }
 
     return paths
   }
 
-  const parentPaths = activeSet ? getParentPaths(activeSet.tokens) : ['']
+  const parentPathItems = activeSet ? getParentPaths(activeSet.tokens) : []
 
   return (
     <div
@@ -180,9 +181,10 @@ export function AddTokenDialog({ isOpen, onClose }: AddTokenDialogProps) {
               onChange={(e) => setParentPath(e.target.value)}
               className="w-full px-3 py-2 bg-bg-secondary border border-border-default rounded font-mono text-sm text-text-primary focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary"
             >
-              {parentPaths.map((path) => (
-                <option key={path} value={path}>
-                  {path || '(root)'}
+              <option value="">(root)</option>
+              {parentPathItems.map((item) => (
+                <option key={item.path} value={item.path}>
+                  {'\u00A0\u00A0'.repeat(item.depth) + (item.depth > 0 ? '\u2514 ' : '') + item.label}
                 </option>
               ))}
             </select>
