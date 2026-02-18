@@ -18,15 +18,18 @@ export function AddTokenDialog({ isOpen, onClose }: AddTokenDialogProps) {
   const activeSet = useTokenStore((state) => state.getActiveTokenSet())
 
   const handleCreate = () => {
-    if (!tokenName || !tokenValue) {
+    const trimmedName = tokenName.trim()
+    const trimmedValue = tokenValue.trim()
+
+    if (!trimmedName || !trimmedValue) {
       alert('Please fill in all required fields')
       return
     }
 
     const tokenData: Partial<Token> = {
-      name: tokenName,
+      name: trimmedName,
       type: tokenType,
-      value: tokenValue,
+      value: trimmedValue,
     }
 
     addToken(parentPath, tokenData)

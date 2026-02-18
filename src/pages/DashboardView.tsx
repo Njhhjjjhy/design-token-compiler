@@ -7,9 +7,11 @@ import { useCallback, useRef } from 'react'
 
 export function DashboardView() {
   const tokenSets = useTokenStore((s) => s.tokenSets)
+  const versions = useTokenStore((s) => s.versions)
   const addTokenSet = useTokenStore((s) => s.addTokenSet)
   const setActiveSet = useTokenStore((s) => s.setActiveSet)
   const setActiveView = useTokenStore((s) => s.setActiveView)
+  const importFile = useTokenStore((s) => s.importFile)
   const fileInputRef = useRef<HTMLInputElement>(null)
 
   const sets = Object.values(tokenSets)
@@ -62,11 +64,12 @@ export function DashboardView() {
         },
       }
       addTokenSet(newSet)
+      importFile(file.name, content)
       setActiveView('sync')
     }
     reader.readAsText(file)
     e.target.value = ''
-  }, [addTokenSet, setActiveView])
+  }, [addTokenSet, importFile, setActiveView])
 
   if (sets.length === 0) {
     return (
@@ -114,7 +117,7 @@ export function DashboardView() {
           <TokenSetCard
             key={tokenSet.id}
             tokenSet={tokenSet}
-            versionCount={0}
+            versionCount={(versions[tokenSet.id] || []).length}
             onEdit={() => navigateTo(tokenSet.id, 'editor')}
             onBrowse={() => navigateTo(tokenSet.id, 'browser')}
             onExport={() => navigateTo(tokenSet.id, 'compiler')}

@@ -26,7 +26,7 @@ export function SyncHeader({
   resolvedCount,
   totalConflicts,
 }: SyncHeaderProps) {
-  const allResolved = totalConflicts > 0 && resolvedCount >= totalConflicts
+  const allResolved = totalConflicts === 0 || resolvedCount >= totalConflicts
   const { stats } = diffResult
 
   return (

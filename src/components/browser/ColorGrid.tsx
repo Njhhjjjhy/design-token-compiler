@@ -66,7 +66,7 @@ export function ColorGrid({ tokens }: ColorGridProps) {
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3">
             {categoryTokens.map(([path, token]) => {
               const value = String(token.resolvedValue)
-              const isValidHex = /^#[0-9a-fA-F]{3,8}$/.test(value)
+              const isValidHex = /^#(?:[0-9a-fA-F]{3}|[0-9a-fA-F]{4}|[0-9a-fA-F]{6}|[0-9a-fA-F]{8})$/.test(value)
               const contrastWhite = isValidHex ? getContrastRatio(value, '#ffffff') : 0
               const contrastBlack = isValidHex ? getContrastRatio(value, '#000000') : 0
               const shortPath = path.split('.').slice(-2).join('.')

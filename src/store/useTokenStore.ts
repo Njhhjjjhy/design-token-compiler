@@ -432,6 +432,11 @@ export const useTokenStore = create<TokenStoreState>()(
           tokenCount: countTokensInTree(tokenSet.tokens),
         }
 
+        const updatedVersions = [...currentVersions, autoSave]
+        if (updatedVersions.length > 50) {
+          updatedVersions.splice(0, updatedVersions.length - 50)
+        }
+
         set({
           tokenSets: {
             ...state.tokenSets,
@@ -443,7 +448,7 @@ export const useTokenStore = create<TokenStoreState>()(
           },
           versions: {
             ...state.versions,
-            [setId]: [...currentVersions, autoSave],
+            [setId]: updatedVersions,
           },
         })
       },

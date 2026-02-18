@@ -15,11 +15,7 @@ function parseTypographyValue(value: unknown): React.CSSProperties {
       letterSpacing: obj.letterSpacing as string | undefined,
     }
   }
-  const str = String(value)
-  if (!str.match(/\d/) && str.length > 0) {
-    return { fontFamily: str }
-  }
-  return { fontFamily: str }
+  return { fontFamily: String(value) }
 }
 
 export function TypographySpecimens({ tokens }: TypographySpecimensProps) {
