@@ -1,4 +1,4 @@
-import { Plus, Upload, Database, Trash2, AlertTriangle, X } from 'lucide-react'
+import { Plus, Upload, Database, Trash2, AlertTriangle } from 'lucide-react'
 import { nanoid } from 'nanoid'
 import { useTokenStore } from '@/store/useTokenStore'
 import { TokenSetCard } from '@/components/dashboard/TokenSetCard'
@@ -7,7 +7,6 @@ import type { TokenSet, ViewMode } from '@/types'
 import { useCallback, useRef, useState } from 'react'
 import { useFocusTrap } from '@/hooks/useFocusTrap'
 
-const WELCOME_DISMISSED_KEY = 'dtc-welcome-dismissed'
 
 export function DashboardView() {
   const tokenSets = useTokenStore((s) => s.tokenSets)
@@ -20,9 +19,6 @@ export function DashboardView() {
   const fileInputRef = useRef<HTMLInputElement>(null)
   const [showClearConfirm, setShowClearConfirm] = useState(false)
   const [showSampleConfirm, setShowSampleConfirm] = useState(false)
-  const [showWelcome, setShowWelcome] = useState(() => {
-    try { return localStorage.getItem(WELCOME_DISMISSED_KEY) !== 'true' } catch { return true }
-  })
   const clearTrap = useFocusTrap(showClearConfirm, () => setShowClearConfirm(false))
   const sampleTrap = useFocusTrap(showSampleConfirm, () => setShowSampleConfirm(false))
 
@@ -79,11 +75,6 @@ export function DashboardView() {
     setShowClearConfirm(false)
   }, [tokenSets, deleteTokenSet])
 
-
-  const handleDismissWelcome = useCallback(() => {
-    setShowWelcome(false)
-    try { localStorage.setItem(WELCOME_DISMISSED_KEY, 'true') } catch { /* ignore */ }
-  }, [])
 
   const handleImportFile = useCallback(() => {
     fileInputRef.current?.click()
@@ -170,27 +161,6 @@ export function DashboardView() {
           </button>
         </div>
       </div>
-
-      {showWelcome && (
-        <div className="mb-6 p-4 bg-surface-elevated border border-border rounded flex items-start gap-4">
-          <div className="flex-1">
-            <p className="font-mono text-sm text-white mb-2">Welcome to Design Token Compiler</p>
-            <p className="font-mono text-xs text-text-secondary leading-relaxed">
-              Manage your design tokens in one place. Select a token set below to browse it,
-              use the Editor to add and modify tokens, the Browser to visualize them,
-              the Compiler to export to CSS/SCSS/TS/Tailwind, and Compare &amp; Merge to sync with external files.
-              Use Ctrl/Cmd+1-5 to switch views quickly.
-            </p>
-          </div>
-          <button
-            onClick={handleDismissWelcome}
-            className="p-1 text-text-tertiary hover:text-white transition-colors flex-shrink-0"
-            aria-label="Dismiss welcome message"
-          >
-            <X className="w-4 h-4" />
-          </button>
-        </div>
-      )}
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4" data-tour="dashboard-grid">
         {sets.map((tokenSet) => (
