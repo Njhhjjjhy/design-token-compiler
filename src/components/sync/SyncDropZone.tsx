@@ -2,6 +2,7 @@ import { useState, useCallback } from 'react'
 import { Upload, AlertTriangle } from 'lucide-react'
 
 const ALLOWED_EXTENSIONS = ['.json', '.css', '.scss']
+const MAX_FILE_SIZE = 5 * 1024 * 1024 // 5 MB
 
 function isAllowedFileType(fileName: string): boolean {
   const lower = fileName.toLowerCase()
@@ -19,6 +20,10 @@ export function SyncDropZone({ onFileLoaded }: SyncDropZoneProps) {
   const handleFile = useCallback((file: File) => {
     if (!isAllowedFileType(file.name)) {
       setFileError(`Unsupported file type. Accepted formats: ${ALLOWED_EXTENSIONS.join(', ')}`)
+      return
+    }
+    if (file.size > MAX_FILE_SIZE) {
+      setFileError(`File too large (${(file.size / 1024 / 1024).toFixed(1)} MB). Maximum size is 5 MB.`)
       return
     }
     setFileError(null)
