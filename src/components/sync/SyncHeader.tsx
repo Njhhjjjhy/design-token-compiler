@@ -55,7 +55,7 @@ export function SyncHeader({
           <button
             onClick={onApply}
             disabled={!allResolved}
-            title={allResolved ? undefined : 'Resolve all conflicts first'}
+            aria-label={allResolved ? 'Apply to editor' : 'Apply to editor (resolve all conflicts first)'}
             className={`
               flex items-center gap-2 px-4 py-2 font-mono text-xs transition-colors
               ${allResolved
@@ -70,7 +70,7 @@ export function SyncHeader({
           <button
             onClick={onExport}
             disabled={!allResolved}
-            title={allResolved ? undefined : 'Resolve all conflicts first'}
+            aria-label={allResolved ? 'Export merged' : 'Export merged (resolve all conflicts first)'}
             className={`
               flex items-center gap-2 px-4 py-2 font-mono text-xs transition-colors
               ${allResolved
@@ -133,7 +133,7 @@ export function SyncHeader({
 
           {/* Batch resolution */}
           {totalConflicts > 0 && !allResolved && (
-            <div className="flex gap-1 ml-2">
+            <div className="flex gap-1 ml-2" role="group" aria-label="Batch conflict resolution">
               <button
                 onClick={() => onResolveAll('editor')}
                 className="px-2 py-0.5 font-mono text-mini text-text-tertiary hover:text-white hover:bg-white/5 rounded transition-colors"

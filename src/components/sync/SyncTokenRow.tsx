@@ -74,7 +74,10 @@ export function SyncTokenRow({
           {editorToken ? (
             <>
               {renderPreview(editorToken)}
-              <span className={`font-mono text-xs truncate ${resolution === 'imported' ? 'line-through text-text-tertiary' : 'text-white'}`}>
+              <span
+                className={`font-mono text-xs truncate ${resolution === 'imported' ? 'line-through text-text-tertiary' : 'text-white'}`}
+                {...(resolution === 'imported' ? { 'aria-label': `${editorToken.value} (discarded)` } : {})}
+              >
                 {editorToken.value}
               </span>
             </>
@@ -90,7 +93,7 @@ export function SyncTokenRow({
             <>
               <button
                 onClick={() => onResolve(path, 'editor')}
-                className={`flex items-center gap-1 px-1.5 py-0.5 rounded font-mono text-mini transition-colors ${
+                className={`flex items-center gap-1 px-1.5 py-0.5 rounded font-mono text-mini transition-colors focus:ring-2 focus:ring-primary ${
                   resolution === 'editor'
                     ? 'bg-info/20 text-info'
                     : 'text-text-tertiary hover:text-white hover:bg-white/5'
@@ -102,7 +105,7 @@ export function SyncTokenRow({
               </button>
               <button
                 onClick={() => onResolve(path, 'imported')}
-                className={`flex items-center gap-1 px-1.5 py-0.5 rounded font-mono text-mini transition-colors ${
+                className={`flex items-center gap-1 px-1.5 py-0.5 rounded font-mono text-mini transition-colors focus:ring-2 focus:ring-primary ${
                   resolution === 'imported'
                     ? 'bg-primary/20 text-primary'
                     : 'text-text-tertiary hover:text-white hover:bg-white/5'
@@ -118,7 +121,7 @@ export function SyncTokenRow({
             <>
               <button
                 onClick={() => onResolve(path, 'editor')}
-                className={`flex items-center gap-1 px-1.5 py-0.5 rounded font-mono text-mini transition-colors ${
+                className={`flex items-center gap-1 px-1.5 py-0.5 rounded font-mono text-mini transition-colors focus:ring-2 focus:ring-primary ${
                   resolution === 'editor'
                     ? 'bg-success/20 text-success'
                     : 'text-text-tertiary hover:text-white hover:bg-white/5'
@@ -130,7 +133,7 @@ export function SyncTokenRow({
               </button>
               <button
                 onClick={() => onResolve(path, 'discard')}
-                className={`flex items-center gap-1 px-1.5 py-0.5 rounded font-mono text-mini transition-colors ${
+                className={`flex items-center gap-1 px-1.5 py-0.5 rounded font-mono text-mini transition-colors focus:ring-2 focus:ring-primary ${
                   resolution === 'discard'
                     ? 'bg-error/20 text-error'
                     : 'text-text-tertiary hover:text-white hover:bg-white/5'
@@ -146,7 +149,7 @@ export function SyncTokenRow({
             <>
               <button
                 onClick={() => onResolve(path, 'add')}
-                className={`flex items-center gap-1 px-1.5 py-0.5 rounded font-mono text-mini transition-colors ${
+                className={`flex items-center gap-1 px-1.5 py-0.5 rounded font-mono text-mini transition-colors focus:ring-2 focus:ring-primary ${
                   resolution === 'add'
                     ? 'bg-success/20 text-success'
                     : 'text-text-tertiary hover:text-white hover:bg-white/5'
@@ -158,7 +161,7 @@ export function SyncTokenRow({
               </button>
               <button
                 onClick={() => onResolve(path, 'discard')}
-                className={`flex items-center gap-1 px-1.5 py-0.5 rounded font-mono text-mini transition-colors ${
+                className={`flex items-center gap-1 px-1.5 py-0.5 rounded font-mono text-mini transition-colors focus:ring-2 focus:ring-primary ${
                   resolution === 'discard'
                     ? 'bg-error/20 text-error'
                     : 'text-text-tertiary hover:text-white hover:bg-white/5'
@@ -176,7 +179,7 @@ export function SyncTokenRow({
           {resolution && onUnresolve && (
             <button
               onClick={() => onUnresolve(path)}
-              className="ml-1 p-0.5 rounded text-text-tertiary hover:text-white hover:bg-white/5 transition-colors"
+              className="ml-1 p-0.5 rounded text-text-tertiary hover:text-white hover:bg-white/5 transition-colors focus:ring-2 focus:ring-primary"
               aria-label="Undo resolution"
               title="Undo"
             >
@@ -191,7 +194,10 @@ export function SyncTokenRow({
           {fileToken ? (
             <>
               {renderPreview(fileToken)}
-              <span className={`font-mono text-xs truncate ${resolution === 'editor' ? 'line-through text-text-tertiary' : 'text-white'}`}>
+              <span
+                className={`font-mono text-xs truncate ${resolution === 'editor' ? 'line-through text-text-tertiary' : 'text-white'}`}
+                {...(resolution === 'editor' ? { 'aria-label': `${fileToken.value} (discarded)` } : {})}
+              >
                 {fileToken.value}
               </span>
             </>

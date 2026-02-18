@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react'
+import { useState, useCallback, useRef } from 'react'
 import { Upload, AlertTriangle, Loader2 } from 'lucide-react'
 
 const ALLOWED_EXTENSIONS = ['.json', '.css', '.scss']
@@ -17,6 +17,7 @@ export function SyncDropZone({ onFileLoaded }: SyncDropZoneProps) {
   const [isDragging, setIsDragging] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
   const [fileError, setFileError] = useState<string | null>(null)
+  const fileInputRef = useRef<HTMLInputElement>(null)
 
   const handleFile = useCallback((file: File) => {
     if (!isAllowedFileType(file.name)) {
@@ -71,7 +72,16 @@ export function SyncDropZone({ onFileLoaded }: SyncDropZoneProps) {
         onDrop={handleDrop}
         onDragOver={handleDragOver}
         onDragLeave={handleDragLeave}
+        tabIndex={0}
+        role="button"
+        aria-label="Drop a file to compare, or press Enter to browse"
         aria-busy={isLoading}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault()
+            fileInputRef.current?.click()
+          }
+        }}
         className={`
           w-full max-w-lg p-12 border-2 border-dashed rounded-lg text-center transition-colors
           ${isDragging
@@ -81,12 +91,12 @@ export function SyncDropZone({ onFileLoaded }: SyncDropZoneProps) {
         `}
       >
         {isLoading ? (
-          <>
+          <div aria-live="polite">
             <Loader2 className="w-10 h-10 mx-auto mb-4 text-primary animate-spin" aria-hidden="true" />
             <p className="font-mono text-sm text-white mb-2">
               Parsing file...
             </p>
-          </>
+          </div>
         ) : (
           <>
             <Upload className={`w-10 h-10 mx-auto mb-4 ${isDragging ? 'text-primary' : 'text-text-tertiary'}`} />
@@ -99,13 +109,15 @@ export function SyncDropZone({ onFileLoaded }: SyncDropZoneProps) {
               or click to browse
             </p>
 
-            <label className="inline-flex items-center gap-2 px-4 py-2 bg-surface-elevated border border-border hover:border-primary transition-colors font-mono text-xs text-white cursor-pointer">
+            <label htmlFor="sync-file-input" className="inline-flex items-center gap-2 px-4 py-2 bg-surface-elevated border border-border hover:border-primary transition-colors font-mono text-xs text-white cursor-pointer">
               Choose File
               <input
+                ref={fileInputRef}
+                id="sync-file-input"
                 type="file"
                 accept=".json,.css,.scss"
                 onChange={handleFileInput}
-                className="hidden"
+                className="sr-only"
               />
             </label>
 
