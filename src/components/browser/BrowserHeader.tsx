@@ -63,17 +63,26 @@ export function BrowserHeader({
             value={searchQuery}
             onChange={(e) => onSearchChange(e.target.value)}
             placeholder="Filter tokens..."
+            aria-label="Filter tokens"
             className="w-full pl-9 pr-3 py-1.5 bg-surface-sunken border border-border font-mono text-xs text-white placeholder:text-text-tertiary focus:outline-none focus:border-primary transition-colors"
           />
         </div>
       </div>
-      <div className="flex border-b border-border bg-surface overflow-x-auto" role="tablist">
-        {tabs.map((tab) => (
+      <div className="flex border-b border-border bg-surface overflow-x-auto" role="tablist" aria-label="Token categories">
+        {tabs.map((tab, index) => (
           <button
             key={tab.id}
+            id={`browser-tab-${tab.id}`}
             role="tab"
             aria-selected={activeTab === tab.id}
+            aria-controls={`browser-tabpanel-${tab.id}`}
+            tabIndex={activeTab === tab.id ? 0 : -1}
             onClick={() => onTabChange(tab.id)}
+            onKeyDown={(e) => {
+              const tabIds = tabs.map(t => t.id)
+              if (e.key === 'ArrowRight') { e.preventDefault(); onTabChange(tabIds[(index + 1) % tabIds.length]) }
+              else if (e.key === 'ArrowLeft') { e.preventDefault(); onTabChange(tabIds[(index - 1 + tabIds.length) % tabIds.length]) }
+            }}
             className={`relative px-6 py-3 font-mono text-xs tracking-wider transition-colors whitespace-nowrap ${
               activeTab === tab.id ? 'text-primary' : 'text-text-secondary hover:text-white'
             }`}

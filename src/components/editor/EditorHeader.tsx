@@ -34,7 +34,7 @@ export function EditorHeader({
   const hasModes = modeEntries.length > 0
 
   return (
-    <div className="pb-6 border-b border-border-default">
+    <div className="pb-6 border-b border-border">
       <div className="flex items-center justify-between">
       <div className="flex items-center gap-4">
         <h2 className="section-title text-primary">TOKEN EDITOR</h2>
@@ -104,6 +104,7 @@ export function EditorHeader({
             value={searchQuery}
             onChange={(e) => onSearchChange(e.target.value)}
             placeholder="Filter tokens..."
+            aria-label="Filter tokens"
             className="w-full pl-9 pr-3 py-1.5 bg-surface-sunken border border-border font-mono text-xs text-white placeholder:text-text-tertiary focus:outline-none focus:border-primary transition-colors"
           />
         </div>

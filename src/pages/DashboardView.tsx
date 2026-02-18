@@ -4,7 +4,8 @@ import { useTokenStore } from '@/store/useTokenStore'
 import { TokenSetCard } from '@/components/dashboard/TokenSetCard'
 import { createSampleDesignSystem } from '@/lib/sample-data'
 import type { TokenSet, ViewMode } from '@/types'
-import { useCallback, useRef, useState, useEffect } from 'react'
+import { useCallback, useRef, useState } from 'react'
+import { useFocusTrap } from '@/hooks/useFocusTrap'
 
 const WELCOME_DISMISSED_KEY = 'dtc-welcome-dismissed'
 
@@ -22,8 +23,8 @@ export function DashboardView() {
   const [showWelcome, setShowWelcome] = useState(() => {
     try { return localStorage.getItem(WELCOME_DISMISSED_KEY) !== 'true' } catch { return true }
   })
-  const clearConfirmRef = useRef<HTMLButtonElement>(null)
-  const sampleConfirmRef = useRef<HTMLButtonElement>(null)
+  const clearTrap = useFocusTrap(showClearConfirm, () => setShowClearConfirm(false))
+  const sampleTrap = useFocusTrap(showSampleConfirm, () => setShowSampleConfirm(false))
 
   const sets = Object.values(tokenSets)
 
@@ -78,18 +79,6 @@ export function DashboardView() {
     setShowClearConfirm(false)
   }, [tokenSets, deleteTokenSet])
 
-  // Focus the confirm button when modals open
-  useEffect(() => {
-    if (showClearConfirm && clearConfirmRef.current) {
-      clearConfirmRef.current.focus()
-    }
-  }, [showClearConfirm])
-
-  useEffect(() => {
-    if (showSampleConfirm && sampleConfirmRef.current) {
-      sampleConfirmRef.current.focus()
-    }
-  }, [showSampleConfirm])
 
   const handleDismissWelcome = useCallback(() => {
     setShowWelcome(false)
@@ -224,15 +213,15 @@ export function DashboardView() {
       {showClearConfirm && (
         <div
           className="fixed inset-0 bg-black/50 flex items-center justify-center z-50"
-          onClick={() => setShowClearConfirm(false)}
-          onKeyDown={(e) => { if (e.key === 'Escape') setShowClearConfirm(false) }}
+          onClick={(e) => { if (e.target === e.currentTarget) setShowClearConfirm(false) }}
         >
           <div
+            ref={clearTrap.dialogRef}
             role="dialog"
             aria-modal="true"
             aria-labelledby="clear-confirm-title"
-            className="bg-bg-primary border border-border-default rounded-lg p-6 w-full max-w-sm"
-            onClick={(e) => e.stopPropagation()}
+            className="bg-surface border border-border rounded-lg p-6 w-full max-w-sm"
+            onKeyDown={clearTrap.handleKeyDown}
           >
             <div className="flex items-center gap-3 mb-4">
               <div className="w-10 h-10 rounded-full bg-red-500/10 flex items-center justify-center flex-shrink-0">
@@ -253,7 +242,6 @@ export function DashboardView() {
                 Cancel
               </button>
               <button
-                ref={clearConfirmRef}
                 onClick={handleConfirmClear}
                 className="px-4 py-2 bg-red-600 hover:bg-red-500 text-white font-mono text-xs rounded transition-colors"
               >
@@ -268,15 +256,15 @@ export function DashboardView() {
       {showSampleConfirm && (
         <div
           className="fixed inset-0 bg-black/50 flex items-center justify-center z-50"
-          onClick={() => setShowSampleConfirm(false)}
-          onKeyDown={(e) => { if (e.key === 'Escape') setShowSampleConfirm(false) }}
+          onClick={(e) => { if (e.target === e.currentTarget) setShowSampleConfirm(false) }}
         >
           <div
+            ref={sampleTrap.dialogRef}
             role="dialog"
             aria-modal="true"
             aria-labelledby="sample-confirm-title"
-            className="bg-bg-primary border border-border-default rounded-lg p-6 w-full max-w-sm"
-            onClick={(e) => e.stopPropagation()}
+            className="bg-surface border border-border rounded-lg p-6 w-full max-w-sm"
+            onKeyDown={sampleTrap.handleKeyDown}
           >
             <div className="flex items-center gap-3 mb-4">
               <div className="w-10 h-10 rounded-full bg-warning/10 flex items-center justify-center flex-shrink-0">
@@ -297,7 +285,6 @@ export function DashboardView() {
                 Cancel
               </button>
               <button
-                ref={sampleConfirmRef}
                 onClick={handleConfirmLoadSample}
                 className="px-4 py-2 bg-primary hover:bg-primary/90 text-white font-mono text-xs rounded transition-colors"
               >

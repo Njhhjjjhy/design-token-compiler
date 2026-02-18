@@ -1,4 +1,5 @@
-import { useState, useRef, useEffect, useCallback } from 'react'
+import { useState, useRef, useEffect } from 'react'
+import { useFocusTrap } from '@/hooks/useFocusTrap'
 import { Trash2, Check, AlertTriangle } from 'lucide-react'
 import type { Token, TokenValue } from '@/types'
 import { useTokenStore } from '@/store/useTokenStore'
@@ -49,7 +50,7 @@ export function TokenValueNode({ token, depth, activeMode, modeOverrides }: Toke
   const cancelledRef = useRef(false)
   const savedViaEnterRef = useRef(false)
   const saveTimerRef = useRef<ReturnType<typeof setTimeout>>()
-  const deleteConfirmRef = useRef<HTMLButtonElement>(null)
+  const deleteTrap = useFocusTrap(showDeleteConfirm, () => setShowDeleteConfirm(false))
   const updateToken = useTokenStore((state) => state.updateToken)
   const deleteToken = useTokenStore((state) => state.deleteToken)
   const updateModeOverride = useTokenStore((state) => state.updateModeOverride)
@@ -159,12 +160,6 @@ export function TokenValueNode({ token, depth, activeMode, modeOverrides }: Toke
     return () => clearTimeout(saveTimerRef.current)
   }, [])
 
-  // Focus the confirm button when delete modal opens
-  useEffect(() => {
-    if (showDeleteConfirm && deleteConfirmRef.current) {
-      deleteConfirmRef.current.focus()
-    }
-  }, [showDeleteConfirm])
 
   // Render color swatch for color tokens
   const renderPreview = () => {
@@ -175,7 +170,8 @@ export function TokenValueNode({ token, depth, activeMode, modeOverrides }: Toke
         return (
           <div
             className="w-4 h-4 rounded border border-dashed border-amber-600"
-            title="Unresolved reference"
+            role="img"
+            aria-label="Unresolved color reference"
           />
         )
       }
@@ -183,6 +179,8 @@ export function TokenValueNode({ token, depth, activeMode, modeOverrides }: Toke
         <div
           className="w-4 h-4 rounded border border-gray-600"
           style={{ backgroundColor: previewValue }}
+          role="img"
+          aria-label={`Color: ${previewValue}`}
         />
       )
     }
@@ -195,6 +193,8 @@ export function TokenValueNode({ token, depth, activeMode, modeOverrides }: Toke
         <div
           className="h-3 bg-gray-500 rounded"
           style={{ width: `${barWidth}px` }}
+          role="img"
+          aria-label={`Spacing: ${previewValue}`}
         />
       )
     }
@@ -204,11 +204,12 @@ export function TokenValueNode({ token, depth, activeMode, modeOverrides }: Toke
 
   return (
     <div
+      role="treeitem"
       className="group flex items-center gap-3 py-2 hover:bg-white/5 transition-colors"
       style={{ paddingLeft: `${paddingLeft}px` }}
     >
       {/* Token Name */}
-      <span className="font-mono text-sm text-text-primary min-w-[120px]">
+      <span className="font-mono text-sm text-white min-w-[120px]">
         {token.name}
       </span>
 
@@ -238,15 +239,17 @@ export function TokenValueNode({ token, depth, activeMode, modeOverrides }: Toke
             onBlur={handleEditSave}
             onKeyDown={handleKeyDown}
             aria-invalid={isInvalid}
+            aria-label={`Edit value for ${token.name}`}
+            aria-describedby={isInvalid ? `error-${token.id}` : undefined}
             placeholder="Value or {reference.path}"
-            className={`w-full px-2 py-1 font-mono text-sm bg-bg-secondary border rounded focus:outline-none focus:ring-1 ${
+            className={`w-full px-2 py-1 font-mono text-sm bg-surface-elevated border rounded focus:outline-none focus:ring-1 ${
               isInvalid
                 ? 'border-red-500 focus:ring-red-500'
-                : 'border-border-default focus:border-primary focus:ring-primary'
+                : 'border-border focus:border-primary focus:ring-primary'
             }`}
           />
           {isInvalid && (
-            <p className="font-mono text-xs text-error mt-1">Value cannot be empty</p>
+            <p id={`error-${token.id}`} role="alert" className="font-mono text-xs text-error mt-1">Value cannot be empty</p>
           )}
         </div>
       ) : (
@@ -292,15 +295,15 @@ export function TokenValueNode({ token, depth, activeMode, modeOverrides }: Toke
       {showDeleteConfirm && (
         <div
           className="fixed inset-0 bg-black/50 flex items-center justify-center z-50"
-          onClick={() => setShowDeleteConfirm(false)}
-          onKeyDown={(e) => { if (e.key === 'Escape') setShowDeleteConfirm(false) }}
+          onClick={(e) => { if (e.target === e.currentTarget) setShowDeleteConfirm(false) }}
         >
           <div
+            ref={deleteTrap.dialogRef}
             role="dialog"
             aria-modal="true"
             aria-labelledby="delete-token-confirm-title"
-            className="bg-bg-primary border border-border-default rounded-lg p-6 w-full max-w-sm"
-            onClick={(e) => e.stopPropagation()}
+            className="bg-surface border border-border rounded-lg p-6 w-full max-w-sm"
+            onKeyDown={deleteTrap.handleKeyDown}
           >
             <div className="flex items-center gap-3 mb-4">
               <div className="w-10 h-10 rounded-full bg-red-500/10 flex items-center justify-center flex-shrink-0">
@@ -321,7 +324,6 @@ export function TokenValueNode({ token, depth, activeMode, modeOverrides }: Toke
                 Cancel
               </button>
               <button
-                ref={deleteConfirmRef}
                 onClick={handleConfirmDelete}
                 className="px-4 py-2 bg-red-600 hover:bg-red-500 text-white font-mono text-xs rounded transition-colors"
               >

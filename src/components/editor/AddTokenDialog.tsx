@@ -1,7 +1,8 @@
-import { useState, useRef, useEffect, useCallback } from 'react'
+import { useState } from 'react'
 import { X } from 'lucide-react'
 import type { TokenType, Token, TokenGroup } from '@/types'
 import { useTokenStore } from '@/store/useTokenStore'
+import { useFocusTrap } from '@/hooks/useFocusTrap'
 
 interface AddTokenDialogProps {
   isOpen: boolean
@@ -14,49 +15,19 @@ export function AddTokenDialog({ isOpen, onClose }: AddTokenDialogProps) {
   const [tokenType, setTokenType] = useState<TokenType>('color')
   const [tokenValue, setTokenValue] = useState('')
   const [isSubmitting, setIsSubmitting] = useState(false)
-  const dialogRef = useRef<HTMLDivElement>(null)
 
   const addToken = useTokenStore((state) => state.addToken)
   const activeSet = useTokenStore((state) => state.getActiveTokenSet())
 
-  // Focus trap and Escape key handler
-  const handleKeyDown = useCallback((e: React.KeyboardEvent) => {
-    if (e.key === 'Escape') {
-      e.stopPropagation()
-      handleCancel()
-      return
-    }
+  const handleCancel = () => {
+    setParentPath('')
+    setTokenName('')
+    setTokenType('color')
+    setTokenValue('')
+    onClose()
+  }
 
-    if (e.key === 'Tab' && dialogRef.current) {
-      const focusable = dialogRef.current.querySelectorAll<HTMLElement>(
-        'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
-      )
-      if (focusable.length === 0) return
-
-      const first = focusable[0]
-      const last = focusable[focusable.length - 1]
-
-      if (e.shiftKey) {
-        if (document.activeElement === first) {
-          e.preventDefault()
-          last.focus()
-        }
-      } else {
-        if (document.activeElement === last) {
-          e.preventDefault()
-          first.focus()
-        }
-      }
-    }
-  }, [])
-
-  // Auto-focus the first input when dialog opens
-  useEffect(() => {
-    if (isOpen && dialogRef.current) {
-      const firstInput = dialogRef.current.querySelector<HTMLElement>('select, input')
-      firstInput?.focus()
-    }
-  }, [isOpen])
+  const { dialogRef, handleKeyDown } = useFocusTrap(isOpen, handleCancel)
 
   // Check if a sibling with the same name exists at the target path
   const getSiblingsAtPath = (path: string): Record<string, Token | TokenGroup> => {
@@ -109,15 +80,6 @@ export function AddTokenDialog({ isOpen, onClose }: AddTokenDialogProps) {
     onClose()
   }
 
-  const handleCancel = () => {
-    // Reset form and close
-    setParentPath('')
-    setTokenName('')
-    setTokenType('color')
-    setTokenValue('')
-    onClose()
-  }
-
   if (!isOpen) return null
 
   // Get available parent paths from token set with depth info for visual hierarchy
@@ -144,20 +106,19 @@ export function AddTokenDialog({ isOpen, onClose }: AddTokenDialogProps) {
   return (
     <div
       className="fixed inset-0 bg-black/50 flex items-center justify-center z-50"
-      onClick={handleCancel}
+      onClick={(e) => { if (e.target === e.currentTarget) handleCancel() }}
     >
       <div
         ref={dialogRef}
         role="dialog"
         aria-modal="true"
         aria-labelledby="add-token-dialog-title"
-        className="bg-bg-primary border border-border-default rounded-lg p-6 w-full max-w-md"
-        onClick={(e) => e.stopPropagation()}
+        className="bg-surface border border-border rounded-lg p-6 w-full max-w-md"
         onKeyDown={handleKeyDown}
       >
         {/* Header */}
         <div className="flex items-center justify-between mb-6">
-          <h3 id="add-token-dialog-title" className="font-mono text-lg font-semibold text-text-primary">
+          <h3 id="add-token-dialog-title" className="font-mono text-lg font-semibold text-white">
             Add Token
           </h3>
           <button
@@ -179,7 +140,7 @@ export function AddTokenDialog({ isOpen, onClose }: AddTokenDialogProps) {
             <select
               value={parentPath}
               onChange={(e) => setParentPath(e.target.value)}
-              className="w-full px-3 py-2 bg-bg-secondary border border-border-default rounded font-mono text-sm text-text-primary focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary"
+              className="w-full px-3 py-2 bg-surface-elevated border border-border rounded font-mono text-sm text-white focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary"
             >
               <option value="">(root)</option>
               {parentPathItems.map((item) => (
@@ -200,14 +161,17 @@ export function AddTokenDialog({ isOpen, onClose }: AddTokenDialogProps) {
               value={tokenName}
               onChange={(e) => setTokenName(e.target.value)}
               placeholder="e.g., primary-dark"
-              className={`w-full px-3 py-2 bg-bg-secondary border rounded font-mono text-sm text-text-primary placeholder:text-text-tertiary focus:outline-none focus:ring-1 ${
+              aria-required="true"
+              aria-invalid={isDuplicate}
+              aria-describedby={isDuplicate ? 'duplicate-error' : undefined}
+              className={`w-full px-3 py-2 bg-surface-elevated border rounded font-mono text-sm text-white placeholder:text-text-tertiary focus:outline-none focus:ring-1 ${
                 isDuplicate
                   ? 'border-red-500 focus:ring-red-500 focus:border-red-500'
-                  : 'border-border-default focus:ring-primary focus:border-primary'
+                  : 'border-border focus:ring-primary focus:border-primary'
               }`}
             />
             {isDuplicate && (
-              <p className="mt-1 font-mono text-xs text-red-400">
+              <p id="duplicate-error" role="alert" className="mt-1 font-mono text-xs text-red-400">
                 A token named "{trimmedName}" already exists at this path.
               </p>
             )}
@@ -221,7 +185,7 @@ export function AddTokenDialog({ isOpen, onClose }: AddTokenDialogProps) {
             <select
               value={tokenType}
               onChange={(e) => setTokenType(e.target.value as TokenType)}
-              className="w-full px-3 py-2 bg-bg-secondary border border-border-default rounded font-mono text-sm text-text-primary focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary"
+              className="w-full px-3 py-2 bg-surface-elevated border border-border rounded font-mono text-sm text-white focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary"
             >
               <option value="color">Color</option>
               <option value="dimension">Spacing</option>
@@ -245,7 +209,7 @@ export function AddTokenDialog({ isOpen, onClose }: AddTokenDialogProps) {
               value={tokenValue}
               onChange={(e) => setTokenValue(e.target.value)}
               placeholder="e.g., #1a1a1a or {color.primary}"
-              className="w-full px-3 py-2 bg-bg-secondary border border-border-default rounded font-mono text-sm text-text-primary placeholder:text-text-tertiary focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary"
+              className="w-full px-3 py-2 bg-surface-elevated border border-border rounded font-mono text-sm text-white placeholder:text-text-tertiary focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary"
             />
             <p className="mt-1.5 font-mono text-xs text-text-tertiary">
               Use <span className="text-text-secondary">{'{group.token}'}</span> syntax to reference another token's value.

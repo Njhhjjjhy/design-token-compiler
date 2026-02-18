@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from 'react'
+import { useFocusTrap } from '@/hooks/useFocusTrap'
 import { X, Save, Check, AlertTriangle } from 'lucide-react'
 import { useTokenStore } from '@/store/useTokenStore'
 import { VersionEntry } from './VersionEntry'
@@ -13,7 +14,7 @@ export function VersionPanel({ isOpen, onClose }: VersionPanelProps) {
   const [justSaved, setJustSaved] = useState(false)
   const [confirmAction, setConfirmAction] = useState<{ type: 'restore' | 'delete'; versionId: string } | null>(null)
   const saveTimerRef = useRef<ReturnType<typeof setTimeout>>()
-  const confirmBtnRef = useRef<HTMLButtonElement>(null)
+  const confirmTrap = useFocusTrap(!!confirmAction, () => setConfirmAction(null))
   const activeSetId = useTokenStore((s) => s.activeSetId)
   const versions = useTokenStore((s) => s.getVersionsForActiveSet())
   const saveVersion = useTokenStore((s) => s.saveVersion)
@@ -24,11 +25,6 @@ export function VersionPanel({ isOpen, onClose }: VersionPanelProps) {
     return () => clearTimeout(saveTimerRef.current)
   }, [])
 
-  useEffect(() => {
-    if (confirmAction && confirmBtnRef.current) {
-      confirmBtnRef.current.focus()
-    }
-  }, [confirmAction])
 
   if (!isOpen) return null
 
@@ -78,6 +74,7 @@ export function VersionPanel({ isOpen, onClose }: VersionPanelProps) {
             value={versionName}
             onChange={(e) => setVersionName(e.target.value)}
             placeholder="Version name (optional)"
+            aria-label="Version name"
             className="flex-1 px-3 py-1.5 bg-surface-elevated border border-border font-mono text-xs text-white placeholder:text-text-tertiary focus:border-primary focus:outline-none"
             onKeyDown={(e) => e.key === 'Enter' && handleSave()}
           />
@@ -125,15 +122,15 @@ export function VersionPanel({ isOpen, onClose }: VersionPanelProps) {
       {confirmAction && (
         <div
           className="fixed inset-0 bg-black/50 flex items-center justify-center z-[60]"
-          onClick={() => setConfirmAction(null)}
-          onKeyDown={(e) => { if (e.key === 'Escape') setConfirmAction(null) }}
+          onClick={(e) => { if (e.target === e.currentTarget) setConfirmAction(null) }}
         >
           <div
+            ref={confirmTrap.dialogRef}
             role="dialog"
             aria-modal="true"
             aria-labelledby="version-confirm-title"
-            className="bg-bg-primary border border-border-default rounded-lg p-6 w-full max-w-sm"
-            onClick={(e) => e.stopPropagation()}
+            className="bg-surface border border-border rounded-lg p-6 w-full max-w-sm"
+            onKeyDown={confirmTrap.handleKeyDown}
           >
             <div className="flex items-center gap-3 mb-4">
               <div className={`w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 ${
@@ -160,7 +157,6 @@ export function VersionPanel({ isOpen, onClose }: VersionPanelProps) {
                 Cancel
               </button>
               <button
-                ref={confirmBtnRef}
                 onClick={handleConfirm}
                 className={`px-4 py-2 text-white font-mono text-xs rounded transition-colors ${
                   confirmAction.type === 'delete'

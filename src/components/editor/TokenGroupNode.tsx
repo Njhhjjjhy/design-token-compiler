@@ -56,7 +56,7 @@ export function TokenGroupNode({ group, groupKey, depth, activeMode, modeOverrid
   }, [groupPath])
 
   return (
-    <div>
+    <div role="treeitem" aria-expanded={isExpanded}>
       {/* Group Header */}
       <button
         onClick={toggleExpand}
@@ -69,7 +69,7 @@ export function TokenGroupNode({ group, groupKey, depth, activeMode, modeOverrid
             isExpanded ? 'rotate-90' : ''
           }`}
         />
-        <span className="font-mono text-sm font-semibold text-text-primary">
+        <span className="font-mono text-sm font-semibold text-white">
           {groupKey}
         </span>
         <span className="text-xs text-text-tertiary font-mono">
@@ -79,7 +79,7 @@ export function TokenGroupNode({ group, groupKey, depth, activeMode, modeOverrid
 
       {/* Children (when expanded) */}
       {isExpanded && (
-        <div>
+        <div role="group">
           {Object.entries(group.tokens).map(([key, item]) => (
             <TokenTreeNode
               key={key}
