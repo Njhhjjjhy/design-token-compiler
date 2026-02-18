@@ -1,5 +1,5 @@
-import { useState } from 'react'
-import { X, Save } from 'lucide-react'
+import { useState, useRef, useEffect } from 'react'
+import { X, Save, Check } from 'lucide-react'
 import { useTokenStore } from '@/store/useTokenStore'
 import { VersionEntry } from './VersionEntry'
 
@@ -10,17 +10,26 @@ interface VersionPanelProps {
 
 export function VersionPanel({ isOpen, onClose }: VersionPanelProps) {
   const [versionName, setVersionName] = useState('')
+  const [justSaved, setJustSaved] = useState(false)
+  const saveTimerRef = useRef<ReturnType<typeof setTimeout>>()
   const activeSetId = useTokenStore((s) => s.activeSetId)
   const versions = useTokenStore((s) => s.getVersionsForActiveSet())
   const saveVersion = useTokenStore((s) => s.saveVersion)
   const restoreVersion = useTokenStore((s) => s.restoreVersion)
   const deleteVersion = useTokenStore((s) => s.deleteVersion)
 
+  useEffect(() => {
+    return () => clearTimeout(saveTimerRef.current)
+  }, [])
+
   if (!isOpen) return null
 
   const handleSave = () => {
     saveVersion(versionName.trim() || undefined)
     setVersionName('')
+    setJustSaved(true)
+    clearTimeout(saveTimerRef.current)
+    saveTimerRef.current = setTimeout(() => setJustSaved(false), 1500)
   }
 
   const handleRestore = (versionId: string) => {
@@ -61,6 +70,15 @@ export function VersionPanel({ isOpen, onClose }: VersionPanelProps) {
             SAVE
           </button>
         </div>
+        <span
+          className={`flex items-center gap-1 mt-1.5 font-mono text-xs text-success transition-opacity duration-300 ${
+            justSaved ? 'opacity-100' : 'opacity-0'
+          }`}
+          aria-live="polite"
+        >
+          <Check className="w-3 h-3" />
+          Version saved
+        </span>
       </div>
 
       <div className="flex-1 overflow-auto">
