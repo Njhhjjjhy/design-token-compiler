@@ -25,6 +25,7 @@ export function TokenGroupNode({ group, groupKey, depth, activeMode, modeOverrid
       {/* Group Header */}
       <button
         onClick={toggleExpand}
+        aria-expanded={isExpanded}
         className="w-full flex items-center gap-2 py-2 hover:bg-white/5 transition-colors text-left"
         style={{ paddingLeft: `${paddingLeft}px` }}
       >
