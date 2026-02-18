@@ -1,4 +1,5 @@
 import type { ResolvedToken } from '@/types'
+import { CopyableValue } from './CopyableValue'
 
 interface TypographySpecimensProps {
   tokens: [string, ResolvedToken][]
@@ -63,10 +64,10 @@ export function TypographySpecimens({ tokens }: TypographySpecimensProps) {
             <div className="flex flex-wrap gap-x-4 gap-y-1">
               {properties.length > 0 ? (
                 properties.map((prop) => (
-                  <span key={prop} className="font-mono text-xs text-text-tertiary">{prop}</span>
+                  <CopyableValue key={prop} value={prop.split(': ')[1] || prop} className="font-mono text-xs text-text-tertiary">{prop}</CopyableValue>
                 ))
               ) : (
-                <span className="font-mono text-xs text-text-tertiary">{rawValue}</span>
+                <CopyableValue value={rawValue} className="font-mono text-xs text-text-tertiary" />
               )}
             </div>
           </div>

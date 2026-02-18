@@ -1,4 +1,5 @@
 import type { ResolvedToken } from '@/types'
+import { CopyableValue } from './CopyableValue'
 
 interface SpacingScaleProps {
   tokens: [string, ResolvedToken][]
@@ -52,7 +53,7 @@ export function SpacingScale({ tokens }: SpacingScaleProps) {
             <div className="flex-1">
               <div className="h-4 bg-primary/30 border border-primary/50 rounded-sm" style={{ width: `${widthPercent}%` }} />
             </div>
-            <span className="font-mono text-xs text-white min-w-[60px] text-right">{value}</span>
+            <CopyableValue value={value} className="font-mono text-xs text-white min-w-[60px] text-right" />
             {!value.endsWith('px') && (
               <span className="font-mono text-xs text-text-tertiary min-w-[50px] text-right">{px}px</span>
             )}

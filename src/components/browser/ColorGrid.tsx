@@ -1,4 +1,5 @@
 import type { ResolvedToken } from '@/types'
+import { CopyableValue } from './CopyableValue'
 
 interface ColorGridProps {
   tokens: [string, ResolvedToken][]
@@ -76,7 +77,7 @@ export function ColorGrid({ tokens }: ColorGridProps) {
                   <div className="h-20 border-b border-border-subtle" style={{ backgroundColor: isValidHex ? value : '#000' }} />
                   <div className="p-2.5">
                     <p className="font-mono text-xs text-white truncate" title={path}>{shortPath}</p>
-                    <p className="font-mono text-xs text-text-secondary mt-0.5">{value}</p>
+                    <CopyableValue value={value} className="font-mono text-xs text-text-secondary mt-0.5 block" />
                     {isValidHex && (
                       <div className="flex gap-2 mt-1.5">
                         <span className={`font-mono text-xs ${contrastWhite >= 4.5 ? 'text-success' : contrastWhite >= 3 ? 'text-warning' : 'text-error'}`}>
