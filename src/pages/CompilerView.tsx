@@ -15,6 +15,15 @@ import { saveAs } from 'file-saver'
 
 type CompilerFormat = 'css' | 'scss' | 'typescript' | 'tailwind' | 'json-w3c' | 'style-dictionary'
 
+const formatDescriptions: Record<CompilerFormat, string> = {
+  css: 'CSS custom properties with light/dark mode via prefers-color-scheme',
+  scss: 'SCSS variables and mixins for preprocessor-based workflows',
+  typescript: 'Typed constants for type-safe token access in TS/JS projects',
+  tailwind: 'Tailwind CSS config extending the default theme with your tokens',
+  'json-w3c': 'W3C Design Tokens Community Group format for cross-tool compatibility',
+  'style-dictionary': 'Style Dictionary format for multi-platform token pipelines',
+}
+
 interface CompilerOutput {
   format: CompilerFormat
   code: string
@@ -249,6 +258,13 @@ export function CompilerView() {
             )}
           </button>
         ))}
+      </div>
+
+      {/* Format Description */}
+      <div className="px-6 py-2 border-b border-border bg-surface-sunken">
+        <p className="font-mono text-xs text-text-tertiary">
+          {formatDescriptions[activeFormat]}
+        </p>
       </div>
 
       {/* Code Output */}
