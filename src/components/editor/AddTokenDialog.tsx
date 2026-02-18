@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect, useCallback } from 'react'
 import { X } from 'lucide-react'
-import type { TokenType, Token } from '@/types'
+import type { TokenType, Token, TokenGroup } from '@/types'
 import { useTokenStore } from '@/store/useTokenStore'
 
 interface AddTokenDialogProps {
@@ -57,12 +57,35 @@ export function AddTokenDialog({ isOpen, onClose }: AddTokenDialogProps) {
     }
   }, [isOpen])
 
+  // Check if a sibling with the same name exists at the target path
+  const getSiblingsAtPath = (path: string): Record<string, Token | TokenGroup> => {
+    if (!activeSet) return {}
+    if (!path) return activeSet.tokens
+    const parts = path.split('.')
+    let node: Record<string, Token | TokenGroup> = activeSet.tokens
+    for (const part of parts) {
+      const child = node[part]
+      if (child && 'tokens' in child) {
+        node = child.tokens
+      } else {
+        return {}
+      }
+    }
+    return node
+  }
+
+  const trimmedName = tokenName.trim()
+  const isDuplicate = trimmedName !== '' && trimmedName in getSiblingsAtPath(parentPath)
+
   const handleCreate = () => {
-    const trimmedName = tokenName.trim()
     const trimmedValue = tokenValue.trim()
 
     if (!trimmedName || !trimmedValue) {
       alert('Please fill in all required fields')
+      return
+    }
+
+    if (isDuplicate) {
       return
     }
 
@@ -171,8 +194,17 @@ export function AddTokenDialog({ isOpen, onClose }: AddTokenDialogProps) {
               value={tokenName}
               onChange={(e) => setTokenName(e.target.value)}
               placeholder="e.g., primary-dark"
-              className="w-full px-3 py-2 bg-bg-secondary border border-border-default rounded font-mono text-sm text-text-primary placeholder:text-text-tertiary focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary"
+              className={`w-full px-3 py-2 bg-bg-secondary border rounded font-mono text-sm text-text-primary placeholder:text-text-tertiary focus:outline-none focus:ring-1 ${
+                isDuplicate
+                  ? 'border-red-500 focus:ring-red-500 focus:border-red-500'
+                  : 'border-border-default focus:ring-primary focus:border-primary'
+              }`}
             />
+            {isDuplicate && (
+              <p className="mt-1 font-mono text-xs text-red-400">
+                A token named "{trimmedName}" already exists at this path.
+              </p>
+            )}
           </div>
 
           {/* Token Type */}
