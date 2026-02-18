@@ -543,6 +543,9 @@ export const useTokenStore = create<TokenStoreState>()(
           name: name || `v${versionNumber} — ${new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}`,
           timestamp: Date.now(),
           tokenSnapshot: JSON.parse(JSON.stringify(activeSet.tokens)),
+          modesSnapshot: Object.keys(activeSet.modes).length > 0
+            ? JSON.parse(JSON.stringify(activeSet.modes))
+            : undefined,
           tokenCount: countTokensInTree(activeSet.tokens),
         }
 
@@ -573,6 +576,9 @@ export const useTokenStore = create<TokenStoreState>()(
           name: `Before restore — ${new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}`,
           timestamp: Date.now(),
           tokenSnapshot: JSON.parse(JSON.stringify(tokenSet.tokens)),
+          modesSnapshot: Object.keys(tokenSet.modes).length > 0
+            ? JSON.parse(JSON.stringify(tokenSet.modes))
+            : undefined,
           tokenCount: countTokensInTree(tokenSet.tokens),
         }
 
@@ -581,12 +587,20 @@ export const useTokenStore = create<TokenStoreState>()(
           updatedVersions.splice(0, updatedVersions.length - 50)
         }
 
+        const restoredModes = version.modesSnapshot
+          ? JSON.parse(JSON.stringify(version.modesSnapshot))
+          : tokenSet.modes
+
         set({
           tokenSets: {
             ...state.tokenSets,
             [setId]: {
               ...tokenSet,
               tokens: JSON.parse(JSON.stringify(version.tokenSnapshot)),
+              modes: restoredModes,
+              activeMode: version.modesSnapshot
+                ? (Object.keys(restoredModes)[0] || null)
+                : tokenSet.activeMode,
               metadata: { ...tokenSet.metadata, updatedAt: Date.now() },
             },
           },

@@ -177,6 +177,7 @@ export interface Version {
   name: string
   timestamp: number
   tokenSnapshot: Record<string, Token | TokenGroup>
+  modesSnapshot?: ModeMap
   tokenCount: number
 }
 
