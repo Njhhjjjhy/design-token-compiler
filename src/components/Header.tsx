@@ -6,13 +6,14 @@ interface HeaderProps {
   activeView: NavItem
   onViewChange: (view: NavItem) => void
   activeSetName?: string
+  activeModeName?: string | null
   syncStatus?: {
     status: 'synced' | 'conflicts' | 'unsynced'
     count?: number
   }
 }
 
-export function Header({ activeView, onViewChange, activeSetName, syncStatus }: HeaderProps) {
+export function Header({ activeView, onViewChange, activeSetName, activeModeName, syncStatus }: HeaderProps) {
   const navItems: { id: NavItem; label: string }[] = [
     { id: 'dashboard', label: 'HOME' },
     { id: 'editor', label: 'EDITOR' },
@@ -44,7 +45,14 @@ export function Header({ activeView, onViewChange, activeSetName, syncStatus }: 
       <div className="px-6 py-3 border-r border-border min-w-[240px]">
         <div className="monospace-label text-white mb-1">TOKEN COMPILER</div>
         {activeSetName && (
-          <div className="text-xs font-mono text-text-secondary">{activeSetName}</div>
+          <div className="flex items-center gap-2 text-xs font-mono text-text-secondary">
+            <span>{activeSetName}</span>
+            {activeModeName && (
+              <span className="px-1.5 py-0.5 bg-surface-elevated border border-border text-text-tertiary text-[10px] uppercase">
+                {activeModeName}
+              </span>
+            )}
+          </div>
         )}
       </div>
 

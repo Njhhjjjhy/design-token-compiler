@@ -58,6 +58,9 @@ function App() {
   }
 
   const activeSet = activeSetId ? tokenSets[activeSetId] : null
+  const activeModeName = activeSet?.activeMode && activeSet.modes[activeSet.activeMode]
+    ? activeSet.modes[activeSet.activeMode].name
+    : null
 
   return (
     <div className="min-h-screen">
@@ -90,6 +93,7 @@ function App() {
         activeView={activeView}
         onViewChange={setActiveView}
         activeSetName={activeSet?.name}
+        activeModeName={activeModeName}
       />
 
       <BinarySeparator />
