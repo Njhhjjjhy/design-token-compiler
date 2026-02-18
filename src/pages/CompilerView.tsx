@@ -118,7 +118,7 @@ export function CompilerView() {
   const handleCopy = async () => {
     await navigator.clipboard.writeText(currentOutput.code)
     setCopied(true)
-    setTimeout(() => setCopied(false), 2000)
+    setTimeout(() => setCopied(false), 3000)
   }
 
   const handleDownload = () => {
