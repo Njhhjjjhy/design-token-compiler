@@ -10,6 +10,7 @@ interface SyncHeaderProps {
   onClear: () => void
   onApply: () => void
   onExport: () => void
+  onResolveAll: (choice: 'editor' | 'imported') => void
   resolvedCount: number
   totalConflicts: number
 }
@@ -23,6 +24,7 @@ export function SyncHeader({
   onClear,
   onApply,
   onExport,
+  onResolveAll,
   resolvedCount,
   totalConflicts,
 }: SyncHeaderProps) {
@@ -124,6 +126,24 @@ export function SyncHeader({
               DIFFERENCES
             </button>
           </div>
+
+          {/* Batch resolution */}
+          {totalConflicts > 0 && !allResolved && (
+            <div className="flex gap-1 ml-2">
+              <button
+                onClick={() => onResolveAll('editor')}
+                className="px-2 py-0.5 font-mono text-[10px] text-text-tertiary hover:text-white hover:bg-white/5 rounded transition-colors"
+              >
+                Keep all editor
+              </button>
+              <button
+                onClick={() => onResolveAll('imported')}
+                className="px-2 py-0.5 font-mono text-[10px] text-text-tertiary hover:text-white hover:bg-white/5 rounded transition-colors"
+              >
+                Keep all imported
+              </button>
+            </div>
+          )}
 
           {/* Resolution progress */}
           {totalConflicts > 0 && (

@@ -17,6 +17,7 @@ export function SyncView() {
   const clearImport = useTokenStore((s) => s.clearImport)
   const resolveToken = useTokenStore((s) => s.resolveToken)
   const unresolveToken = useTokenStore((s) => s.unresolveToken)
+  const resolveAllAs = useTokenStore((s) => s.resolveAllAs)
   const setSyncFilter = useTokenStore((s) => s.setSyncFilter)
   const applyToEditor = useTokenStore((s) => s.applyToEditor)
   const resolvedCount = useTokenStore((s) => s.getResolvedCount())
@@ -136,6 +137,7 @@ export function SyncView() {
         onClear={clearImport}
         onApply={applyToEditor}
         onExport={handleExport}
+        onResolveAll={resolveAllAs}
         resolvedCount={resolvedCount}
         totalConflicts={totalConflicts}
       />
