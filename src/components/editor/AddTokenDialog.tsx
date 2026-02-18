@@ -166,12 +166,12 @@ export function AddTokenDialog({ isOpen, onClose }: AddTokenDialogProps) {
               aria-describedby={isDuplicate ? 'duplicate-error' : undefined}
               className={`w-full px-3 py-2 bg-surface-elevated border rounded font-mono text-sm text-white placeholder:text-text-tertiary focus:outline-none focus:ring-1 ${
                 isDuplicate
-                  ? 'border-red-500 focus:ring-red-500 focus:border-red-500'
+                  ? 'border-error focus:ring-error focus:border-error'
                   : 'border-border focus:ring-primary focus:border-primary'
               }`}
             />
             {isDuplicate && (
-              <p id="duplicate-error" role="alert" className="mt-1 font-mono text-xs text-red-400">
+              <p id="duplicate-error" role="alert" className="mt-1 font-mono text-xs text-error">
                 A token named "{trimmedName}" already exists at this path.
               </p>
             )}

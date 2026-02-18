@@ -162,20 +162,22 @@ export function CompilerView() {
           <div className="flex gap-3">
             <button
               onClick={handleCopy}
+              aria-label={`Copy ${activeFormat} code to clipboard`}
               className="flex items-center gap-2 px-4 py-2 bg-surface-elevated border border-border hover:border-primary transition-colors font-mono text-xs text-white"
             >
               {copied ? (
                 <>
-                  <Check className="w-4 h-4" />
+                  <Check className="w-4 h-4" aria-hidden="true" />
                   COPIED
                 </>
               ) : (
                 <>
-                  <Copy className="w-4 h-4" />
+                  <Copy className="w-4 h-4" aria-hidden="true" />
                   COPY
                 </>
               )}
             </button>
+            <span className="sr-only" aria-live="polite">{copied ? 'Code copied to clipboard' : ''}</span>
             <button
               onClick={handleDownload}
               className="flex items-center gap-2 px-4 py-2 bg-surface-elevated border border-border hover:border-primary transition-colors font-mono text-xs text-white"
@@ -235,30 +237,42 @@ export function CompilerView() {
       )}
 
       {/* Format Tabs */}
-      <div className="flex border-b border-border bg-surface overflow-x-auto" role="tablist">
-        {(['css', 'scss', 'typescript', 'tailwind', 'json-w3c', 'style-dictionary'] as CompilerFormat[]).map((format) => (
-          <button
-            key={format}
-            role="tab"
-            aria-selected={activeFormat === format}
-            onClick={() => setActiveFormat(format)}
-            className={`
-              relative px-6 py-3 font-mono text-xs uppercase tracking-wider transition-colors whitespace-nowrap
-              ${activeFormat === format ? 'text-primary' : 'text-text-secondary hover:text-white'}
-            `}
-          >
-            {format === 'css' && 'CSS'}
-            {format === 'scss' && 'SCSS'}
-            {format === 'typescript' && 'TypeScript'}
-            {format === 'tailwind' && 'Tailwind'}
-            {format === 'json-w3c' && 'JSON (W3C)'}
-            {format === 'style-dictionary' && 'Style Dictionary'}
-            {activeFormat === format && (
-              <div className="absolute bottom-0 left-0 right-0 h-[2px] bg-primary" />
-            )}
-          </button>
-        ))}
-      </div>
+      {(() => {
+        const formats: CompilerFormat[] = ['css', 'scss', 'typescript', 'tailwind', 'json-w3c', 'style-dictionary']
+        return (
+          <div className="flex border-b border-border bg-surface overflow-x-auto" role="tablist" aria-label="Output formats">
+            {formats.map((format, index) => (
+              <button
+                key={format}
+                id={`compiler-tab-${format}`}
+                role="tab"
+                aria-selected={activeFormat === format}
+                aria-controls="compiler-tabpanel"
+                tabIndex={activeFormat === format ? 0 : -1}
+                onClick={() => setActiveFormat(format)}
+                onKeyDown={(e) => {
+                  if (e.key === 'ArrowRight') { e.preventDefault(); setActiveFormat(formats[(index + 1) % formats.length]) }
+                  else if (e.key === 'ArrowLeft') { e.preventDefault(); setActiveFormat(formats[(index - 1 + formats.length) % formats.length]) }
+                }}
+                className={`
+                  relative px-6 py-3 font-mono text-xs uppercase tracking-wider transition-colors whitespace-nowrap
+                  ${activeFormat === format ? 'text-primary' : 'text-text-secondary hover:text-white'}
+                `}
+              >
+                {format === 'css' && 'CSS'}
+                {format === 'scss' && 'SCSS'}
+                {format === 'typescript' && 'TypeScript'}
+                {format === 'tailwind' && 'Tailwind'}
+                {format === 'json-w3c' && 'JSON (W3C)'}
+                {format === 'style-dictionary' && 'Style Dictionary'}
+                {activeFormat === format && (
+                  <div className="absolute bottom-0 left-0 right-0 h-[2px] bg-primary" />
+                )}
+              </button>
+            ))}
+          </div>
+        )
+      })()}
 
       {/* Format Description */}
       <div className="px-6 py-2 border-b border-border bg-surface-sunken">
@@ -268,7 +282,7 @@ export function CompilerView() {
       </div>
 
       {/* Code Output */}
-      <div className="flex-1 overflow-auto bg-[#1e1e1e]">
+      <div className="flex-1 overflow-auto bg-[#1e1e1e]" role="tabpanel" id="compiler-tabpanel" aria-labelledby={`compiler-tab-${activeFormat}`} aria-label={`Generated ${activeFormat} code`}>
         <SyntaxHighlighter
           language={currentOutput.language}
           style={vscDarkPlus}
@@ -281,7 +295,7 @@ export function CompilerView() {
             fontFamily: 'JetBrains Mono, monospace',
           }}
           lineNumberStyle={{
-            color: '#858585',
+            color: 'rgb(var(--color-text-tertiary))',
             paddingRight: '24px',
             userSelect: 'none',
           }}

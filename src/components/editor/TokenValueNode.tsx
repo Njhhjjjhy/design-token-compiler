@@ -169,7 +169,7 @@ export function TokenValueNode({ token, depth, activeMode, modeOverrides }: Toke
       if (previewValue.startsWith('{')) {
         return (
           <div
-            className="w-4 h-4 rounded border border-dashed border-amber-600"
+            className="w-4 h-4 rounded border border-dashed border-warning"
             role="img"
             aria-label="Unresolved color reference"
           />
@@ -177,7 +177,7 @@ export function TokenValueNode({ token, depth, activeMode, modeOverrides }: Toke
       }
       return (
         <div
-          className="w-4 h-4 rounded border border-gray-600"
+          className="w-4 h-4 rounded border border-border"
           style={{ backgroundColor: previewValue }}
           role="img"
           aria-label={`Color: ${previewValue}`}
@@ -191,7 +191,7 @@ export function TokenValueNode({ token, depth, activeMode, modeOverrides }: Toke
       const barWidth = Math.min(numValue, 64)
       return (
         <div
-          className="h-3 bg-gray-500 rounded"
+          className="h-3 bg-text-tertiary rounded"
           style={{ width: `${barWidth}px` }}
           role="img"
           aria-label={`Spacing: ${previewValue}`}
@@ -215,7 +215,7 @@ export function TokenValueNode({ token, depth, activeMode, modeOverrides }: Toke
 
       {/* Type Badge */}
       <span
-        className="px-2 py-0.5 text-xs font-mono uppercase rounded bg-blue-500/20 text-blue-400"
+        className="px-2 py-0.5 text-xs font-mono uppercase rounded bg-info/20 text-info"
         title={typeDescriptions[token.type] || token.type}
       >
         {typeDisplayNames[token.type] || token.type}
@@ -223,7 +223,7 @@ export function TokenValueNode({ token, depth, activeMode, modeOverrides }: Toke
 
       {/* Override indicator */}
       {activeMode && hasOverride && (
-        <span className="px-1.5 py-0.5 text-[10px] font-mono uppercase rounded bg-amber-500/20 text-amber-400">
+        <span className="px-1.5 py-0.5 text-[10px] font-mono uppercase rounded bg-warning/20 text-warning">
           override
         </span>
       )}
@@ -244,7 +244,7 @@ export function TokenValueNode({ token, depth, activeMode, modeOverrides }: Toke
             placeholder="Value or {reference.path}"
             className={`w-full px-2 py-1 font-mono text-sm bg-surface-elevated border rounded focus:outline-none focus:ring-1 ${
               isInvalid
-                ? 'border-red-500 focus:ring-red-500'
+                ? 'border-error focus:ring-error'
                 : 'border-border focus:border-primary focus:ring-primary'
             }`}
           />
@@ -285,7 +285,7 @@ export function TokenValueNode({ token, depth, activeMode, modeOverrides }: Toke
       {/* Delete / Remove Override Button */}
       <button
         onClick={handleDelete}
-        className="opacity-0 group-hover:opacity-100 focus:opacity-100 p-1 hover:text-red-400 transition-all"
+        className="opacity-0 group-hover:opacity-100 focus:opacity-100 p-1 hover:text-error transition-all"
         title={activeMode && hasOverride ? 'Remove override' : 'Delete token'}
         aria-label={activeMode && hasOverride ? 'Remove override' : 'Delete token'}
       >
@@ -306,8 +306,8 @@ export function TokenValueNode({ token, depth, activeMode, modeOverrides }: Toke
             onKeyDown={deleteTrap.handleKeyDown}
           >
             <div className="flex items-center gap-3 mb-4">
-              <div className="w-10 h-10 rounded-full bg-red-500/10 flex items-center justify-center flex-shrink-0">
-                <AlertTriangle className="w-5 h-5 text-red-400" />
+              <div className="w-10 h-10 rounded-full bg-error/10 flex items-center justify-center flex-shrink-0">
+                <AlertTriangle className="w-5 h-5 text-error" />
               </div>
               <h3 id="delete-token-confirm-title" className="font-mono text-sm font-semibold text-white">
                 Delete Token?
@@ -325,7 +325,7 @@ export function TokenValueNode({ token, depth, activeMode, modeOverrides }: Toke
               </button>
               <button
                 onClick={handleConfirmDelete}
-                className="px-4 py-2 bg-red-600 hover:bg-red-500 text-white font-mono text-xs rounded transition-colors"
+                className="px-4 py-2 bg-error hover:bg-error/90 text-white font-mono text-xs rounded transition-colors"
               >
                 Delete
               </button>

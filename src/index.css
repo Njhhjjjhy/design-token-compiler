@@ -3,20 +3,20 @@
 @tailwind utilities;
 
 :root {
-  --color-primary: #c50935;
-  --color-secondary: #faf5f4;
-  --color-surface: #ffffff;
-  --color-surface-elevated: #ffffff;
-  --color-surface-sunken: #f0e8e6;
-  --color-border: #d4c5c5;
-  --color-border-subtle: #e8dede;
-  --color-white: #1a0505;
-  --color-text-secondary: #6b5555;
-  --color-text-tertiary: #806a6a;
-  --color-success: #15803d;
-  --color-warning: #a16207;
-  --color-error: #b91c1c;
-  --color-info: #1d4ed8;
+  --color-primary: 197 9 53;
+  --color-secondary: 250 245 244;
+  --color-surface: 255 255 255;
+  --color-surface-elevated: 255 255 255;
+  --color-surface-sunken: 240 232 230;
+  --color-border: 212 197 197;
+  --color-border-subtle: 232 222 222;
+  --color-white: 26 5 5;
+  --color-text-secondary: 107 85 85;
+  --color-text-tertiary: 128 106 106;
+  --color-success: 21 128 61;
+  --color-warning: 161 98 7;
+  --color-error: 185 28 28;
+  --color-info: 29 78 216;
 
   --font-mono: 'JetBrains Mono', monospace;
   --font-serif: 'Instrument Serif', serif;
@@ -24,32 +24,32 @@
 }
 
 .dark {
-  --color-primary: #f7365f;
-  --color-secondary: #160000;
-  --color-surface: #1e0505;
-  --color-surface-elevated: #2a0a0a;
-  --color-surface-sunken: #140303;
-  --color-border: #5c2828;
-  --color-border-subtle: #4a1f1f;
-  --color-white: #fff0eb;
-  --color-text-secondary: #b39e9e;
-  --color-text-tertiary: #9a8080;
-  --color-success: #22c55e;
-  --color-warning: #f59e0b;
-  --color-error: #ef4444;
-  --color-info: #3b82f6;
+  --color-primary: 247 54 95;
+  --color-secondary: 22 0 0;
+  --color-surface: 30 5 5;
+  --color-surface-elevated: 42 10 10;
+  --color-surface-sunken: 20 3 3;
+  --color-border: 92 40 40;
+  --color-border-subtle: 74 31 31;
+  --color-white: 255 240 235;
+  --color-text-secondary: 179 158 158;
+  --color-text-tertiary: 154 128 128;
+  --color-success: 34 197 94;
+  --color-warning: 245 158 11;
+  --color-error: 239 68 68;
+  --color-info: 59 130 246;
 }
 
 html {
   font: 400 16px/1.48 var(--font-sans);
-  background-color: var(--color-secondary);
-  color: var(--color-white);
+  background-color: rgb(var(--color-secondary));
+  color: rgb(var(--color-white));
 }
 
 body {
   padding: 1rem;
   min-height: 100vh;
-  background-color: var(--color-surface);
+  background-color: rgb(var(--color-surface));
 }
 
 * {
@@ -61,7 +61,7 @@ body {
 @layer base {
   /* Global focus-visible ring for keyboard accessibility */
   :focus-visible {
-    outline: 1px solid var(--color-primary);
+    outline: 1px solid rgb(var(--color-primary));
     outline-offset: 2px;
   }
 
@@ -73,7 +73,7 @@ body {
 
 @layer components {
   .compartment-border {
-    border: 1px solid var(--color-border);
+    border: 1px solid rgb(var(--color-border));
   }
 
   .section-title {

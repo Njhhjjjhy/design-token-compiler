@@ -134,10 +134,10 @@ export function VersionPanel({ isOpen, onClose }: VersionPanelProps) {
           >
             <div className="flex items-center gap-3 mb-4">
               <div className={`w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 ${
-                confirmAction.type === 'delete' ? 'bg-red-500/10' : 'bg-warning/10'
+                confirmAction.type === 'delete' ? 'bg-error/10' : 'bg-warning/10'
               }`}>
                 <AlertTriangle className={`w-5 h-5 ${
-                  confirmAction.type === 'delete' ? 'text-red-400' : 'text-warning'
+                  confirmAction.type === 'delete' ? 'text-error' : 'text-warning'
                 }`} />
               </div>
               <h3 id="version-confirm-title" className="font-mono text-sm font-semibold text-white">
@@ -160,7 +160,7 @@ export function VersionPanel({ isOpen, onClose }: VersionPanelProps) {
                 onClick={handleConfirm}
                 className={`px-4 py-2 text-white font-mono text-xs rounded transition-colors ${
                   confirmAction.type === 'delete'
-                    ? 'bg-red-600 hover:bg-red-500'
+                    ? 'bg-error hover:bg-error/90'
                     : 'bg-primary hover:bg-primary/90'
                 }`}
               >

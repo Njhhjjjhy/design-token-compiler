@@ -83,13 +83,13 @@ export function ColorGrid({ tokens }: ColorGridProps) {
               const shortPath = path.split('.').slice(-2).join('.')
 
               return (
-                <div key={path} className={`border ${isReference ? 'border-dashed border-amber-700' : 'border-border-subtle'}`}>
+                <div key={path} className={`border ${isReference ? 'border-dashed border-warning' : 'border-border-subtle'}`}>
                   {isValidHex ? (
-                    <div className="h-20 border-b border-border-subtle" style={{ backgroundColor: value }} />
+                    <div className="h-20 border-b border-border-subtle" style={{ backgroundColor: value }} role="img" aria-label={`Color swatch: ${value}`} />
                   ) : isReference ? (
-                    <div className="h-20 border-b border-dashed border-amber-700 bg-amber-950/30 flex items-center justify-center relative">
-                      <span className="font-mono text-xs text-amber-400/60 truncate px-2">{value}</span>
-                      <span className="absolute bottom-1 right-1 px-1.5 py-0.5 bg-amber-900/80 text-amber-300 font-mono text-[10px] rounded">
+                    <div className="h-20 border-b border-dashed border-warning bg-warning/10 flex items-center justify-center relative">
+                      <span className="font-mono text-xs text-warning/60 truncate px-2">{value}</span>
+                      <span className="absolute bottom-1 right-1 px-1.5 py-0.5 bg-warning/20 text-warning font-mono text-[10px] rounded">
                         ref
                       </span>
                     </div>
@@ -97,10 +97,10 @@ export function ColorGrid({ tokens }: ColorGridProps) {
                     <div
                       className="h-20 border-b border-border-subtle relative"
                       style={{
-                        background: 'repeating-linear-gradient(45deg, #2a2a2a, #2a2a2a 6px, #1a1a1a 6px, #1a1a1a 12px)',
+                        background: 'repeating-linear-gradient(45deg, rgb(var(--color-surface-elevated)), rgb(var(--color-surface-elevated)) 6px, rgb(var(--color-surface-sunken)) 6px, rgb(var(--color-surface-sunken)) 12px)',
                       }}
                     >
-                      <span className="absolute bottom-1 right-1 px-1.5 py-0.5 bg-red-900/80 text-red-300 font-mono text-[10px] rounded">
+                      <span className="absolute bottom-1 right-1 px-1.5 py-0.5 bg-error/20 text-error font-mono text-[10px] rounded">
                         invalid
                       </span>
                     </div>
@@ -110,10 +110,10 @@ export function ColorGrid({ tokens }: ColorGridProps) {
                     <CopyableValue value={value} className="font-mono text-xs text-text-secondary mt-0.5 block" />
                     {isValidHex && (
                       <div className="flex gap-2 mt-1.5">
-                        <span className={`font-mono text-xs ${contrastWhite >= 4.5 ? 'text-success' : contrastWhite >= 3 ? 'text-warning' : 'text-error'}`}>
+                        <span className={`font-mono text-xs ${contrastWhite >= 4.5 ? 'text-success' : contrastWhite >= 3 ? 'text-warning' : 'text-error'}`} aria-label={`Contrast vs white: ${contrastWhite.toFixed(1)}`}>
                           W {contrastWhite.toFixed(1)}
                         </span>
-                        <span className={`font-mono text-xs ${contrastBlack >= 4.5 ? 'text-success' : contrastBlack >= 3 ? 'text-warning' : 'text-error'}`}>
+                        <span className={`font-mono text-xs ${contrastBlack >= 4.5 ? 'text-success' : contrastBlack >= 3 ? 'text-warning' : 'text-error'}`} aria-label={`Contrast vs black: ${contrastBlack.toFixed(1)}`}>
                           B {contrastBlack.toFixed(1)}
                         </span>
                       </div>

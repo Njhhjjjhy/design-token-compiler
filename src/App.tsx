@@ -97,10 +97,10 @@ function App() {
       </a>
 
       {storageWarning && (
-        <div className="bg-yellow-900/80 border-b border-yellow-700 px-4 py-2 flex items-center justify-between">
+        <div className="bg-warning/20 border-b border-warning px-4 py-2 flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <AlertTriangle className="w-4 h-4 text-yellow-400 flex-shrink-0" />
-            <p className="font-mono text-xs text-yellow-200">
+            <AlertTriangle className="w-4 h-4 text-warning flex-shrink-0" />
+            <p className="font-mono text-xs text-white">
               Storage quota exceeded. Some changes may not be saved. Consider exporting your token sets and clearing old data.
             </p>
           </div>
@@ -109,7 +109,7 @@ function App() {
             className="p-1 hover:bg-white/10 rounded transition-colors flex-shrink-0"
             aria-label="Dismiss storage warning"
           >
-            <X className="w-4 h-4 text-yellow-400" />
+            <X className="w-4 h-4 text-warning" />
           </button>
         </div>
       )}

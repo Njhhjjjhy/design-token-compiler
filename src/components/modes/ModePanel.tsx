@@ -149,7 +149,7 @@ export function ModePanel({ isOpen, onClose }: ModePanelProps) {
                       </button>
                       <button
                         onClick={() => handleDelete(mode.id)}
-                        className="p-1 text-text-tertiary hover:text-red-400 transition-colors"
+                        className="p-1 text-text-tertiary hover:text-error transition-colors"
                         title="Delete mode"
                       >
                         <Trash2 className="w-3.5 h-3.5" />

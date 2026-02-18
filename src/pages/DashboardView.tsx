@@ -164,7 +164,7 @@ export function DashboardView() {
             <Database className="w-4 h-4" />
             SAMPLE DATA
           </button>
-          <button onClick={handleClearAll} className="flex items-center gap-2 px-4 py-2 bg-surface-elevated border border-border hover:border-red-500 text-text-secondary hover:text-red-400 font-mono text-xs transition-colors">
+          <button onClick={handleClearAll} className="flex items-center gap-2 px-4 py-2 bg-surface-elevated border border-border hover:border-error text-text-secondary hover:text-error font-mono text-xs transition-colors">
             <Trash2 className="w-4 h-4" />
             CLEAR ALL
           </button>
@@ -224,8 +224,8 @@ export function DashboardView() {
             onKeyDown={clearTrap.handleKeyDown}
           >
             <div className="flex items-center gap-3 mb-4">
-              <div className="w-10 h-10 rounded-full bg-red-500/10 flex items-center justify-center flex-shrink-0">
-                <AlertTriangle className="w-5 h-5 text-red-400" />
+              <div className="w-10 h-10 rounded-full bg-error/10 flex items-center justify-center flex-shrink-0">
+                <AlertTriangle className="w-5 h-5 text-error" />
               </div>
               <h3 id="clear-confirm-title" className="font-mono text-sm font-semibold text-white">
                 Clear All Token Sets?
@@ -243,7 +243,7 @@ export function DashboardView() {
               </button>
               <button
                 onClick={handleConfirmClear}
-                className="px-4 py-2 bg-red-600 hover:bg-red-500 text-white font-mono text-xs rounded transition-colors"
+                className="px-4 py-2 bg-error hover:bg-error/90 text-white font-mono text-xs rounded transition-colors"
               >
                 Clear All
               </button>
