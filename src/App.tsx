@@ -59,6 +59,13 @@ function App() {
     if ((e.ctrlKey || e.metaKey) && viewKeys[e.key]) {
       e.preventDefault()
       setActiveView(viewKeys[e.key])
+      requestAnimationFrame(() => {
+        const main = document.getElementById('main-content')
+        if (main) {
+          main.tabIndex = -1
+          main.focus()
+        }
+      })
     }
   }, [setActiveView])
 

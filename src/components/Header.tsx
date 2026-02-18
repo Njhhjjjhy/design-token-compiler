@@ -17,12 +17,12 @@ interface HeaderProps {
 }
 
 export function Header({ activeView, onViewChange, activeSetName, activeModeName, syncStatus, theme, onToggleTheme }: HeaderProps) {
-  const navItems: { id: NavItem; label: string }[] = [
-    { id: 'dashboard', label: 'HOME' },
-    { id: 'editor', label: 'EDITOR' },
-    { id: 'browser', label: 'BROWSER' },
-    { id: 'compiler', label: 'COMPILER' },
-    { id: 'sync', label: 'SYNC' },
+  const navItems: { id: NavItem; label: string; shortcut: string }[] = [
+    { id: 'dashboard', label: 'HOME', shortcut: 'Meta+1' },
+    { id: 'editor', label: 'EDITOR', shortcut: 'Meta+2' },
+    { id: 'browser', label: 'BROWSER', shortcut: 'Meta+3' },
+    { id: 'compiler', label: 'COMPILER', shortcut: 'Meta+4' },
+    { id: 'sync', label: 'SYNC', shortcut: 'Meta+5' },
   ]
 
   const statusColors = {
@@ -51,7 +51,7 @@ export function Header({ activeView, onViewChange, activeSetName, activeModeName
           <div className="flex items-center gap-2 text-xs font-mono text-text-secondary">
             <span>{activeSetName}</span>
             {activeModeName && (
-              <span className="px-1.5 py-0.5 bg-surface-elevated border border-border text-text-tertiary text-mini uppercase">
+              <span className="px-1.5 py-0.5 bg-surface-elevated border border-border text-text-tertiary text-mini uppercase" aria-label={`Active mode: ${activeModeName}`}>
                 {activeModeName}
               </span>
             )}
@@ -66,6 +66,7 @@ export function Header({ activeView, onViewChange, activeSetName, activeModeName
             key={item.id}
             onClick={() => onViewChange(item.id)}
             aria-current={activeView === item.id ? 'page' : undefined}
+            aria-keyshortcuts={item.shortcut}
             className={`
               relative h-full px-6 font-mono text-nav tracking-wider
               transition-colors hover:text-white

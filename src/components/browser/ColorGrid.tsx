@@ -48,7 +48,7 @@ function groupByCategory(tokens: [string, ResolvedToken][]): Map<string, [string
 export function ColorGrid({ tokens }: ColorGridProps) {
   if (tokens.length === 0) {
     return (
-      <div className="flex items-center justify-center py-24">
+      <div className="flex items-center justify-center py-24" role="status">
         <p className="font-mono text-sm text-text-secondary">No color tokens found.</p>
       </div>
     )

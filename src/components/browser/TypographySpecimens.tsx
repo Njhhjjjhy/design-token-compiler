@@ -33,7 +33,7 @@ function parseTypographyValue(value: unknown, path: string, type: string): React
 export function TypographySpecimens({ tokens }: TypographySpecimensProps) {
   if (tokens.length === 0) {
     return (
-      <div className="flex items-center justify-center py-24">
+      <div className="flex items-center justify-center py-24" role="status">
         <p className="font-mono text-sm text-text-secondary">No typography tokens found.</p>
       </div>
     )

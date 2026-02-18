@@ -12,7 +12,7 @@ export function VersionEntry({ version, onRestore, onDelete }: VersionEntryProps
   return (
     <div className="flex items-center gap-3 px-4 py-3 border-b border-border-subtle hover:bg-white/[0.02] transition-colors">
       <div className="flex-1 min-w-0">
-        <p className="font-mono text-xs text-white truncate">{version.name}</p>
+        <h4 className="font-mono text-xs text-white truncate">{version.name}</h4>
         <p className="font-mono text-xs text-text-tertiary mt-0.5">
           {format(version.timestamp, 'MMM d, yyyy · h:mm a')}
           <span className="ml-2">{version.tokenCount} tokens</span>

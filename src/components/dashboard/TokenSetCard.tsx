@@ -97,7 +97,7 @@ export function TokenSetCard({
             <p className="font-mono text-xs text-text-tertiary mt-1">{totalTokens} tokens</p>
           </div>
           {tokenSet.activeMode && tokenSet.modes[tokenSet.activeMode] && (
-            <span className="px-2 py-0.5 bg-surface-elevated border border-border font-mono text-xs text-text-secondary">
+            <span className="px-2 py-0.5 bg-surface-elevated border border-border font-mono text-xs text-text-secondary" aria-label={`Active mode: ${tokenSet.modes[tokenSet.activeMode].name}`}>
               {tokenSet.modes[tokenSet.activeMode].name.toUpperCase()}
             </span>
           )}

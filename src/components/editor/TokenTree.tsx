@@ -132,7 +132,7 @@ export function TokenTree({ tokenSet, activeMode, searchQuery = '' }: TokenTreeP
 
   if (searchQuery && Object.keys(visibleTokens).length === 0) {
     return (
-      <div className="flex items-center justify-center py-12">
+      <div className="flex items-center justify-center py-12" role="status">
         <p className="font-mono text-sm text-text-secondary">No tokens match "{searchQuery}"</p>
       </div>
     )

@@ -41,7 +41,7 @@ export function SpacingScale({ tokens }: SpacingScaleProps) {
 
   if (tokens.length === 0) {
     return (
-      <div className="flex items-center justify-center py-24">
+      <div className="flex items-center justify-center py-24" role="status">
         <p className="font-mono text-sm text-text-secondary">No spacing tokens found.</p>
       </div>
     )
@@ -72,10 +72,10 @@ export function SpacingScale({ tokens }: SpacingScaleProps) {
           {sortLabels[sortMode]}
         </button>
       </div>
-      <div className="space-y-1">
+      <div className="space-y-1" aria-describedby={sorted.some(([, t]) => /rem|em/.test(String(t.resolvedValue))) ? 'spacing-rem-note' : undefined}>
         {sorted.some(([, t]) => /rem|em/.test(String(t.resolvedValue))) && (
           <div className="px-4 py-1.5 border-b border-border-subtle">
-            <p className="font-mono text-mini text-text-tertiary">
+            <p id="spacing-rem-note" className="font-mono text-mini text-text-tertiary">
               Pixel conversions assume 1rem = 16px (browser default)
             </p>
           </div>

@@ -87,7 +87,9 @@ export function VersionPanel({ isOpen, onClose }: VersionPanelProps) {
           className={`flex items-center gap-1 mt-1.5 font-mono text-xs text-success transition-opacity duration-300 ${
             justSaved ? 'opacity-100' : 'opacity-0'
           }`}
+          role="status"
           aria-live="polite"
+          aria-atomic="true"
         >
           <Check className="w-3 h-3" />
           Version saved
@@ -100,14 +102,17 @@ export function VersionPanel({ isOpen, onClose }: VersionPanelProps) {
             <p className="font-mono text-xs text-text-secondary">No versions saved yet.</p>
           </div>
         ) : (
-          sortedVersions.map((version) => (
-            <VersionEntry
-              key={version.id}
-              version={version}
-              onRestore={() => handleRestore(version.id)}
-              onDelete={() => handleDelete(version.id)}
-            />
-          ))
+          <ul className="list-none" aria-label="Saved versions">
+            {sortedVersions.map((version) => (
+              <li key={version.id}>
+                <VersionEntry
+                  version={version}
+                  onRestore={() => handleRestore(version.id)}
+                  onDelete={() => handleDelete(version.id)}
+                />
+              </li>
+            ))}
+          </ul>
         )}
       </div>
 
