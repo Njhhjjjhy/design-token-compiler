@@ -40,13 +40,13 @@ export function BrowserHeader({
         <h2 className="section-title text-primary">TOKEN BROWSER</h2>
         {hasModes && (
           <div className="flex border border-border">
-            {modeEntries.map((mode) => (
+            {modeEntries.map((mode, i) => (
               <button
                 key={mode.id}
                 onClick={() => onModeChange(mode.id)}
                 className={`px-3 py-1 font-mono text-xs transition-colors ${
                   activeMode === mode.id ? 'bg-surface-elevated text-white' : 'text-text-secondary hover:text-white'
-                } ${mode.id !== modeEntries[0].id ? 'border-l border-border' : ''}`}
+                } ${i > 0 ? 'border-l border-border' : ''}`}
               >
                 {mode.name.toUpperCase()}
               </button>

@@ -44,7 +44,7 @@ export function EditorHeader({
             >
               BASE
             </button>
-            {modeEntries.map((mode, i) => (
+            {modeEntries.map((mode) => (
               <button
                 key={mode.id}
                 onClick={() => onModeChange(mode.id)}
