@@ -50,6 +50,8 @@ export default {
         'modal': '50',
         'overlay': '60',
         'skiplink': '100',
+        'tour-overlay': '9000',
+        'tour-tooltip': '9001',
       },
       width: {
         'sidebar': '20rem',
