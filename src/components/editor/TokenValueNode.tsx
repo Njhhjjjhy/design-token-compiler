@@ -14,9 +14,10 @@ export function TokenValueNode({ token, depth, activeMode, modeOverrides }: Toke
   const [isEditing, setIsEditing] = useState(false)
   const [editValue, setEditValue] = useState('')
   const [isInvalid, setIsInvalid] = useState(false)
-  const [justSaved, setJustSaved] = useState(false)
+  const [saveLabel, setSaveLabel] = useState<string | null>(null)
   const inputRef = useRef<HTMLInputElement>(null)
   const cancelledRef = useRef(false)
+  const savedViaEnterRef = useRef(false)
   const saveTimerRef = useRef<ReturnType<typeof setTimeout>>()
   const updateToken = useTokenStore((state) => state.updateToken)
   const deleteToken = useTokenStore((state) => state.deleteToken)
@@ -73,10 +74,11 @@ export function TokenValueNode({ token, depth, activeMode, modeOverrides }: Toke
     setIsEditing(false)
     setIsInvalid(false)
 
-    // Flash save indicator
-    setJustSaved(true)
+    // Flash save indicator with context-aware label
+    setSaveLabel(savedViaEnterRef.current ? 'Saved' : 'Auto-saved')
+    savedViaEnterRef.current = false
     clearTimeout(saveTimerRef.current)
-    saveTimerRef.current = setTimeout(() => setJustSaved(false), 1500)
+    saveTimerRef.current = setTimeout(() => setSaveLabel(null), 1500)
   }
 
   const handleEditCancel = () => {
@@ -87,6 +89,7 @@ export function TokenValueNode({ token, depth, activeMode, modeOverrides }: Toke
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter') {
+      savedViaEnterRef.current = true
       handleEditSave()
     } else if (e.key === 'Escape') {
       handleEditCancel()
@@ -212,13 +215,13 @@ export function TokenValueNode({ token, depth, activeMode, modeOverrides }: Toke
 
       {/* Save indicator */}
       <span
-        className={`flex items-center gap-1 font-mono text-xs text-success transition-opacity duration-300 ${
-          justSaved ? 'opacity-100' : 'opacity-0'
+        className={`flex items-center gap-1 font-mono text-xs text-success transition-opacity duration-300 min-w-[80px] ${
+          saveLabel ? 'opacity-100' : 'opacity-0'
         }`}
         aria-live="polite"
       >
         <Check className="w-3 h-3" />
-        Saved
+        {saveLabel || 'Saved'}
       </span>
 
       {/* Delete / Remove Override Button */}
