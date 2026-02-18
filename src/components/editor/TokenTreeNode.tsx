@@ -8,10 +8,12 @@ interface TokenTreeNodeProps {
   depth: number
   activeMode: string | null
   modeOverrides: Record<string, TokenValue>
+  parentPath?: string
 }
 
-export function TokenTreeNode({ itemKey, item, depth, activeMode, modeOverrides }: TokenTreeNodeProps) {
+export function TokenTreeNode({ itemKey, item, depth, activeMode, modeOverrides, parentPath = '' }: TokenTreeNodeProps) {
   const isGroup = 'tokens' in item
+  const fullPath = parentPath ? `${parentPath}.${itemKey}` : itemKey
 
   if (isGroup) {
     return (
@@ -21,6 +23,7 @@ export function TokenTreeNode({ itemKey, item, depth, activeMode, modeOverrides 
         depth={depth}
         activeMode={activeMode}
         modeOverrides={modeOverrides}
+        path={fullPath}
       />
     )
   } else {

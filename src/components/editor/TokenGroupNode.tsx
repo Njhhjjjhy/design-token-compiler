@@ -1,7 +1,26 @@
-import { useState } from 'react'
+import { useState, useCallback } from 'react'
 import { ChevronRight } from 'lucide-react'
 import type { TokenGroup, TokenValue } from '@/types'
 import { TokenTreeNode } from './TokenTreeNode'
+
+const STORAGE_KEY = 'dtc-expanded-groups'
+
+function getExpandedGroups(): Set<string> {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY)
+    return raw ? new Set(JSON.parse(raw)) : new Set()
+  } catch {
+    return new Set()
+  }
+}
+
+function saveExpandedGroups(groups: Set<string>) {
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify([...groups]))
+  } catch {
+    // Ignore quota errors
+  }
+}
 
 interface TokenGroupNodeProps {
   group: TokenGroup
@@ -9,16 +28,32 @@ interface TokenGroupNodeProps {
   depth: number
   activeMode: string | null
   modeOverrides: Record<string, TokenValue>
+  path?: string
 }
 
-export function TokenGroupNode({ group, groupKey, depth, activeMode, modeOverrides }: TokenGroupNodeProps) {
-  // Top-level groups start expanded, nested groups start collapsed
-  const [isExpanded, setIsExpanded] = useState(depth === 0)
+export function TokenGroupNode({ group, groupKey, depth, activeMode, modeOverrides, path }: TokenGroupNodeProps) {
+  const groupPath = path || groupKey
+  const [isExpanded, setIsExpanded] = useState(() => {
+    const saved = getExpandedGroups()
+    if (saved.has(groupPath)) return true
+    if (saved.size === 0) return depth === 0
+    return false
+  })
   const paddingLeft = depth * 16
 
-  const toggleExpand = () => {
-    setIsExpanded(!isExpanded)
-  }
+  const toggleExpand = useCallback(() => {
+    setIsExpanded((prev) => {
+      const next = !prev
+      const groups = getExpandedGroups()
+      if (next) {
+        groups.add(groupPath)
+      } else {
+        groups.delete(groupPath)
+      }
+      saveExpandedGroups(groups)
+      return next
+    })
+  }, [groupPath])
 
   return (
     <div>
@@ -53,6 +88,7 @@ export function TokenGroupNode({ group, groupKey, depth, activeMode, modeOverrid
               depth={depth + 1}
               activeMode={activeMode}
               modeOverrides={modeOverrides}
+              parentPath={groupPath}
             />
           ))}
         </div>
