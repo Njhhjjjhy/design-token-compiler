@@ -272,12 +272,20 @@ export const useTokenStore = create<TokenStoreState>()(
             return result
           }
 
+          // Remove orphaned mode overrides referencing this token ID
+          const cleanedModes: Record<string, Mode> = {}
+          for (const [modeId, mode] of Object.entries(activeSet.modes)) {
+            const { [tokenId]: _removed, ...remainingOverrides } = mode.overrides
+            cleanedModes[modeId] = { ...mode, overrides: remainingOverrides }
+          }
+
           return {
             tokenSets: {
               ...state.tokenSets,
               [activeSet.id]: {
                 ...activeSet,
                 tokens: deleteFromTokens(activeSet.tokens),
+                modes: cleanedModes,
                 metadata: {
                   ...activeSet.metadata,
                   updatedAt: Date.now(),
