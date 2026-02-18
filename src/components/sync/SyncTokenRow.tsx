@@ -1,6 +1,6 @@
 import type { FlatToken } from '@/lib/flatten-tokens'
 import type { DiffStatus } from '@/lib/diff-engine'
-import { ArrowLeft, ArrowRight, Check, Minus, Plus, Equal, AlertTriangle, ArrowRightFromLine, ArrowLeftFromLine } from 'lucide-react'
+import { ArrowLeft, ArrowRight, Check, Minus, Plus, Equal, AlertTriangle, ArrowRightFromLine, ArrowLeftFromLine, Undo2 } from 'lucide-react'
 
 interface SyncTokenRowProps {
   path: string
@@ -9,6 +9,7 @@ interface SyncTokenRowProps {
   fileToken?: FlatToken
   resolution?: 'editor' | 'imported' | 'discard' | 'add'
   onResolve: (path: string, choice: 'editor' | 'imported' | 'discard' | 'add') => void
+  onUnresolve?: (path: string) => void
 }
 
 export function SyncTokenRow({
@@ -18,6 +19,7 @@ export function SyncTokenRow({
   fileToken,
   resolution,
   onResolve,
+  onUnresolve,
 }: SyncTokenRowProps) {
   const statusColors: Record<DiffStatus, string> = {
     same: 'border-l-success/30',
@@ -168,6 +170,16 @@ export function SyncTokenRow({
           )}
           {status === 'same' && (
             <Check className="w-3 h-3 text-success/40" />
+          )}
+          {resolution && onUnresolve && (
+            <button
+              onClick={() => onUnresolve(path)}
+              className="ml-1 p-0.5 rounded text-text-tertiary hover:text-white hover:bg-white/5 transition-colors"
+              aria-label="Undo resolution"
+              title="Undo"
+            >
+              <Undo2 className="w-3 h-3" />
+            </button>
           )}
         </div>
 

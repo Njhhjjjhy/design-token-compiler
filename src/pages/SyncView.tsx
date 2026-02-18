@@ -16,6 +16,7 @@ export function SyncView() {
   const importFile = useTokenStore((s) => s.importFile)
   const clearImport = useTokenStore((s) => s.clearImport)
   const resolveToken = useTokenStore((s) => s.resolveToken)
+  const unresolveToken = useTokenStore((s) => s.unresolveToken)
   const setSyncFilter = useTokenStore((s) => s.setSyncFilter)
   const applyToEditor = useTokenStore((s) => s.applyToEditor)
   const resolvedCount = useTokenStore((s) => s.getResolvedCount())
@@ -143,6 +144,7 @@ export function SyncView() {
         resolutions={resolutions}
         filter={syncFilter}
         onResolve={resolveToken}
+        onUnresolve={unresolveToken}
       />
     </div>
   )

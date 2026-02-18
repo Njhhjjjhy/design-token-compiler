@@ -48,6 +48,7 @@ interface TokenStoreState extends AppState {
   importFile: (fileName: string, content: string) => void
   clearImport: () => void
   resolveToken: (path: string, choice: 'editor' | 'imported' | 'discard' | 'add') => void
+  unresolveToken: (path: string) => void
   setSyncFilter: (filter: 'all' | 'differences') => void
   applyToEditor: () => void
   getUnresolvedCount: () => number
@@ -475,6 +476,12 @@ export const useTokenStore = create<TokenStoreState>()(
         set((state) => ({
           resolutions: { ...state.resolutions, [path]: choice },
         })),
+
+      unresolveToken: (path) =>
+        set((state) => {
+          const { [path]: _removed, ...remaining } = state.resolutions
+          return { resolutions: remaining }
+        }),
 
       setSyncFilter: (filter) => set({ syncFilter: filter }),
 

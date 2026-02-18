@@ -6,6 +6,7 @@ interface SyncDiffPanelProps {
   resolutions: Record<string, 'editor' | 'imported' | 'discard' | 'add'>
   filter: 'all' | 'differences'
   onResolve: (path: string, choice: 'editor' | 'imported' | 'discard' | 'add') => void
+  onUnresolve: (path: string) => void
 }
 
 export function SyncDiffPanel({
@@ -13,6 +14,7 @@ export function SyncDiffPanel({
   resolutions,
   filter,
   onResolve,
+  onUnresolve,
 }: SyncDiffPanelProps) {
   // Apply filter
   let rows = diffResult.rows
@@ -80,6 +82,7 @@ export function SyncDiffPanel({
                 fileToken={row.fileToken}
                 resolution={resolutions[row.path]}
                 onResolve={onResolve}
+                onUnresolve={onUnresolve}
               />
             </div>
           ))}
