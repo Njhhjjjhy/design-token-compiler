@@ -26,7 +26,7 @@ export function BinarySeparator() {
   const [binaryString] = useState(generateBinaryString())
 
   return (
-    <div className="h-9 border-t border-b border-border bg-secondary overflow-hidden relative">
+    <div aria-hidden="true" role="presentation" className="h-9 border-t border-b border-border bg-secondary overflow-hidden relative">
       <div
         className="absolute whitespace-nowrap font-mono text-[8px] text-text-tertiary leading-9"
         style={{
