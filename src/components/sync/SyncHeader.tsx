@@ -53,6 +53,7 @@ export function SyncHeader({
           <button
             onClick={onApply}
             disabled={!allResolved}
+            title={allResolved ? undefined : 'Resolve all conflicts first'}
             className={`
               flex items-center gap-2 px-4 py-2 font-mono text-xs transition-colors
               ${allResolved
@@ -67,6 +68,7 @@ export function SyncHeader({
           <button
             onClick={onExport}
             disabled={!allResolved}
+            title={allResolved ? undefined : 'Resolve all conflicts first'}
             className={`
               flex items-center gap-2 px-4 py-2 font-mono text-xs transition-colors
               ${allResolved
