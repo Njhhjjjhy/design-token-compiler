@@ -28,6 +28,7 @@ export function CompilerView() {
   const activeSetId = useTokenStore((state) => state.activeSetId)
   const [activeFormat, setActiveFormat] = useState<CompilerFormat>('css')
   const [copied, setCopied] = useState(false)
+  const [showErrors, setShowErrors] = useState(false)
 
   const activeSet = activeSetId ? tokenSets[activeSetId] : null
 
@@ -189,18 +190,40 @@ export function CompilerView() {
             <span className="text-text-secondary">TOKENS:</span>{' '}
             <span className="text-white">{Object.keys(lightResult.tokens).length}</span>
           </div>
-          <div className="font-mono text-xs">
-            <span className="text-text-secondary">ERRORS:</span>{' '}
-            <span className={lightResult.errors.length > 0 ? 'text-error' : 'text-success'}>
-              {lightResult.errors.length}
-            </span>
-          </div>
+          {lightResult.errors.length > 0 ? (
+            <button
+              onClick={() => setShowErrors(!showErrors)}
+              className="font-mono text-xs hover:underline"
+            >
+              <span className="text-text-secondary">ERRORS:</span>{' '}
+              <span className="text-error">{lightResult.errors.length}</span>
+              <span className="text-text-tertiary ml-1">{showErrors ? '(hide)' : '(show)'}</span>
+            </button>
+          ) : (
+            <div className="font-mono text-xs">
+              <span className="text-text-secondary">ERRORS:</span>{' '}
+              <span className="text-success">0</span>
+            </div>
+          )}
           <div className="font-mono text-xs">
             <span className="text-text-secondary">SIZE:</span>{' '}
             <span className="text-white">{(currentOutput.code.length / 1024).toFixed(1)} KB</span>
           </div>
         </div>
       </div>
+
+      {/* Error List */}
+      {showErrors && lightResult.errors.length > 0 && (
+        <div className="border-b border-border bg-surface-sunken px-6 py-3 space-y-1">
+          {lightResult.errors.map((err, i) => (
+            <div key={i} className="flex items-baseline gap-3 font-mono text-xs">
+              <span className="text-error uppercase">{err.error.replace('_', ' ')}</span>
+              <span className="text-white">{err.tokenPath}</span>
+              <span className="text-text-tertiary">{err.message}</span>
+            </div>
+          ))}
+        </div>
+      )}
 
       {/* Format Tabs */}
       <div className="flex border-b border-border bg-surface overflow-x-auto">
