@@ -222,11 +222,11 @@ export function AddTokenDialog({ isOpen, onClose }: AddTokenDialogProps) {
               className="w-full px-3 py-2 bg-bg-secondary border border-border-default rounded font-mono text-sm text-text-primary focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary"
             >
               <option value="color">Color</option>
-              <option value="dimension">Dimension</option>
-              <option value="fontFamily">Font Family</option>
+              <option value="dimension">Spacing</option>
+              <option value="fontFamily">Font</option>
               <option value="fontWeight">Font Weight</option>
               <option value="duration">Duration</option>
-              <option value="cubicBezier">Cubic Bezier</option>
+              <option value="cubicBezier">Easing</option>
               <option value="number">Number</option>
               <option value="typography">Typography</option>
               <option value="shadow">Shadow</option>

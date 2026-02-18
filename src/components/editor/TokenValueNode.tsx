@@ -3,6 +3,19 @@ import { Trash2, Check, AlertTriangle } from 'lucide-react'
 import type { Token, TokenValue } from '@/types'
 import { useTokenStore } from '@/store/useTokenStore'
 
+const typeDisplayNames: Record<string, string> = {
+  color: 'color',
+  dimension: 'spacing',
+  fontFamily: 'font',
+  fontWeight: 'weight',
+  duration: 'duration',
+  cubicBezier: 'easing',
+  number: 'number',
+  typography: 'type',
+  shadow: 'shadow',
+  border: 'border',
+}
+
 interface TokenValueNodeProps {
   token: Token
   depth: number
@@ -180,7 +193,7 @@ export function TokenValueNode({ token, depth, activeMode, modeOverrides }: Toke
 
       {/* Type Badge */}
       <span className="px-2 py-0.5 text-xs font-mono uppercase rounded bg-blue-500/20 text-blue-400">
-        {token.type}
+        {typeDisplayNames[token.type] || token.type}
       </span>
 
       {/* Override indicator */}
