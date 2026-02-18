@@ -83,7 +83,6 @@ function App() {
         activeView={activeView}
         onViewChange={setActiveView}
         activeSetName={activeSet?.name}
-        syncStatus={{ status: 'unsynced' }}
       />
 
       <BinarySeparator />
