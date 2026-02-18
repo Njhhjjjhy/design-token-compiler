@@ -1,5 +1,12 @@
 import { useState, useCallback } from 'react'
-import { Upload } from 'lucide-react'
+import { Upload, AlertTriangle } from 'lucide-react'
+
+const ALLOWED_EXTENSIONS = ['.json', '.css', '.scss']
+
+function isAllowedFileType(fileName: string): boolean {
+  const lower = fileName.toLowerCase()
+  return ALLOWED_EXTENSIONS.some((ext) => lower.endsWith(ext))
+}
 
 interface SyncDropZoneProps {
   onFileLoaded: (fileName: string, content: string) => void
@@ -7,8 +14,14 @@ interface SyncDropZoneProps {
 
 export function SyncDropZone({ onFileLoaded }: SyncDropZoneProps) {
   const [isDragging, setIsDragging] = useState(false)
+  const [fileError, setFileError] = useState<string | null>(null)
 
   const handleFile = useCallback((file: File) => {
+    if (!isAllowedFileType(file.name)) {
+      setFileError(`Unsupported file type. Accepted formats: ${ALLOWED_EXTENSIONS.join(', ')}`)
+      return
+    }
+    setFileError(null)
     const reader = new FileReader()
     reader.onload = (e) => {
       const content = e.target?.result as string
@@ -77,6 +90,13 @@ export function SyncDropZone({ onFileLoaded }: SyncDropZoneProps) {
         <p className="mt-6 font-mono text-xs text-text-tertiary">
           Supported: .json (Figma or W3C) · .css · .scss
         </p>
+
+        {fileError && (
+          <div className="mt-4 flex items-center gap-2 text-left">
+            <AlertTriangle className="w-4 h-4 text-error flex-shrink-0" />
+            <p className="font-mono text-xs text-error">{fileError}</p>
+          </div>
+        )}
       </div>
     </div>
   )
