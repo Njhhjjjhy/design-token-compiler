@@ -247,6 +247,9 @@ export function AddTokenDialog({ isOpen, onClose }: AddTokenDialogProps) {
               placeholder="e.g., #1a1a1a or {color.primary}"
               className="w-full px-3 py-2 bg-bg-secondary border border-border-default rounded font-mono text-sm text-text-primary placeholder:text-text-tertiary focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary"
             />
+            <p className="mt-1.5 font-mono text-xs text-text-tertiary">
+              Use <span className="text-text-secondary">{'{group.token}'}</span> syntax to reference another token's value.
+            </p>
           </div>
         </div>
 

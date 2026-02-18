@@ -238,6 +238,7 @@ export function TokenValueNode({ token, depth, activeMode, modeOverrides }: Toke
             onBlur={handleEditSave}
             onKeyDown={handleKeyDown}
             aria-invalid={isInvalid}
+            placeholder="Value or {reference.path}"
             className={`w-full px-2 py-1 font-mono text-sm bg-bg-secondary border rounded focus:outline-none focus:ring-1 ${
               isInvalid
                 ? 'border-red-500 focus:ring-red-500'
