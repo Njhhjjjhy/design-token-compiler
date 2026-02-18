@@ -10,14 +10,41 @@ import { SyncView } from './pages/SyncView'
 import { useTokenStore, STORAGE_ERROR_EVENT } from './store/useTokenStore'
 import { createSampleTokenSet } from './data/sampleTokens'
 import { useTheme } from './hooks/useTheme'
+import { TourProvider, useTour } from './components/onboarding/TourProvider'
+import { TourOverlay } from './components/onboarding/TourOverlay'
+import { TourTooltip } from './components/onboarding/TourTooltip'
+import { createSampleDesignSystem } from './lib/sample-data'
 
-function App() {
+function TourUI() {
+  const { isActive } = useTour()
+  const addTokenSet = useTokenStore((s) => s.addTokenSet)
+  const tokenSets = useTokenStore((s) => s.tokenSets)
+  const deleteTokenSet = useTokenStore((s) => s.deleteTokenSet)
+
+  const handleLoadSample = useCallback(() => {
+    for (const id of Object.keys(tokenSets)) {
+      deleteTokenSet(id)
+    }
+    addTokenSet(createSampleDesignSystem())
+  }, [tokenSets, deleteTokenSet, addTokenSet])
+
+  if (!isActive) return null
+  return (
+    <>
+      <TourOverlay />
+      <TourTooltip onLoadSample={handleLoadSample} />
+    </>
+  )
+}
+
+function AppShell() {
   const activeView = useTokenStore((state) => state.activeView)
   const setActiveView = useTokenStore((state) => state.setActiveView)
   const tokenSets = useTokenStore((state) => state.tokenSets)
   const activeSetId = useTokenStore((state) => state.activeSetId)
   const [storageWarning, setStorageWarning] = useState(false)
   const { theme, toggleTheme } = useTheme()
+  const { start: startTour } = useTour()
 
   // Listen for localStorage quota errors
   useEffect(() => {
@@ -130,6 +157,7 @@ function App() {
         activeModeName={activeModeName}
         theme={theme}
         onToggleTheme={toggleTheme}
+        onStartTour={startTour}
       />
 
       <BinarySeparator />
@@ -139,7 +167,19 @@ function App() {
       </main>
 
       <BinarySeparator />
+
+      <TourUI />
     </div>
+  )
+}
+
+function App() {
+  const setActiveView = useTokenStore((state) => state.setActiveView)
+
+  return (
+    <TourProvider onNavigate={setActiveView}>
+      <AppShell />
+    </TourProvider>
   )
 }
 
