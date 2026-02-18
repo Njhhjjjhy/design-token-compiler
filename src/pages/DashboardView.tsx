@@ -1,10 +1,10 @@
-import { Plus, Upload, Database, Trash2 } from 'lucide-react'
+import { Plus, Upload, Database, Trash2, AlertTriangle } from 'lucide-react'
 import { nanoid } from 'nanoid'
 import { useTokenStore } from '@/store/useTokenStore'
 import { TokenSetCard } from '@/components/dashboard/TokenSetCard'
 import { createSampleDesignSystem } from '@/lib/sample-data'
 import type { TokenSet, ViewMode } from '@/types'
-import { useCallback, useRef } from 'react'
+import { useCallback, useRef, useState, useEffect } from 'react'
 
 export function DashboardView() {
   const tokenSets = useTokenStore((s) => s.tokenSets)
@@ -15,6 +15,8 @@ export function DashboardView() {
   const setActiveView = useTokenStore((s) => s.setActiveView)
   const importFile = useTokenStore((s) => s.importFile)
   const fileInputRef = useRef<HTMLInputElement>(null)
+  const [showClearConfirm, setShowClearConfirm] = useState(false)
+  const clearConfirmRef = useRef<HTMLButtonElement>(null)
 
   const sets = Object.values(tokenSets)
 
@@ -50,10 +52,22 @@ export function DashboardView() {
   }, [tokenSets, deleteTokenSet, addTokenSet])
 
   const handleClearAll = useCallback(() => {
+    setShowClearConfirm(true)
+  }, [])
+
+  const handleConfirmClear = useCallback(() => {
     for (const id of Object.keys(tokenSets)) {
       deleteTokenSet(id)
     }
+    setShowClearConfirm(false)
   }, [tokenSets, deleteTokenSet])
+
+  // Focus the confirm button when the modal opens
+  useEffect(() => {
+    if (showClearConfirm && clearConfirmRef.current) {
+      clearConfirmRef.current.focus()
+    }
+  }, [showClearConfirm])
 
   const handleImportFile = useCallback(() => {
     fileInputRef.current?.click()
@@ -157,6 +171,50 @@ export function DashboardView() {
       </div>
 
       <input ref={fileInputRef} type="file" accept=".json,.css,.scss" onChange={handleFileSelected} className="hidden" />
+
+      {/* Clear All Confirmation Modal */}
+      {showClearConfirm && (
+        <div
+          className="fixed inset-0 bg-black/50 flex items-center justify-center z-50"
+          onClick={() => setShowClearConfirm(false)}
+          onKeyDown={(e) => { if (e.key === 'Escape') setShowClearConfirm(false) }}
+        >
+          <div
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="clear-confirm-title"
+            className="bg-bg-primary border border-border-default rounded-lg p-6 w-full max-w-sm"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex items-center gap-3 mb-4">
+              <div className="w-10 h-10 rounded-full bg-red-500/10 flex items-center justify-center flex-shrink-0">
+                <AlertTriangle className="w-5 h-5 text-red-400" />
+              </div>
+              <h3 id="clear-confirm-title" className="font-mono text-sm font-semibold text-white">
+                Clear All Token Sets?
+              </h3>
+            </div>
+            <p className="font-mono text-xs text-text-secondary mb-6 ml-[52px]">
+              This will permanently delete all {sets.length} token set{sets.length !== 1 ? 's' : ''} and cannot be undone.
+            </p>
+            <div className="flex items-center justify-end gap-3">
+              <button
+                onClick={() => setShowClearConfirm(false)}
+                className="px-4 py-2 font-mono text-xs text-text-secondary hover:bg-white/10 rounded transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                ref={clearConfirmRef}
+                onClick={handleConfirmClear}
+                className="px-4 py-2 bg-red-600 hover:bg-red-500 text-white font-mono text-xs rounded transition-colors"
+              >
+                Clear All
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
