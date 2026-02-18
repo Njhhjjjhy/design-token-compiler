@@ -1,6 +1,6 @@
 import type { FlatToken } from '@/lib/flatten-tokens'
 import type { DiffStatus } from '@/lib/diff-engine'
-import { ArrowLeft, ArrowRight, Check, Minus, Plus } from 'lucide-react'
+import { ArrowLeft, ArrowRight, Check, Minus, Plus, Equal, AlertTriangle, ArrowRightFromLine, ArrowLeftFromLine } from 'lucide-react'
 
 interface SyncTokenRowProps {
   path: string
@@ -58,7 +58,11 @@ export function SyncTokenRow({
         </span>
 
         {/* Status badge */}
-        <span className={`font-mono text-xs uppercase ${statusLabelColors[status]} min-w-[80px]`}>
+        <span className={`font-mono text-xs uppercase ${statusLabelColors[status]} min-w-[80px] flex items-center gap-1`}>
+          {status === 'same' && <Equal className="w-3 h-3" />}
+          {status === 'different' && <AlertTriangle className="w-3 h-3" />}
+          {status === 'editor_only' && <ArrowLeftFromLine className="w-3 h-3" />}
+          {status === 'file_only' && <ArrowRightFromLine className="w-3 h-3" />}
           {statusLabels[status]}
         </span>
 
