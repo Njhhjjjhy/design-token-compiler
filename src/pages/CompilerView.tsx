@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useMemo } from 'react'
 import { useTokenStore } from '@/store/useTokenStore'
 import { resolveTokens } from '@/lib/resolver'
 import { compileToCssWithModes } from '@/lib/compilers/css'
@@ -60,8 +60,8 @@ export function CompilerView() {
   const lightResult = resolveTokens(activeSet, defaultMode?.id)
   const darkResult = altMode ? resolveTokens(activeSet, altMode.id) : lightResult
 
-  // Compile to all formats
-  const outputs: Record<CompilerFormat, CompilerOutput> = {
+  // Memoize compilation to avoid recomputing on every render
+  const outputs = useMemo<Record<CompilerFormat, CompilerOutput>>(() => ({
     css: {
       format: 'css',
       code: compileToCssWithModes(lightResult.tokens, darkResult.tokens, {
@@ -120,7 +120,7 @@ export function CompilerView() {
       fileName: 'tokens.sd.json',
       mimeType: 'application/json',
     },
-  }
+  }), [lightResult.tokens, darkResult.tokens])
 
   const currentOutput = outputs[activeFormat]
 
