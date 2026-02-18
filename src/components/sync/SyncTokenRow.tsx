@@ -52,24 +52,25 @@ export function SyncTokenRow({
   const shortPath = path.split('.').slice(1).join('.') || path
 
   return (
-    <div className={`border-l-2 ${statusColors[status]} ${statusBg[status]} ${resolution ? 'opacity-70' : ''}`}>
-      <div className="flex items-center gap-2 px-4 py-2">
-        {/* Token path */}
-        <span className="font-mono text-xs text-text-secondary min-w-[180px] truncate" title={path}>
+    <tr className={`border-l-2 ${statusColors[status]} ${statusBg[status]} ${resolution ? 'opacity-70' : ''} border-b border-border-subtle`}>
+      <td className="px-4 py-2">
+        <span className="font-mono text-xs text-text-secondary min-w-[180px] truncate block" title={path}>
           {shortPath}
         </span>
+      </td>
 
-        {/* Status badge */}
-        <span className={`font-mono text-xs uppercase ${statusLabelColors[status]} min-w-[80px] flex items-center gap-1`}>
+      <td className="px-1 py-2">
+        <span className={`font-mono text-xs uppercase ${statusLabelColors[status]} flex items-center gap-1`}>
           {status === 'same' && <Equal className="w-3 h-3" />}
           {status === 'different' && <AlertTriangle className="w-3 h-3" />}
           {status === 'editor_only' && <ArrowLeftFromLine className="w-3 h-3" />}
           {status === 'file_only' && <ArrowRightFromLine className="w-3 h-3" />}
           {statusLabels[status]}
         </span>
+      </td>
 
-        {/* Editor value */}
-        <div className="flex-1 flex items-center gap-2 min-w-0">
+      <td className="px-1 py-2">
+        <div className="flex items-center gap-2 min-w-0">
           {editorToken ? (
             <>
               {renderPreview(editorToken)}
@@ -81,9 +82,10 @@ export function SyncTokenRow({
             <span className="font-mono text-xs text-text-tertiary italic">&mdash;</span>
           )}
         </div>
+      </td>
 
-        {/* Resolution controls */}
-        <div className="flex items-center gap-1 mx-2">
+      <td className="px-1 py-2">
+        <div className="flex items-center gap-1">
           {status === 'different' && (
             <>
               <button
@@ -182,9 +184,10 @@ export function SyncTokenRow({
             </button>
           )}
         </div>
+      </td>
 
-        {/* File value */}
-        <div className="flex-1 flex items-center gap-2 min-w-0">
+      <td className="px-1 py-2">
+        <div className="flex items-center gap-2 min-w-0">
           {fileToken ? (
             <>
               {renderPreview(fileToken)}
@@ -196,8 +199,8 @@ export function SyncTokenRow({
             <span className="font-mono text-xs text-text-tertiary italic">&mdash;</span>
           )}
         </div>
-      </div>
-    </div>
+      </td>
+    </tr>
   )
 }
 
@@ -210,6 +213,8 @@ function renderPreview(token: FlatToken) {
       <div
         className="w-3 h-3 rounded-sm border border-white/20 flex-shrink-0"
         style={{ backgroundColor: token.value }}
+        role="img"
+        aria-label={`Color: ${token.value}`}
       />
     )
   }
@@ -222,6 +227,8 @@ function renderPreview(token: FlatToken) {
       <div
         className="h-2 bg-text-tertiary rounded-sm flex-shrink-0"
         style={{ width: `${barWidth}px` }}
+        role="img"
+        aria-label={`Dimension: ${token.value}`}
       />
     )
   }

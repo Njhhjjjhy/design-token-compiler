@@ -42,52 +42,55 @@ export function SyncDiffPanel({
 
   return (
     <div className="flex-1 overflow-auto">
-      {/* Column headers */}
-      <div className="sticky top-0 z-10 flex items-center gap-2 px-4 py-2 bg-surface border-b border-border">
-        <span className="font-mono text-xs text-text-tertiary uppercase tracking-wider min-w-[180px]">
-          Token
-        </span>
-        <span className="font-mono text-xs text-text-tertiary uppercase tracking-wider min-w-[80px]">
-          Status
-        </span>
-        <span className="flex-1 font-mono text-xs text-text-tertiary uppercase tracking-wider">
-          Editor Value
-        </span>
-        <span className="w-[72px]" /> {/* Resolution controls spacer */}
-        <span className="flex-1 font-mono text-xs text-text-tertiary uppercase tracking-wider">
-          File Value
-        </span>
-      </div>
-
-      {/* Grouped rows */}
-      {Array.from(groups.entries()).map(([group, groupRows]) => (
-        <div key={group}>
-          {/* Group header */}
-          <div className="px-4 py-2 bg-secondary/50 border-b border-border">
-            <span className="font-mono text-xs text-primary uppercase tracking-wider">
-              {group}
-            </span>
-            <span className="font-mono text-xs text-text-tertiary ml-2">
-              ({groupRows.length})
-            </span>
-          </div>
-
-          {/* Token rows */}
-          {groupRows.map((row) => (
-            <div key={row.path} className="border-b border-border-subtle">
-              <SyncTokenRow
-                path={row.path}
-                status={row.status}
-                editorToken={row.editorToken}
-                fileToken={row.fileToken}
-                resolution={resolutions[row.path]}
-                onResolve={onResolve}
-                onUnresolve={onUnresolve}
-              />
-            </div>
+      <table className="w-full" aria-label="Token comparison">
+        <thead className="sticky top-0 z-10">
+          <tr className="bg-surface border-b border-border">
+            <th scope="col" className="text-left px-4 py-2 font-mono text-xs text-text-tertiary uppercase tracking-wider font-normal min-w-[180px]">
+              Token
+            </th>
+            <th scope="col" className="text-left px-1 py-2 font-mono text-xs text-text-tertiary uppercase tracking-wider font-normal min-w-[80px]">
+              Status
+            </th>
+            <th scope="col" className="text-left px-1 py-2 font-mono text-xs text-text-tertiary uppercase tracking-wider font-normal">
+              Editor Value
+            </th>
+            <th scope="col" className="px-1 py-2 w-[72px]">
+              <span className="sr-only">Resolution</span>
+            </th>
+            <th scope="col" className="text-left px-1 py-2 font-mono text-xs text-text-tertiary uppercase tracking-wider font-normal">
+              File Value
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          {Array.from(groups.entries()).map(([group, groupRows]) => (
+            <>
+              <tr key={`group-${group}`}>
+                <td colSpan={5} className="px-4 py-2 bg-secondary/50 border-b border-border">
+                  <span className="font-mono text-xs text-primary uppercase tracking-wider">
+                    {group}
+                  </span>
+                  <span className="font-mono text-xs text-text-tertiary ml-2">
+                    ({groupRows.length})
+                  </span>
+                </td>
+              </tr>
+              {groupRows.map((row) => (
+                <SyncTokenRow
+                  key={row.path}
+                  path={row.path}
+                  status={row.status}
+                  editorToken={row.editorToken}
+                  fileToken={row.fileToken}
+                  resolution={resolutions[row.path]}
+                  onResolve={onResolve}
+                  onUnresolve={onUnresolve}
+                />
+              ))}
+            </>
           ))}
-        </div>
-      ))}
+        </tbody>
+      </table>
     </div>
   )
 }

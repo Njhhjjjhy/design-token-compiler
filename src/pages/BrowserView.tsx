@@ -83,7 +83,12 @@ export function BrowserView() {
         searchQuery={searchQuery}
         onSearchChange={setSearchQuery}
       />
-      <div className="flex-1 overflow-auto px-8 py-6">
+      <div
+        className="flex-1 overflow-auto px-8 py-6"
+        role="tabpanel"
+        id={`browser-tabpanel-${activeTab}`}
+        aria-labelledby={`browser-tab-${activeTab}`}
+      >
         {activeTab === 'colors' && <ColorGrid tokens={filtered.colors} />}
         {activeTab === 'spacing' && <SpacingScale tokens={filtered.spacing} />}
         {activeTab === 'typography' && <TypographySpecimens tokens={filtered.typography} />}

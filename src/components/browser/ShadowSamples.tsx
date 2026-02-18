@@ -29,15 +29,23 @@ export function ShadowSamples({ tokens }: ShadowSamplesProps) {
         return (
           <div
             key={path}
-            className="border border-border-subtle p-4 tablet:p-5 cursor-default"
+            className="border border-border-subtle p-4 tablet:p-5 cursor-default focus:outline-none focus:ring-1 focus:ring-primary"
+            tabIndex={0}
+            role="button"
+            aria-label={`Shadow preview: ${shortPath}`}
             onMouseEnter={() => { if (canHover) setActivePath(path) }}
             onMouseLeave={() => { if (canHover) setActivePath(null) }}
+            onFocus={() => { if (canHover) setActivePath(path) }}
+            onBlur={() => { if (canHover) setActivePath(null) }}
             onClick={() => { if (!canHover) setActivePath(prev => prev === path ? null : path) }}
+            onKeyDown={(e) => { if (!canHover && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); setActivePath(prev => prev === path ? null : path) } }}
           >
             <p className="font-mono text-xs text-text-secondary mb-4" title={path}>{shortPath}</p>
             <div className="flex items-center justify-center py-8">
               <div
                 className="w-20 h-20 tablet:w-24 tablet:h-24 large:w-28 large:h-28 bg-surface-elevated rounded transition-all duration-200 ease-out"
+                role="img"
+                aria-label={`Shadow: ${value}`}
                 style={{
                   boxShadow: isActive ? `${value}, 0 8px 24px rgba(0,0,0,0.3)` : value,
                   transform: isActive ? 'translateY(-4px)' : 'none',

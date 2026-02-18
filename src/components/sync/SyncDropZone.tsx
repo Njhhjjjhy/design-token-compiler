@@ -71,6 +71,7 @@ export function SyncDropZone({ onFileLoaded }: SyncDropZoneProps) {
         onDrop={handleDrop}
         onDragOver={handleDragOver}
         onDragLeave={handleDragLeave}
+        aria-busy={isLoading}
         className={`
           w-full max-w-lg p-12 border-2 border-dashed rounded-lg text-center transition-colors
           ${isDragging
@@ -81,7 +82,7 @@ export function SyncDropZone({ onFileLoaded }: SyncDropZoneProps) {
       >
         {isLoading ? (
           <>
-            <Loader2 className="w-10 h-10 mx-auto mb-4 text-primary animate-spin" />
+            <Loader2 className="w-10 h-10 mx-auto mb-4 text-primary animate-spin" aria-hidden="true" />
             <p className="font-mono text-sm text-white mb-2">
               Parsing file...
             </p>
@@ -118,8 +119,8 @@ export function SyncDropZone({ onFileLoaded }: SyncDropZoneProps) {
         )}
 
         {fileError && (
-          <div className="mt-4 flex items-center gap-2 text-left">
-            <AlertTriangle className="w-4 h-4 text-error flex-shrink-0" />
+          <div className="mt-4 flex items-center gap-2 text-left" role="alert">
+            <AlertTriangle className="w-4 h-4 text-error flex-shrink-0" aria-hidden="true" />
             <p className="font-mono text-xs text-error">{fileError}</p>
           </div>
         )}

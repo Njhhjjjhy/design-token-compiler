@@ -56,7 +56,7 @@ export function TokenTree({ tokenSet, activeMode, searchQuery = '' }: TokenTreeP
   }
 
   return (
-    <div className="space-y-1">
+    <div className="space-y-1" role="tree" aria-label="Token tree">
       {Object.entries(visibleTokens).map(([key, item]) => (
         <TokenTreeNode
           key={key}

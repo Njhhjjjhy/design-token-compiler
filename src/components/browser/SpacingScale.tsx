@@ -89,7 +89,7 @@ export function SpacingScale({ tokens }: SpacingScaleProps) {
             <div key={path} className="flex items-center gap-4 py-2 px-4 border-b border-border-subtle">
               <span className="font-mono text-xs text-text-secondary min-w-[160px] truncate" title={path}>{shortPath}</span>
               <div className="flex-1">
-                <div className="h-4 bg-primary/30 border border-primary/50 rounded-sm" style={{ width: `${widthPercent}%` }} />
+                <div className="h-4 bg-primary/30 border border-primary/50 rounded-sm" style={{ width: `${widthPercent}%` }} role="img" aria-label={`${value} (${px}px)`} />
               </div>
               <CopyableValue value={value} className="font-mono text-xs text-white min-w-[60px] text-right" />
               {!value.endsWith('px') && (

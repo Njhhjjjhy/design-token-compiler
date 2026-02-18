@@ -74,9 +74,16 @@ export function TokenSetCard({
     .map(([type, label]) => `${typeCounts[type]} ${label}`)
 
   return (
-    <div onClick={onClick} className="border border-border bg-surface hover:border-primary/40 transition-colors cursor-pointer">
+    <div
+      onClick={onClick}
+      onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onClick() } }}
+      tabIndex={0}
+      role="button"
+      aria-label={`Open ${tokenSet.name} token set`}
+      className="border border-border bg-surface hover:border-primary/40 transition-colors cursor-pointer focus:outline-none focus:ring-1 focus:ring-primary"
+    >
       {colorPreviews.length > 0 && (
-        <div className="flex h-3">
+        <div className="flex h-3" role="img" aria-label={`Color preview: ${colorPreviews.join(', ')}`}>
           {colorPreviews.map((color, i) => (
             <div key={i} className="flex-1" style={{ backgroundColor: color }} />
           ))}

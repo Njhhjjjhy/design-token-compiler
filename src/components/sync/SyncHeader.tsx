@@ -108,9 +108,11 @@ export function SyncHeader({
 
         <div className="ml-auto flex items-center gap-2">
           {/* Filter toggle */}
-          <div className="flex border border-border">
+          <div className="flex border border-border" role="radiogroup" aria-label="Filter diff view">
             <button
               onClick={() => onFilterChange('all')}
+              role="radio"
+              aria-checked={filter === 'all'}
               className={`px-3 py-1 font-mono text-xs transition-colors ${
                 filter === 'all' ? 'bg-surface-elevated text-white' : 'text-text-secondary hover:text-white'
               }`}
@@ -119,6 +121,8 @@ export function SyncHeader({
             </button>
             <button
               onClick={() => onFilterChange('differences')}
+              role="radio"
+              aria-checked={filter === 'differences'}
               className={`px-3 py-1 font-mono text-xs border-l border-border transition-colors ${
                 filter === 'differences' ? 'bg-surface-elevated text-white' : 'text-text-secondary hover:text-white'
               }`}
@@ -147,7 +151,7 @@ export function SyncHeader({
 
           {/* Resolution progress */}
           {totalConflicts > 0 && (
-            <span className="font-mono text-xs text-text-secondary ml-4">
+            <span className="font-mono text-xs text-text-secondary ml-4" role="status" aria-live="polite" aria-label={`${resolvedCount} of ${totalConflicts} conflicts resolved`}>
               <span className={allResolved ? 'text-success' : 'text-warning'}>{resolvedCount}</span>
               <span> / {totalConflicts} resolved</span>
             </span>
