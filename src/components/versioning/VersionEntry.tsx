@@ -19,10 +19,10 @@ export function VersionEntry({ version, onRestore, onDelete }: VersionEntryProps
         </p>
       </div>
       <div className="flex gap-1 flex-shrink-0">
-        <button onClick={onRestore} className="p-1.5 text-text-tertiary hover:text-success hover:bg-success/10 transition-colors rounded" title="Restore this version" aria-label="Restore this version">
+        <button onClick={onRestore} className="p-1.5 text-text-tertiary hover:text-success hover:bg-success/10 transition-colors rounded" aria-label="Restore this version">
           <RotateCcw className="w-3.5 h-3.5" />
         </button>
-        <button onClick={onDelete} className="p-1.5 text-text-tertiary hover:text-error hover:bg-error/10 transition-colors rounded" title="Delete this version" aria-label="Delete this version">
+        <button onClick={onDelete} className="p-1.5 text-text-tertiary hover:text-error hover:bg-error/10 transition-colors rounded" aria-label="Delete this version">
           <Trash2 className="w-3.5 h-3.5" />
         </button>
       </div>

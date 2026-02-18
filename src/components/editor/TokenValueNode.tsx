@@ -229,7 +229,7 @@ export function TokenValueNode({ token, depth, activeMode, modeOverrides }: Toke
       {/* Type Badge */}
       <span
         className="px-2 py-0.5 text-xs font-mono uppercase rounded bg-info/20 text-info"
-        title={typeDescriptions[token.type] || token.type}
+        aria-label={`Type: ${typeDescriptions[token.type] || token.type}`}
       >
         {typeDisplayNames[token.type] || token.type}
       </span>
@@ -275,7 +275,7 @@ export function TokenValueNode({ token, depth, activeMode, modeOverrides }: Toke
               ? 'text-text-tertiary hover:bg-white/10'
               : 'text-text-secondary hover:bg-white/10'
           }`}
-          title={activeMode && hasOverride ? `Base: ${baseValueString}` : (displayString !== valueString ? valueString : undefined)}
+          aria-label={activeMode && hasOverride ? `${token.name}, base value: ${baseValueString}` : `${token.name}: ${displayString}`}
         >
           {displayString}
         </button>
@@ -302,7 +302,6 @@ export function TokenValueNode({ token, depth, activeMode, modeOverrides }: Toke
         onClick={handleDelete}
         tabIndex={-1}
         className="opacity-0 group-hover:opacity-100 focus:opacity-100 p-1 hover:text-error transition-all"
-        title={activeMode && hasOverride ? 'Remove override' : 'Delete token'}
         aria-label={activeMode && hasOverride ? 'Remove override' : 'Delete token'}
       >
         <Trash2 className="w-4 h-4" />
@@ -318,6 +317,7 @@ export function TokenValueNode({ token, depth, activeMode, modeOverrides }: Toke
             role="dialog"
             aria-modal="true"
             aria-labelledby="delete-token-confirm-title"
+            aria-describedby="delete-token-confirm-desc"
             className="bg-surface border border-border rounded-lg p-6 w-full max-w-sm"
             onKeyDown={deleteTrap.handleKeyDown}
           >
@@ -329,7 +329,7 @@ export function TokenValueNode({ token, depth, activeMode, modeOverrides }: Toke
                 Delete Token?
               </h3>
             </div>
-            <p className="font-mono text-xs text-text-secondary mb-6 ml-[52px]">
+            <p id="delete-token-confirm-desc" className="font-mono text-xs text-text-secondary mb-6 ml-[52px]">
               Delete token '{token.name}'? This cannot be undone.
             </p>
             <div className="flex items-center justify-end gap-3">

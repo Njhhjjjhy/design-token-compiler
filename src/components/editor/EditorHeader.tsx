@@ -39,24 +39,28 @@ export function EditorHeader({
       <div className="flex items-center gap-4">
         <h2 className="section-title text-primary">TOKEN EDITOR</h2>
         {hasModes && (
-          <div className="flex border border-border">
+          <div className="flex border border-border" role="radiogroup" aria-label="Token mode">
             <button
+              role="radio"
+              aria-checked={activeMode === null}
               onClick={() => onModeChange(null)}
               className={`px-3 py-1 font-mono text-xs transition-colors ${
                 activeMode === null ? 'bg-surface-elevated text-white' : 'text-text-secondary hover:text-white'
               }`}
-              title="Default token values with no mode overrides"
+              aria-label="Base: default token values with no mode overrides"
             >
               BASE
             </button>
             {modeEntries.map((mode) => (
               <button
                 key={mode.id}
+                role="radio"
+                aria-checked={activeMode === mode.id}
                 onClick={() => onModeChange(mode.id)}
                 className={`px-3 py-1 font-mono text-xs transition-colors border-l border-border ${
                   activeMode === mode.id ? 'bg-surface-elevated text-white' : 'text-text-secondary hover:text-white'
                 }`}
-                title={`View tokens with ${mode.name} overrides applied`}
+                aria-label={`${mode.name}: view tokens with ${mode.name} overrides applied`}
               >
                 {mode.name.toUpperCase()}
               </button>
@@ -68,7 +72,7 @@ export function EditorHeader({
         <button
           onClick={onOpenModes}
           className="flex items-center gap-2 px-4 py-2 bg-surface-elevated border border-border hover:border-primary text-white font-mono text-sm transition-colors"
-          title="Manage alternate token value sets (e.g. dark mode, compact)"
+          aria-label="Modes: manage alternate token value sets (e.g. dark mode, compact)"
         >
           <Layers className="w-4 h-4" />
           Modes
@@ -79,7 +83,7 @@ export function EditorHeader({
         <button
           onClick={onOpenVersions}
           className="flex items-center gap-2 px-4 py-2 bg-surface-elevated border border-border hover:border-primary text-white font-mono text-sm transition-colors"
-          title="Save and restore token snapshots"
+          aria-label="Versions: save and restore token snapshots"
         >
           <Clock className="w-4 h-4" />
           Versions
@@ -112,7 +116,7 @@ export function EditorHeader({
           <button
             onClick={onExpandAll}
             className="flex items-center gap-1 px-2 py-1 font-mono text-mini text-text-secondary hover:text-white transition-colors"
-            title="Expand all groups"
+            aria-label="Expand all groups"
           >
             <ChevronsUpDown className="w-3 h-3" />
             Expand
@@ -120,7 +124,7 @@ export function EditorHeader({
           <button
             onClick={onCollapseAll}
             className="px-2 py-1 font-mono text-mini text-text-secondary hover:text-white border-l border-border transition-colors"
-            title="Collapse all groups"
+            aria-label="Collapse all groups"
           >
             Collapse
           </button>

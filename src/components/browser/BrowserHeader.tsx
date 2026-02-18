@@ -39,15 +39,17 @@ export function BrowserHeader({
       <div className="flex items-center justify-between mb-6">
         <h2 className="section-title text-primary">TOKEN BROWSER</h2>
         {hasModes && (
-          <div className="flex border border-border">
+          <div className="flex border border-border" role="radiogroup" aria-label="Token mode">
             {modeEntries.map((mode, i) => (
               <button
                 key={mode.id}
+                role="radio"
+                aria-checked={activeMode === mode.id}
                 onClick={() => onModeChange(mode.id)}
                 className={`px-3 py-1 font-mono text-xs transition-colors ${
                   activeMode === mode.id ? 'bg-surface-elevated text-white' : 'text-text-secondary hover:text-white'
                 } ${i > 0 ? 'border-l border-border' : ''}`}
-                title={`View tokens with ${mode.name} overrides applied`}
+                aria-label={`${mode.name}: view tokens with ${mode.name} overrides applied`}
               >
                 {mode.name.toUpperCase()}
               </button>

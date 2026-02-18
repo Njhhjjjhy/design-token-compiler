@@ -151,7 +151,7 @@ export function DashboardView() {
     <div className="p-8">
       <div className="flex items-center justify-between mb-8">
         <h2 className="section-title text-primary">DASHBOARD</h2>
-        <div className="flex gap-3">
+        <div className="flex gap-3" role="group" aria-label="Token set actions">
           <button onClick={handleNewSet} className="flex items-center gap-2 px-4 py-2 bg-primary hover:bg-primary/90 text-white font-mono text-xs transition-colors">
             <Plus className="w-4 h-4" />
             NEW SET
@@ -220,6 +220,7 @@ export function DashboardView() {
             role="dialog"
             aria-modal="true"
             aria-labelledby="clear-confirm-title"
+            aria-describedby="clear-confirm-desc"
             className="bg-surface border border-border rounded-lg p-6 w-full max-w-sm"
             onKeyDown={clearTrap.handleKeyDown}
           >
@@ -231,7 +232,7 @@ export function DashboardView() {
                 Clear All Token Sets?
               </h3>
             </div>
-            <p className="font-mono text-xs text-text-secondary mb-6 ml-[52px]">
+            <p id="clear-confirm-desc" className="font-mono text-xs text-text-secondary mb-6 ml-[52px]">
               This will permanently delete all {sets.length} token set{sets.length !== 1 ? 's' : ''} and cannot be undone.
             </p>
             <div className="flex items-center justify-end gap-3">
@@ -263,6 +264,7 @@ export function DashboardView() {
             role="dialog"
             aria-modal="true"
             aria-labelledby="sample-confirm-title"
+            aria-describedby="sample-confirm-desc"
             className="bg-surface border border-border rounded-lg p-6 w-full max-w-sm"
             onKeyDown={sampleTrap.handleKeyDown}
           >
@@ -274,7 +276,7 @@ export function DashboardView() {
                 Replace Existing Token Sets?
               </h3>
             </div>
-            <p className="font-mono text-xs text-text-secondary mb-6 ml-[52px]">
+            <p id="sample-confirm-desc" className="font-mono text-xs text-text-secondary mb-6 ml-[52px]">
               Loading sample data will remove your {sets.length} existing token set{sets.length !== 1 ? 's' : ''} and replace {sets.length !== 1 ? 'them' : 'it'} with sample data.
             </p>
             <div className="flex items-center justify-end gap-3">
