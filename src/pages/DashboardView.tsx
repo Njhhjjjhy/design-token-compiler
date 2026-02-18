@@ -16,7 +16,9 @@ export function DashboardView() {
   const importFile = useTokenStore((s) => s.importFile)
   const fileInputRef = useRef<HTMLInputElement>(null)
   const [showClearConfirm, setShowClearConfirm] = useState(false)
+  const [showSampleConfirm, setShowSampleConfirm] = useState(false)
   const clearConfirmRef = useRef<HTMLButtonElement>(null)
+  const sampleConfirmRef = useRef<HTMLButtonElement>(null)
 
   const sets = Object.values(tokenSets)
 
@@ -43,12 +45,21 @@ export function DashboardView() {
   }, [addTokenSet, setActiveView])
 
   const handleLoadSample = useCallback(() => {
-    // Clear all existing sets first for a clean start
+    if (Object.keys(tokenSets).length > 0) {
+      setShowSampleConfirm(true)
+      return
+    }
+    const sampleSet = createSampleDesignSystem()
+    addTokenSet(sampleSet)
+  }, [tokenSets, addTokenSet])
+
+  const handleConfirmLoadSample = useCallback(() => {
     for (const id of Object.keys(tokenSets)) {
       deleteTokenSet(id)
     }
     const sampleSet = createSampleDesignSystem()
     addTokenSet(sampleSet)
+    setShowSampleConfirm(false)
   }, [tokenSets, deleteTokenSet, addTokenSet])
 
   const handleClearAll = useCallback(() => {
@@ -62,12 +73,18 @@ export function DashboardView() {
     setShowClearConfirm(false)
   }, [tokenSets, deleteTokenSet])
 
-  // Focus the confirm button when the modal opens
+  // Focus the confirm button when modals open
   useEffect(() => {
     if (showClearConfirm && clearConfirmRef.current) {
       clearConfirmRef.current.focus()
     }
   }, [showClearConfirm])
+
+  useEffect(() => {
+    if (showSampleConfirm && sampleConfirmRef.current) {
+      sampleConfirmRef.current.focus()
+    }
+  }, [showSampleConfirm])
 
   const handleImportFile = useCallback(() => {
     fileInputRef.current?.click()
@@ -210,6 +227,50 @@ export function DashboardView() {
                 className="px-4 py-2 bg-red-600 hover:bg-red-500 text-white font-mono text-xs rounded transition-colors"
               >
                 Clear All
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Load Sample Data Confirmation Modal */}
+      {showSampleConfirm && (
+        <div
+          className="fixed inset-0 bg-black/50 flex items-center justify-center z-50"
+          onClick={() => setShowSampleConfirm(false)}
+          onKeyDown={(e) => { if (e.key === 'Escape') setShowSampleConfirm(false) }}
+        >
+          <div
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="sample-confirm-title"
+            className="bg-bg-primary border border-border-default rounded-lg p-6 w-full max-w-sm"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex items-center gap-3 mb-4">
+              <div className="w-10 h-10 rounded-full bg-warning/10 flex items-center justify-center flex-shrink-0">
+                <AlertTriangle className="w-5 h-5 text-warning" />
+              </div>
+              <h3 id="sample-confirm-title" className="font-mono text-sm font-semibold text-white">
+                Replace Existing Token Sets?
+              </h3>
+            </div>
+            <p className="font-mono text-xs text-text-secondary mb-6 ml-[52px]">
+              Loading sample data will remove your {sets.length} existing token set{sets.length !== 1 ? 's' : ''} and replace {sets.length !== 1 ? 'them' : 'it'} with sample data.
+            </p>
+            <div className="flex items-center justify-end gap-3">
+              <button
+                onClick={() => setShowSampleConfirm(false)}
+                className="px-4 py-2 font-mono text-xs text-text-secondary hover:bg-white/10 rounded transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                ref={sampleConfirmRef}
+                onClick={handleConfirmLoadSample}
+                className="px-4 py-2 bg-primary hover:bg-primary/90 text-white font-mono text-xs rounded transition-colors"
+              >
+                Load Sample Data
               </button>
             </div>
           </div>
