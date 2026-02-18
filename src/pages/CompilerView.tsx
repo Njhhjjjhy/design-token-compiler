@@ -46,7 +46,7 @@ export function CompilerView() {
       <div className="p-8">
         <h2 className="section-title text-primary mb-6">COMPILER</h2>
         <p className="font-mono text-sm text-text-secondary">
-          No token set loaded. Create or import a token set to compile.
+          No token set selected. Go to the Dashboard to create or import one.
         </p>
       </div>
     )
