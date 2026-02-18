@@ -47,6 +47,7 @@ export function BrowserHeader({
                 className={`px-3 py-1 font-mono text-xs transition-colors ${
                   activeMode === mode.id ? 'bg-surface-elevated text-white' : 'text-text-secondary hover:text-white'
                 } ${i > 0 ? 'border-l border-border' : ''}`}
+                title={`View tokens with ${mode.name} overrides applied`}
               >
                 {mode.name.toUpperCase()}
               </button>

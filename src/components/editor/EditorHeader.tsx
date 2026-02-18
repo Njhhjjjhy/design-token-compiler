@@ -45,6 +45,7 @@ export function EditorHeader({
               className={`px-3 py-1 font-mono text-xs transition-colors ${
                 activeMode === null ? 'bg-surface-elevated text-white' : 'text-text-secondary hover:text-white'
               }`}
+              title="Default token values with no mode overrides"
             >
               BASE
             </button>
@@ -55,6 +56,7 @@ export function EditorHeader({
                 className={`px-3 py-1 font-mono text-xs transition-colors border-l border-border ${
                   activeMode === mode.id ? 'bg-surface-elevated text-white' : 'text-text-secondary hover:text-white'
                 }`}
+                title={`View tokens with ${mode.name} overrides applied`}
               >
                 {mode.name.toUpperCase()}
               </button>
@@ -66,6 +68,7 @@ export function EditorHeader({
         <button
           onClick={onOpenModes}
           className="flex items-center gap-2 px-4 py-2 bg-surface-elevated border border-border hover:border-primary text-white font-mono text-sm transition-colors"
+          title="Manage alternate token value sets (e.g. dark mode, compact)"
         >
           <Layers className="w-4 h-4" />
           Modes
@@ -76,6 +79,7 @@ export function EditorHeader({
         <button
           onClick={onOpenVersions}
           className="flex items-center gap-2 px-4 py-2 bg-surface-elevated border border-border hover:border-primary text-white font-mono text-sm transition-colors"
+          title="Save and restore token snapshots"
         >
           <Clock className="w-4 h-4" />
           Versions

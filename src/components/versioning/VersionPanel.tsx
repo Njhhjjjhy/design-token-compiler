@@ -81,7 +81,7 @@ export function VersionPanel({ isOpen, onClose }: VersionPanelProps) {
             className="flex-1 px-3 py-1.5 bg-surface-elevated border border-border font-mono text-xs text-white placeholder:text-text-tertiary focus:border-primary focus:outline-none"
             onKeyDown={(e) => e.key === 'Enter' && handleSave()}
           />
-          <button onClick={handleSave} className="flex items-center gap-1.5 px-3 py-1.5 bg-primary hover:bg-primary/90 text-white font-mono text-xs transition-colors">
+          <button onClick={handleSave} className="flex items-center gap-1.5 px-3 py-1.5 bg-primary hover:bg-primary/90 text-white font-mono text-xs transition-colors" title="Create a snapshot of current token values">
             <Save className="w-3.5 h-3.5" />
             SAVE
           </button>

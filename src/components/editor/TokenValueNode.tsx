@@ -16,6 +16,22 @@ const typeDisplayNames: Record<string, string> = {
   border: 'border',
 }
 
+const typeDescriptions: Record<string, string> = {
+  color: 'Color values (hex, rgb, hsl)',
+  dimension: 'Spacing and size values (px, rem, em)',
+  fontFamily: 'Font family names',
+  fontWeight: 'Font weight values (100-900, bold, etc.)',
+  duration: 'Animation duration (ms, s)',
+  cubicBezier: 'Easing curve for animations',
+  number: 'Unitless numeric values',
+  typography: 'Combined type styles (family, size, weight, etc.)',
+  shadow: 'Box shadow definitions',
+  border: 'Border style definitions',
+  gradient: 'Color gradient values',
+  strokeStyle: 'Stroke/outline style values',
+  transition: 'Transition definitions',
+}
+
 interface TokenValueNodeProps {
   token: Token
   depth: number
@@ -197,7 +213,10 @@ export function TokenValueNode({ token, depth, activeMode, modeOverrides }: Toke
       </span>
 
       {/* Type Badge */}
-      <span className="px-2 py-0.5 text-xs font-mono uppercase rounded bg-blue-500/20 text-blue-400">
+      <span
+        className="px-2 py-0.5 text-xs font-mono uppercase rounded bg-blue-500/20 text-blue-400"
+        title={typeDescriptions[token.type] || token.type}
+      >
         {typeDisplayNames[token.type] || token.type}
       </span>
 
