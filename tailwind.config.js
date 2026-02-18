@@ -4,28 +4,35 @@ export default {
     "./index.html",
     "./src/**/*.{js,ts,jsx,tsx}",
   ],
+  darkMode: 'class',
   theme: {
     extend: {
+      screens: {
+        'tablet': '768px',
+        'desktop': '1024px',
+        'large': '1440px',
+      },
       colors: {
-        primary: '#f40c3f',
-        secondary: '#160000',
+        primary: 'var(--color-primary)',
+        secondary: 'var(--color-secondary)',
         surface: {
-          DEFAULT: '#1e0505',
-          elevated: '#2a0a0a',
+          DEFAULT: 'var(--color-surface)',
+          elevated: 'var(--color-surface-elevated)',
+          sunken: 'var(--color-surface-sunken)',
         },
         border: {
-          DEFAULT: '#3d1515',
-          subtle: '#2d0e0e',
+          DEFAULT: 'var(--color-border)',
+          subtle: 'var(--color-border-subtle)',
         },
-        white: '#fff0eb',
+        white: 'var(--color-white)',
         text: {
-          secondary: '#b39e9e',
-          tertiary: '#7a6565',
+          secondary: 'var(--color-text-secondary)',
+          tertiary: 'var(--color-text-tertiary)',
         },
-        success: '#22c55e',
-        warning: '#f59e0b',
-        error: '#ef4444',
-        info: '#3b82f6',
+        success: 'var(--color-success)',
+        warning: 'var(--color-warning)',
+        error: 'var(--color-error)',
+        info: 'var(--color-info)',
       },
       fontFamily: {
         sans: ['Inter', 'system-ui', 'sans-serif'],
