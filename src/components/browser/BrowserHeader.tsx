@@ -66,10 +66,12 @@ export function BrowserHeader({
           />
         </div>
       </div>
-      <div className="flex border-b border-border">
+      <div className="flex border-b border-border" role="tablist">
         {tabs.map((tab) => (
           <button
             key={tab.id}
+            role="tab"
+            aria-selected={activeTab === tab.id}
             onClick={() => onTabChange(tab.id)}
             className={`relative px-5 py-3 font-mono text-xs tracking-wider transition-colors ${
               activeTab === tab.id ? 'text-white' : 'text-text-secondary hover:text-white'

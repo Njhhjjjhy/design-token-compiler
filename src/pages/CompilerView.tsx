@@ -226,10 +226,12 @@ export function CompilerView() {
       )}
 
       {/* Format Tabs */}
-      <div className="flex border-b border-border bg-surface overflow-x-auto">
+      <div className="flex border-b border-border bg-surface overflow-x-auto" role="tablist">
         {(['css', 'scss', 'typescript', 'tailwind', 'json-w3c', 'style-dictionary'] as CompilerFormat[]).map((format) => (
           <button
             key={format}
+            role="tab"
+            aria-selected={activeFormat === format}
             onClick={() => setActiveFormat(format)}
             className={`
               relative px-6 py-3 font-mono text-xs uppercase tracking-wider transition-colors whitespace-nowrap
