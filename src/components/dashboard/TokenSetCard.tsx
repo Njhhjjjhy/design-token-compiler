@@ -76,7 +76,7 @@ export function TokenSetCard({
   return (
     <div onClick={onClick} className="border border-border bg-surface hover:border-primary/40 transition-colors cursor-pointer">
       {colorPreviews.length > 0 && (
-        <div className="flex h-2">
+        <div className="flex h-3">
           {colorPreviews.map((color, i) => (
             <div key={i} className="flex-1" style={{ backgroundColor: color }} />
           ))}
