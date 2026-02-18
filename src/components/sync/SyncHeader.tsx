@@ -42,6 +42,7 @@ export function SyncHeader({
               onClick={onClear}
               className="ml-1 text-text-tertiary hover:text-white transition-colors"
               title="Clear import"
+              aria-label="Clear import"
             >
               <X className="w-3 h-3" />
             </button>

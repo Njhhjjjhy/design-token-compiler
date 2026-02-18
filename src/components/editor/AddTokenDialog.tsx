@@ -135,6 +135,7 @@ export function AddTokenDialog({ isOpen, onClose }: AddTokenDialogProps) {
           <button
             onClick={handleCancel}
             className="p-1 hover:bg-white/10 rounded transition-colors"
+            aria-label="Close dialog"
           >
             <X className="w-5 h-5" />
           </button>

@@ -41,7 +41,7 @@ export function VersionPanel({ isOpen, onClose }: VersionPanelProps) {
     <div className="fixed inset-y-0 right-0 w-80 bg-surface border-l border-border z-50 flex flex-col shadow-2xl">
       <div className="flex items-center justify-between px-4 py-3 border-b border-border">
         <h3 className="section-title text-primary">VERSIONS</h3>
-        <button onClick={onClose} className="p-1 text-text-tertiary hover:text-white transition-colors">
+        <button onClick={onClose} className="p-1 text-text-tertiary hover:text-white transition-colors" aria-label="Close versions panel">
           <X className="w-4 h-4" />
         </button>
       </div>

@@ -92,6 +92,7 @@ export function SyncTokenRow({
                     : 'text-text-tertiary hover:text-white hover:bg-white/5'
                 }`}
                 title="Keep editor value"
+                aria-label="Keep editor value"
               >
                 <ArrowLeft className="w-3 h-3" />
               </button>
@@ -103,6 +104,7 @@ export function SyncTokenRow({
                     : 'text-text-tertiary hover:text-white hover:bg-white/5'
                 }`}
                 title="Keep imported value"
+                aria-label="Keep imported value"
               >
                 <ArrowRight className="w-3 h-3" />
               </button>
@@ -118,6 +120,7 @@ export function SyncTokenRow({
                     : 'text-text-tertiary hover:text-white hover:bg-white/5'
                 }`}
                 title="Keep in editor"
+                aria-label="Keep in editor"
               >
                 <Check className="w-3 h-3" />
               </button>
@@ -129,6 +132,7 @@ export function SyncTokenRow({
                     : 'text-text-tertiary hover:text-white hover:bg-white/5'
                 }`}
                 title="Remove from editor"
+                aria-label="Remove from editor"
               >
                 <Minus className="w-3 h-3" />
               </button>
@@ -144,6 +148,7 @@ export function SyncTokenRow({
                     : 'text-text-tertiary hover:text-white hover:bg-white/5'
                 }`}
                 title="Add to editor"
+                aria-label="Add to editor"
               >
                 <Plus className="w-3 h-3" />
               </button>
@@ -155,6 +160,7 @@ export function SyncTokenRow({
                     : 'text-text-tertiary hover:text-white hover:bg-white/5'
                 }`}
                 title="Ignore"
+                aria-label="Ignore"
               >
                 <Minus className="w-3 h-3" />
               </button>
