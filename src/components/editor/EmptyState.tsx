@@ -6,7 +6,7 @@ export function EmptyState() {
       <FileQuestion className="w-12 h-12 mb-4 opacity-50" />
       <p className="font-mono text-sm">No tokens defined</p>
       <p className="font-mono text-xs mt-2 opacity-70">
-        Click "Add Token" to create your first token
+        Use the Add Token button in the header above to get started
       </p>
     </div>
   )
