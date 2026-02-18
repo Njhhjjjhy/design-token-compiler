@@ -1,10 +1,12 @@
-import { Plus, Clock, Layers, Search } from 'lucide-react'
+import { Plus, Clock, Layers, Search, ChevronsUpDown } from 'lucide-react'
 import type { ModeMap } from '@/types'
 
 interface EditorHeaderProps {
   onAddToken: () => void
   onOpenVersions: () => void
   onOpenModes: () => void
+  onExpandAll: () => void
+  onCollapseAll: () => void
   versionCount: number
   modeCount: number
   modes: ModeMap
@@ -18,6 +20,8 @@ export function EditorHeader({
   onAddToken,
   onOpenVersions,
   onOpenModes,
+  onExpandAll,
+  onCollapseAll,
   versionCount,
   modeCount,
   modes,
@@ -88,15 +92,34 @@ export function EditorHeader({
         </button>
       </div>
       </div>
-      <div className="relative mt-4 max-w-xs">
-        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-text-tertiary" />
-        <input
-          type="text"
-          value={searchQuery}
-          onChange={(e) => onSearchChange(e.target.value)}
-          placeholder="Filter tokens..."
-          className="w-full pl-9 pr-3 py-1.5 bg-surface-sunken border border-border font-mono text-xs text-white placeholder:text-text-tertiary focus:outline-none focus:border-primary transition-colors"
-        />
+      <div className="flex items-center gap-3 mt-4">
+        <div className="relative max-w-xs flex-1">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-text-tertiary" />
+          <input
+            type="text"
+            value={searchQuery}
+            onChange={(e) => onSearchChange(e.target.value)}
+            placeholder="Filter tokens..."
+            className="w-full pl-9 pr-3 py-1.5 bg-surface-sunken border border-border font-mono text-xs text-white placeholder:text-text-tertiary focus:outline-none focus:border-primary transition-colors"
+          />
+        </div>
+        <div className="flex border border-border">
+          <button
+            onClick={onExpandAll}
+            className="flex items-center gap-1 px-2 py-1 font-mono text-[10px] text-text-secondary hover:text-white transition-colors"
+            title="Expand all groups"
+          >
+            <ChevronsUpDown className="w-3 h-3" />
+            Expand
+          </button>
+          <button
+            onClick={onCollapseAll}
+            className="px-2 py-1 font-mono text-[10px] text-text-secondary hover:text-white border-l border-border transition-colors"
+            title="Collapse all groups"
+          >
+            Collapse
+          </button>
+        </div>
       </div>
     </div>
   )
