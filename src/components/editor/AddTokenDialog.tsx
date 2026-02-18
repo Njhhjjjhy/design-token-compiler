@@ -13,6 +13,7 @@ export function AddTokenDialog({ isOpen, onClose }: AddTokenDialogProps) {
   const [tokenName, setTokenName] = useState('')
   const [tokenType, setTokenType] = useState<TokenType>('color')
   const [tokenValue, setTokenValue] = useState('')
+  const [isSubmitting, setIsSubmitting] = useState(false)
   const dialogRef = useRef<HTMLDivElement>(null)
 
   const addToken = useTokenStore((state) => state.addToken)
@@ -85,9 +86,11 @@ export function AddTokenDialog({ isOpen, onClose }: AddTokenDialogProps) {
       return
     }
 
-    if (isDuplicate) {
+    if (isDuplicate || isSubmitting) {
       return
     }
+
+    setIsSubmitting(true)
 
     const tokenData: Partial<Token> = {
       name: trimmedName,
@@ -102,6 +105,7 @@ export function AddTokenDialog({ isOpen, onClose }: AddTokenDialogProps) {
     setTokenName('')
     setTokenType('color')
     setTokenValue('')
+    setIsSubmitting(false)
     onClose()
   }
 
@@ -254,9 +258,10 @@ export function AddTokenDialog({ isOpen, onClose }: AddTokenDialogProps) {
           </button>
           <button
             onClick={handleCreate}
-            className="px-4 py-2 bg-primary hover:bg-primary/90 text-white font-mono text-sm rounded transition-colors"
+            disabled={isSubmitting}
+            className="px-4 py-2 bg-primary hover:bg-primary/90 text-white font-mono text-sm rounded transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            Create
+            {isSubmitting ? 'Creating...' : 'Create'}
           </button>
         </div>
       </div>
