@@ -225,7 +225,7 @@ export function CompilerView() {
 
       {/* Error List */}
       {showErrors && lightResult.errors.length > 0 && (
-        <div className="border-b border-border bg-surface-sunken px-6 py-3 space-y-1">
+        <div className="border-b border-border bg-surface-sunken px-6 py-3 space-y-1" role="region" aria-label="Resolution errors" aria-live="polite">
           {lightResult.errors.map((err, i) => (
             <div key={i} className="flex items-baseline gap-3 font-mono text-xs">
               <span className="text-error uppercase">{err.error.replace('_', ' ')}</span>
@@ -276,13 +276,13 @@ export function CompilerView() {
 
       {/* Format Description */}
       <div className="px-6 py-2 border-b border-border bg-surface-sunken">
-        <p className="font-mono text-xs text-text-tertiary">
+        <p id="compiler-format-desc" className="font-mono text-xs text-text-tertiary">
           {formatDescriptions[activeFormat]}
         </p>
       </div>
 
       {/* Code Output */}
-      <div className="flex-1 overflow-auto bg-code-bg" role="tabpanel" id="compiler-tabpanel" aria-labelledby={`compiler-tab-${activeFormat}`} aria-label={`Generated ${activeFormat} code`}>
+      <div className="flex-1 overflow-auto bg-code-bg" role="tabpanel" id="compiler-tabpanel" aria-labelledby={`compiler-tab-${activeFormat}`} aria-describedby="compiler-format-desc">
         <SyntaxHighlighter
           language={currentOutput.language}
           style={vscDarkPlus}
