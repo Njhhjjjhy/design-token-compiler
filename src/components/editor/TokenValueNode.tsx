@@ -46,10 +46,15 @@ export function TokenValueNode({ token, depth, activeMode, modeOverrides }: Toke
   const hasOverride = activeMode !== null && token.id in modeOverrides
   const displayValue: TokenValue = hasOverride ? modeOverrides[token.id] : token.value
 
-  // Convert displayed value to string for editing and display
+  // Convert displayed value to string for editing
   const valueString = typeof displayValue === 'string'
     ? displayValue
     : JSON.stringify(displayValue)
+
+  // Human-readable summary for complex object values
+  const displayString = typeof displayValue === 'object' && displayValue !== null
+    ? Object.values(displayValue as Record<string, unknown>).filter(Boolean).join(', ')
+    : valueString
 
   // Base value string (for showing "inherited from" hint)
   const baseValueString = typeof token.value === 'string'
@@ -232,9 +237,9 @@ export function TokenValueNode({ token, depth, activeMode, modeOverrides }: Toke
               ? 'text-text-tertiary hover:bg-white/10'
               : 'text-text-secondary hover:bg-white/10'
           }`}
-          title={activeMode && hasOverride ? `Base: ${baseValueString}` : undefined}
+          title={activeMode && hasOverride ? `Base: ${baseValueString}` : (displayString !== valueString ? valueString : undefined)}
         >
-          {valueString}
+          {displayString}
         </button>
       )}
 
