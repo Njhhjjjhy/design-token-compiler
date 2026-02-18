@@ -9,6 +9,7 @@ import { CompilerView } from './pages/CompilerView'
 import { SyncView } from './pages/SyncView'
 import { useTokenStore, STORAGE_ERROR_EVENT } from './store/useTokenStore'
 import { createSampleTokenSet } from './data/sampleTokens'
+import { useTheme } from './hooks/useTheme'
 
 function App() {
   const activeView = useTokenStore((state) => state.activeView)
@@ -16,6 +17,7 @@ function App() {
   const tokenSets = useTokenStore((state) => state.tokenSets)
   const activeSetId = useTokenStore((state) => state.activeSetId)
   const [storageWarning, setStorageWarning] = useState(false)
+  const { theme, toggleTheme } = useTheme()
 
   // Listen for localStorage quota errors
   useEffect(() => {
@@ -119,6 +121,8 @@ function App() {
         onViewChange={setActiveView}
         activeSetName={activeSet?.name}
         activeModeName={activeModeName}
+        theme={theme}
+        onToggleTheme={toggleTheme}
       />
 
       <BinarySeparator />

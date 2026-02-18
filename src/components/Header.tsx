@@ -1,6 +1,7 @@
-import { useState } from 'react'
+import { Sun, Moon } from 'lucide-react'
 
 type NavItem = 'dashboard' | 'editor' | 'browser' | 'compiler' | 'sync'
+type Theme = 'light' | 'dark'
 
 interface HeaderProps {
   activeView: NavItem
@@ -11,9 +12,11 @@ interface HeaderProps {
     status: 'synced' | 'conflicts' | 'unsynced'
     count?: number
   }
+  theme: Theme
+  onToggleTheme: () => void
 }
 
-export function Header({ activeView, onViewChange, activeSetName, activeModeName, syncStatus }: HeaderProps) {
+export function Header({ activeView, onViewChange, activeSetName, activeModeName, syncStatus, theme, onToggleTheme }: HeaderProps) {
   const navItems: { id: NavItem; label: string }[] = [
     { id: 'dashboard', label: 'HOME' },
     { id: 'editor', label: 'EDITOR' },
@@ -43,7 +46,7 @@ export function Header({ activeView, onViewChange, activeSetName, activeModeName
 
       {/* App Title + Active Set */}
       <div className="px-6 py-3 border-r border-border min-w-[240px]">
-        <div className="monospace-label text-white mb-1">TOKEN COMPILER</div>
+        <h1 className="monospace-label text-white mb-1">TOKEN COMPILER</h1>
         {activeSetName && (
           <div className="flex items-center gap-2 text-xs font-mono text-text-secondary">
             <span>{activeSetName}</span>
@@ -86,6 +89,18 @@ export function Header({ activeView, onViewChange, activeSetName, activeModeName
           </span>
         </div>
       )}
+
+      {/* Theme Toggle */}
+      <div className="px-4 flex items-center border-l border-border h-full">
+        <button
+          onClick={onToggleTheme}
+          className="p-2 text-text-secondary hover:text-white transition-colors"
+          aria-label={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
+          title={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
+        >
+          {theme === 'dark' ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
+        </button>
+      </div>
     </header>
   )
 }
