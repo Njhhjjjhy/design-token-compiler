@@ -82,7 +82,7 @@ export function EditorView() {
         searchQuery={searchQuery}
         onSearchChange={setSearchQuery}
       />
-      <div className="mt-6">
+      <div className="mt-6" data-tour="editor-tree">
         <TokenTree key={treeKey} tokenSet={activeSet} activeMode={activeMode} searchQuery={searchQuery} />
       </div>
       <AddTokenDialog

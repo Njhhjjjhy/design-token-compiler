@@ -120,7 +120,9 @@ export function SyncView() {
             Compare {activeSet.name} against an external file
           </p>
         </div>
-        <SyncDropZone onFileLoaded={importFile} />
+        <div data-tour="sync-dropzone">
+          <SyncDropZone onFileLoaded={importFile} />
+        </div>
       </div>
     )
   }

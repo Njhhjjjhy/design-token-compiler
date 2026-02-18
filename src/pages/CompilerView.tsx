@@ -240,7 +240,7 @@ export function CompilerView() {
       {(() => {
         const formats: CompilerFormat[] = ['css', 'scss', 'typescript', 'tailwind', 'json-w3c', 'style-dictionary']
         return (
-          <div className="flex border-b border-border bg-surface overflow-x-auto" role="tablist" aria-label="Output formats">
+          <div className="flex border-b border-border bg-surface overflow-x-auto" role="tablist" aria-label="Output formats" data-tour="compiler-formats">
             {formats.map((format, index) => (
               <button
                 key={format}

@@ -82,6 +82,7 @@ export function EditorHeader({
         </button>
         <button
           onClick={onOpenVersions}
+          data-tour="editor-versions-btn"
           className="flex items-center gap-2 px-4 py-2 bg-surface-elevated border border-border hover:border-primary text-white font-mono text-sm transition-colors"
           aria-label="Versions: save and restore token snapshots"
         >

@@ -88,6 +88,7 @@ export function BrowserView() {
         role="tabpanel"
         id={`browser-tabpanel-${activeTab}`}
         aria-labelledby={`browser-tab-${activeTab}`}
+        data-tour="browser-content"
       >
         {activeTab === 'colors' && <ColorGrid tokens={filtered.colors} />}
         {activeTab === 'spacing' && <SpacingScale tokens={filtered.spacing} />}

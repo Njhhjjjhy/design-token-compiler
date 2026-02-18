@@ -127,7 +127,7 @@ export function DashboardView() {
           <p className="font-mono text-sm text-text-secondary mb-8 max-w-md text-center">
             A token set is a collection of design tokens — colors, spacing, typography, and more — that define your design system.
           </p>
-          <div className="flex gap-4">
+          <div className="flex gap-4" data-tour="dashboard-actions">
             <button onClick={handleNewSet} className="flex items-center gap-2 px-6 py-3 bg-primary hover:bg-primary/90 text-white font-mono text-sm transition-colors">
               <Plus className="w-4 h-4" />
               New Token Set
@@ -136,7 +136,7 @@ export function DashboardView() {
               <Upload className="w-4 h-4" />
               Import File
             </button>
-            <button onClick={handleLoadSample} className="flex items-center gap-2 px-6 py-3 bg-surface-elevated border border-border hover:border-primary text-white font-mono text-sm transition-colors">
+            <button onClick={handleLoadSample} data-tour="dashboard-sample" className="flex items-center gap-2 px-6 py-3 bg-surface-elevated border border-border hover:border-primary text-white font-mono text-sm transition-colors">
               <Database className="w-4 h-4" />
               Load Sample Data
             </button>
@@ -151,7 +151,7 @@ export function DashboardView() {
     <div className="p-8">
       <div className="flex items-center justify-between mb-8">
         <h2 className="section-title text-primary">DASHBOARD</h2>
-        <div className="flex gap-3" role="group" aria-label="Token set actions">
+        <div className="flex gap-3" role="group" aria-label="Token set actions" data-tour="dashboard-actions">
           <button onClick={handleNewSet} className="flex items-center gap-2 px-4 py-2 bg-primary hover:bg-primary/90 text-white font-mono text-xs transition-colors">
             <Plus className="w-4 h-4" />
             NEW SET
@@ -160,7 +160,7 @@ export function DashboardView() {
             <Upload className="w-4 h-4" />
             IMPORT
           </button>
-          <button onClick={handleLoadSample} className="flex items-center gap-2 px-4 py-2 bg-surface-elevated border border-border hover:border-primary text-white font-mono text-xs transition-colors">
+          <button onClick={handleLoadSample} data-tour="dashboard-sample" className="flex items-center gap-2 px-4 py-2 bg-surface-elevated border border-border hover:border-primary text-white font-mono text-xs transition-colors">
             <Database className="w-4 h-4" />
             SAMPLE DATA
           </button>
@@ -192,7 +192,7 @@ export function DashboardView() {
         </div>
       )}
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4" data-tour="dashboard-grid">
         {sets.map((tokenSet) => (
           <TokenSetCard
             key={tokenSet.id}
