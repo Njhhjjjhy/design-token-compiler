@@ -194,29 +194,29 @@ export function CompilerView() {
         </div>
 
         {/* Stats */}
-        <div className="mt-4 flex gap-6">
-          <div className="font-mono text-xs">
+        <div className="mt-4 flex items-center gap-4 font-mono text-xs">
+          <div>
             <span className="text-text-secondary">TOKENS:</span>{' '}
             <span className="text-white">{Object.keys(lightResult.tokens).length}</span>
           </div>
           {lightResult.errors.length > 0 ? (
             <button
               onClick={() => setShowErrors(!showErrors)}
-              className="font-mono text-xs hover:underline"
+              className="hover:underline"
             >
               <span className="text-text-secondary">ERRORS:</span>{' '}
               <span className="text-error">{lightResult.errors.length}</span>
               <span className="text-text-tertiary ml-1">{showErrors ? '(hide)' : '(show)'}</span>
             </button>
           ) : (
-            <div className="font-mono text-xs">
+            <div>
               <span className="text-text-secondary">ERRORS:</span>{' '}
               <span className="text-success">0</span>
             </div>
           )}
-          <div className="font-mono text-xs">
-            <span className="text-text-secondary">SIZE:</span>{' '}
-            <span className="text-white">{(currentOutput.code.length / 1024).toFixed(1)} KB</span>
+          <span className="text-border">|</span>
+          <div className="text-text-tertiary">
+            {(currentOutput.code.length / 1024).toFixed(1)} KB
           </div>
         </div>
       </div>
