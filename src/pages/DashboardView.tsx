@@ -1,7 +1,8 @@
-import { Plus, Upload } from 'lucide-react'
+import { Plus, Upload, Database, Trash2 } from 'lucide-react'
 import { nanoid } from 'nanoid'
 import { useTokenStore } from '@/store/useTokenStore'
 import { TokenSetCard } from '@/components/dashboard/TokenSetCard'
+import { createSampleDesignSystem } from '@/lib/sample-data'
 import type { TokenSet, ViewMode } from '@/types'
 import { useCallback, useRef } from 'react'
 
@@ -9,6 +10,7 @@ export function DashboardView() {
   const tokenSets = useTokenStore((s) => s.tokenSets)
   const versions = useTokenStore((s) => s.versions)
   const addTokenSet = useTokenStore((s) => s.addTokenSet)
+  const deleteTokenSet = useTokenStore((s) => s.deleteTokenSet)
   const setActiveSet = useTokenStore((s) => s.setActiveSet)
   const setActiveView = useTokenStore((s) => s.setActiveView)
   const importFile = useTokenStore((s) => s.importFile)
@@ -37,6 +39,21 @@ export function DashboardView() {
     addTokenSet(newSet)
     setActiveView('editor')
   }, [addTokenSet, setActiveView])
+
+  const handleLoadSample = useCallback(() => {
+    // Clear all existing sets first for a clean start
+    for (const id of Object.keys(tokenSets)) {
+      deleteTokenSet(id)
+    }
+    const sampleSet = createSampleDesignSystem()
+    addTokenSet(sampleSet)
+  }, [tokenSets, deleteTokenSet, addTokenSet])
+
+  const handleClearAll = useCallback(() => {
+    for (const id of Object.keys(tokenSets)) {
+      deleteTokenSet(id)
+    }
+  }, [tokenSets, deleteTokenSet])
 
   const handleImportFile = useCallback(() => {
     fileInputRef.current?.click()
@@ -89,6 +106,10 @@ export function DashboardView() {
               <Upload className="w-4 h-4" />
               Import File
             </button>
+            <button onClick={handleLoadSample} className="flex items-center gap-2 px-6 py-3 bg-surface-elevated border border-border hover:border-primary text-white font-mono text-sm transition-colors">
+              <Database className="w-4 h-4" />
+              Load Sample Data
+            </button>
           </div>
         </div>
         <input ref={fileInputRef} type="file" accept=".json,.css,.scss" onChange={handleFileSelected} className="hidden" />
@@ -108,6 +129,14 @@ export function DashboardView() {
           <button onClick={handleImportFile} className="flex items-center gap-2 px-4 py-2 bg-surface-elevated border border-border hover:border-primary text-white font-mono text-xs transition-colors">
             <Upload className="w-4 h-4" />
             IMPORT
+          </button>
+          <button onClick={handleLoadSample} className="flex items-center gap-2 px-4 py-2 bg-surface-elevated border border-border hover:border-primary text-white font-mono text-xs transition-colors">
+            <Database className="w-4 h-4" />
+            SAMPLE DATA
+          </button>
+          <button onClick={handleClearAll} className="flex items-center gap-2 px-4 py-2 bg-surface-elevated border border-border hover:border-red-500 text-text-secondary hover:text-red-400 font-mono text-xs transition-colors">
+            <Trash2 className="w-4 h-4" />
+            CLEAR ALL
           </button>
         </div>
       </div>

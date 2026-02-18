@@ -4,7 +4,7 @@ interface TypographySpecimensProps {
   tokens: [string, ResolvedToken][]
 }
 
-function parseTypographyValue(value: unknown): React.CSSProperties {
+function parseTypographyValue(value: unknown, path: string, type: string): React.CSSProperties {
   if (typeof value === 'object' && value !== null) {
     const obj = value as Record<string, unknown>
     return {
@@ -15,7 +15,18 @@ function parseTypographyValue(value: unknown): React.CSSProperties {
       letterSpacing: obj.letterSpacing as string | undefined,
     }
   }
-  return { fontFamily: String(value) }
+
+  const strValue = String(value)
+
+  if (type === 'fontWeight') return { fontWeight: strValue }
+  if (type === 'fontFamily') return { fontFamily: strValue }
+
+  // Dimension tokens — determine CSS property from path
+  if (path.includes('.size.') || path.includes('fontSize')) return { fontSize: strValue }
+  if (path.includes('.lineHeight.') || path.includes('line-height')) return { lineHeight: strValue }
+  if (path.includes('.letterSpacing.') || path.includes('letter-spacing')) return { letterSpacing: strValue }
+
+  return { fontFamily: strValue }
 }
 
 export function TypographySpecimens({ tokens }: TypographySpecimensProps) {
@@ -30,7 +41,7 @@ export function TypographySpecimens({ tokens }: TypographySpecimensProps) {
   return (
     <div className="space-y-6">
       {tokens.map(([path, token]) => {
-        const styles = parseTypographyValue(token.resolvedValue)
+        const styles = parseTypographyValue(token.resolvedValue, path, token.type)
         const shortPath = path.split('.').slice(-2).join('.')
         const rawValue = typeof token.resolvedValue === 'object'
           ? JSON.stringify(token.resolvedValue, null, 2)

@@ -1,6 +1,6 @@
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
-import type { AppState, Token, TokenGroup, TokenSet, TokenValue, Version, ViewMode } from '@/types'
+import type { AppState, Mode, Token, TokenGroup, TokenSet, TokenValue, Version, ViewMode } from '@/types'
 import type { FlatToken } from '@/lib/flatten-tokens'
 import type { DiffResult } from '@/lib/diff-engine'
 import type { ImportFormat } from '@/lib/parsers'
@@ -23,6 +23,14 @@ interface TokenStoreState extends AppState {
   updateToken: (tokenId: string, newValue: TokenValue) => void
   addToken: (parentPath: string, tokenData: Partial<Token>) => void
   deleteToken: (tokenId: string) => void
+
+  // Mode Management
+  setActiveMode: (setId: string, modeId: string | null) => void
+  addMode: (setId: string, mode: Mode) => void
+  renameMode: (setId: string, modeId: string, newName: string) => void
+  updateModeOverride: (setId: string, modeId: string, tokenIdOrPath: string, value: TokenValue) => void
+  removeModeOverride: (setId: string, modeId: string, tokenIdOrPath: string) => void
+  deleteMode: (setId: string, modeId: string) => void
 
   // Helpers
   getActiveTokenSet: () => TokenSet | null
@@ -270,6 +278,127 @@ export const useTokenStore = create<TokenStoreState>()(
         if (!state.activeSetId) return null
         return state.tokenSets[state.activeSetId] || null
       },
+
+      // Mode Management
+      setActiveMode: (setId, modeId) =>
+        set((state) => {
+          const tokenSet = state.tokenSets[setId]
+          if (!tokenSet) return state
+          return {
+            tokenSets: {
+              ...state.tokenSets,
+              [setId]: {
+                ...tokenSet,
+                activeMode: modeId,
+                metadata: { ...tokenSet.metadata, updatedAt: Date.now() },
+              },
+            },
+          }
+        }),
+
+      addMode: (setId, mode) =>
+        set((state) => {
+          const tokenSet = state.tokenSets[setId]
+          if (!tokenSet) return state
+          const isFirst = Object.keys(tokenSet.modes).length === 0
+          return {
+            tokenSets: {
+              ...state.tokenSets,
+              [setId]: {
+                ...tokenSet,
+                modes: { ...tokenSet.modes, [mode.id]: mode },
+                activeMode: isFirst ? mode.id : tokenSet.activeMode,
+                metadata: { ...tokenSet.metadata, updatedAt: Date.now() },
+              },
+            },
+          }
+        }),
+
+      renameMode: (setId, modeId, newName) =>
+        set((state) => {
+          const tokenSet = state.tokenSets[setId]
+          const mode = tokenSet?.modes[modeId]
+          if (!tokenSet || !mode) return state
+          return {
+            tokenSets: {
+              ...state.tokenSets,
+              [setId]: {
+                ...tokenSet,
+                modes: {
+                  ...tokenSet.modes,
+                  [modeId]: { ...mode, name: newName },
+                },
+                metadata: { ...tokenSet.metadata, updatedAt: Date.now() },
+              },
+            },
+          }
+        }),
+
+      updateModeOverride: (setId, modeId, tokenIdOrPath, value) =>
+        set((state) => {
+          const tokenSet = state.tokenSets[setId]
+          const mode = tokenSet?.modes[modeId]
+          if (!tokenSet || !mode) return state
+          return {
+            tokenSets: {
+              ...state.tokenSets,
+              [setId]: {
+                ...tokenSet,
+                modes: {
+                  ...tokenSet.modes,
+                  [modeId]: {
+                    ...mode,
+                    overrides: { ...mode.overrides, [tokenIdOrPath]: value },
+                  },
+                },
+                metadata: { ...tokenSet.metadata, updatedAt: Date.now() },
+              },
+            },
+          }
+        }),
+
+      removeModeOverride: (setId, modeId, tokenIdOrPath) =>
+        set((state) => {
+          const tokenSet = state.tokenSets[setId]
+          const mode = tokenSet?.modes[modeId]
+          if (!tokenSet || !mode) return state
+          const { [tokenIdOrPath]: _removed, ...remainingOverrides } = mode.overrides
+          return {
+            tokenSets: {
+              ...state.tokenSets,
+              [setId]: {
+                ...tokenSet,
+                modes: {
+                  ...tokenSet.modes,
+                  [modeId]: { ...mode, overrides: remainingOverrides },
+                },
+                metadata: { ...tokenSet.metadata, updatedAt: Date.now() },
+              },
+            },
+          }
+        }),
+
+      deleteMode: (setId, modeId) =>
+        set((state) => {
+          const tokenSet = state.tokenSets[setId]
+          if (!tokenSet) return state
+          const { [modeId]: _removed, ...remainingModes } = tokenSet.modes
+          const modeIds = Object.keys(remainingModes)
+          const newActiveMode = tokenSet.activeMode === modeId
+            ? (modeIds[0] || null)
+            : tokenSet.activeMode
+          return {
+            tokenSets: {
+              ...state.tokenSets,
+              [setId]: {
+                ...tokenSet,
+                modes: remainingModes,
+                activeMode: newActiveMode,
+                metadata: { ...tokenSet.metadata, updatedAt: Date.now() },
+              },
+            },
+          }
+        }),
 
       // Sync actions
       importFile: (fileName, content) => {

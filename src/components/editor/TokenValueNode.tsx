@@ -6,20 +6,35 @@ import { useTokenStore } from '@/store/useTokenStore'
 interface TokenValueNodeProps {
   token: Token
   depth: number
+  activeMode: string | null
+  modeOverrides: Record<string, TokenValue>
 }
 
-export function TokenValueNode({ token, depth }: TokenValueNodeProps) {
+export function TokenValueNode({ token, depth, activeMode, modeOverrides }: TokenValueNodeProps) {
   const [isEditing, setIsEditing] = useState(false)
   const [editValue, setEditValue] = useState('')
   const [isInvalid, setIsInvalid] = useState(false)
   const inputRef = useRef<HTMLInputElement>(null)
+  const cancelledRef = useRef(false)
   const updateToken = useTokenStore((state) => state.updateToken)
   const deleteToken = useTokenStore((state) => state.deleteToken)
+  const updateModeOverride = useTokenStore((state) => state.updateModeOverride)
+  const removeModeOverride = useTokenStore((state) => state.removeModeOverride)
+  const activeSetId = useTokenStore((state) => state.activeSetId)
 
   const paddingLeft = depth * 16
 
-  // Convert token value to string for editing
-  const valueString = typeof token.value === 'string'
+  // Determine whether this token has a mode override
+  const hasOverride = activeMode !== null && token.id in modeOverrides
+  const displayValue: TokenValue = hasOverride ? modeOverrides[token.id] : token.value
+
+  // Convert displayed value to string for editing and display
+  const valueString = typeof displayValue === 'string'
+    ? displayValue
+    : JSON.stringify(displayValue)
+
+  // Base value string (for showing "inherited from" hint)
+  const baseValueString = typeof token.value === 'string'
     ? token.value
     : JSON.stringify(token.value)
 
@@ -29,13 +44,15 @@ export function TokenValueNode({ token, depth }: TokenValueNodeProps) {
   }
 
   const handleEditSave = () => {
-    // Basic validation - just check it's not empty
+    if (cancelledRef.current) {
+      cancelledRef.current = false
+      return
+    }
     if (!editValue.trim()) {
       setIsInvalid(true)
       return
     }
 
-    // Try to parse if it looks like JSON, otherwise use as string
     let newValue: TokenValue = editValue
     if (editValue.startsWith('{') || editValue.startsWith('[')) {
       try {
@@ -45,12 +62,18 @@ export function TokenValueNode({ token, depth }: TokenValueNodeProps) {
       }
     }
 
-    updateToken(token.id, newValue)
+    if (activeMode && activeSetId) {
+      // Editing in mode context -- update mode override
+      updateModeOverride(activeSetId, activeMode, token.id, newValue)
+    } else {
+      updateToken(token.id, newValue)
+    }
     setIsEditing(false)
     setIsInvalid(false)
   }
 
   const handleEditCancel = () => {
+    cancelledRef.current = true
     setIsEditing(false)
     setIsInvalid(false)
   }
@@ -64,8 +87,13 @@ export function TokenValueNode({ token, depth }: TokenValueNodeProps) {
   }
 
   const handleDelete = () => {
-    if (window.confirm(`Delete token '${token.name}'? This cannot be undone.`)) {
-      deleteToken(token.id)
+    if (activeMode && activeSetId && hasOverride) {
+      // In mode context, "delete" removes the override
+      removeModeOverride(activeSetId, activeMode, token.id)
+    } else if (!activeMode) {
+      if (window.confirm(`Delete token '${token.name}'? This cannot be undone.`)) {
+        deleteToken(token.id)
+      }
     }
   }
 
@@ -79,10 +107,12 @@ export function TokenValueNode({ token, depth }: TokenValueNodeProps) {
 
   // Render color swatch for color tokens
   const renderPreview = () => {
-    if (token.type === 'color' && typeof token.value === 'string') {
-      const colorValue = token.value.startsWith('{')
-        ? '#cccccc' // Placeholder for references
-        : token.value
+    const previewValue = typeof displayValue === 'string' ? displayValue : String(displayValue)
+
+    if (token.type === 'color' && typeof previewValue === 'string') {
+      const colorValue = previewValue.startsWith('{')
+        ? '#cccccc'
+        : previewValue
       return (
         <div
           className="w-4 h-4 rounded border border-gray-600"
@@ -91,11 +121,10 @@ export function TokenValueNode({ token, depth }: TokenValueNodeProps) {
       )
     }
 
-    if (token.type === 'dimension' && typeof token.value === 'string') {
-      // Extract numeric value for bar width (simplified)
-      const match = token.value.match(/(\d+)/)
+    if (token.type === 'dimension' && typeof previewValue === 'string') {
+      const match = previewValue.match(/(\d+)/)
       const numValue = match ? parseInt(match[1]) : 0
-      const barWidth = Math.min(numValue, 64) // Cap at 64px for display
+      const barWidth = Math.min(numValue, 64)
       return (
         <div
           className="h-3 bg-gray-500 rounded"
@@ -122,6 +151,13 @@ export function TokenValueNode({ token, depth }: TokenValueNodeProps) {
         {token.type}
       </span>
 
+      {/* Override indicator */}
+      {activeMode && hasOverride && (
+        <span className="px-1.5 py-0.5 text-[10px] font-mono uppercase rounded bg-amber-500/20 text-amber-400">
+          override
+        </span>
+      )}
+
       {/* Value (editable) */}
       {isEditing ? (
         <input
@@ -140,7 +176,12 @@ export function TokenValueNode({ token, depth }: TokenValueNodeProps) {
       ) : (
         <button
           onClick={handleEditStart}
-          className="flex-1 text-left px-2 py-1 font-mono text-sm text-text-secondary hover:bg-white/10 rounded cursor-text"
+          className={`flex-1 text-left px-2 py-1 font-mono text-sm rounded cursor-text ${
+            activeMode && !hasOverride
+              ? 'text-text-tertiary hover:bg-white/10'
+              : 'text-text-secondary hover:bg-white/10'
+          }`}
+          title={activeMode && hasOverride ? `Base: ${baseValueString}` : undefined}
         >
           {valueString}
         </button>
@@ -151,11 +192,11 @@ export function TokenValueNode({ token, depth }: TokenValueNodeProps) {
         {renderPreview()}
       </div>
 
-      {/* Delete Button */}
+      {/* Delete / Remove Override Button */}
       <button
         onClick={handleDelete}
         className="opacity-0 group-hover:opacity-100 p-1 hover:text-red-400 transition-all"
-        title="Delete token"
+        title={activeMode && hasOverride ? 'Remove override' : 'Delete token'}
       >
         <Trash2 className="w-4 h-4" />
       </button>

@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useCallback } from 'react'
 import { useTokenStore } from '@/store/useTokenStore'
 import { resolveTokens } from '@/lib/resolver'
 import { BrowserHeader, type BrowserTab } from '@/components/browser/BrowserHeader'
@@ -10,8 +10,15 @@ import type { ResolvedToken } from '@/types'
 
 export function BrowserView() {
   const activeSet = useTokenStore((s) => s.getActiveTokenSet())
+  const storeSetActiveMode = useTokenStore((s) => s.setActiveMode)
   const [activeTab, setActiveTab] = useState<BrowserTab>('colors')
-  const [activeMode, setActiveMode] = useState<string | null>(activeSet?.activeMode || null)
+  const activeMode = activeSet?.activeMode ?? null
+  const handleModeChange = useCallback(
+    (modeId: string) => {
+      if (activeSet) storeSetActiveMode(activeSet.id, modeId)
+    },
+    [activeSet, storeSetActiveMode]
+  )
 
   const resolved = useMemo(() => {
     if (!activeSet) return null
@@ -21,11 +28,13 @@ export function BrowserView() {
   const grouped = useMemo(() => {
     if (!resolved) return { colors: [], spacing: [], typography: [], shadows: [] }
     const entries = Object.entries(resolved.tokens) as [string, ResolvedToken][]
+    const isFontDimension = (path: string) => path.startsWith('font.')
     return {
       colors: entries.filter(([, t]) => t.type === 'color'),
-      spacing: entries.filter(([, t]) => t.type === 'dimension'),
-      typography: entries.filter(([, t]) =>
+      spacing: entries.filter(([path, t]) => t.type === 'dimension' && !isFontDimension(path)),
+      typography: entries.filter(([path, t]) =>
         t.type === 'typography' || t.type === 'fontFamily' || t.type === 'fontWeight'
+        || (t.type === 'dimension' && isFontDimension(path))
       ),
       shadows: entries.filter(([, t]) => t.type === 'shadow'),
     }
@@ -57,7 +66,7 @@ export function BrowserView() {
         tabCounts={tabCounts}
         modes={activeSet.modes}
         activeMode={activeMode}
-        onModeChange={setActiveMode}
+        onModeChange={handleModeChange}
       />
       <div className="flex-1 overflow-auto px-8 py-6">
         {activeTab === 'colors' && <ColorGrid tokens={grouped.colors} />}

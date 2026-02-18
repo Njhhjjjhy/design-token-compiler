@@ -50,7 +50,8 @@ function hasEmbeddedReferences(value: TokenValue): boolean {
 // ============================================================================
 
 /**
- * Apply mode overrides to tokens
+ * Apply mode overrides to tokens.
+ * Override keys may be dot-paths or token IDs — both are supported.
  */
 function applyModeOverrides(
   tokens: Record<string, Token>,
@@ -58,10 +59,17 @@ function applyModeOverrides(
 ): Record<string, Token> {
   const tokensWithModes = { ...tokens }
 
-  for (const [tokenPath, overrideValue] of Object.entries(modeOverrides)) {
-    if (tokensWithModes[tokenPath]) {
-      tokensWithModes[tokenPath] = {
-        ...tokensWithModes[tokenPath],
+  // Build ID-to-path lookup so overrides keyed by token ID also work
+  const idToPath: Record<string, string> = {}
+  for (const [path, token] of Object.entries(tokens)) {
+    idToPath[token.id] = path
+  }
+
+  for (const [key, overrideValue] of Object.entries(modeOverrides)) {
+    const path = tokensWithModes[key] ? key : idToPath[key]
+    if (path && tokensWithModes[path]) {
+      tokensWithModes[path] = {
+        ...tokensWithModes[path],
         value: overrideValue,
       }
     }
@@ -284,9 +292,15 @@ export function resolveTokens(
   // Flatten the token hierarchy
   let flatTokens = flattenTokens(tokenSet.tokens)
 
-  // Apply mode overrides if specified
-  if (modeId && tokenSet.modes[modeId]) {
-    flatTokens = applyModeOverrides(flatTokens, tokenSet.modes[modeId].overrides)
+  // Apply mode overrides if specified (supports both mode ID and mode name)
+  if (modeId) {
+    const mode = tokenSet.modes[modeId]
+      ?? Object.values(tokenSet.modes).find(
+        (m) => m.name.toLowerCase() === modeId.toLowerCase()
+      )
+    if (mode) {
+      flatTokens = applyModeOverrides(flatTokens, mode.overrides)
+    }
   }
 
   // Detect circular references first

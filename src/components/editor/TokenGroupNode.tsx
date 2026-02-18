@@ -1,15 +1,17 @@
 import { useState } from 'react'
 import { ChevronRight } from 'lucide-react'
-import type { TokenGroup } from '@/types'
+import type { TokenGroup, TokenValue } from '@/types'
 import { TokenTreeNode } from './TokenTreeNode'
 
 interface TokenGroupNodeProps {
   group: TokenGroup
   groupKey: string
   depth: number
+  activeMode: string | null
+  modeOverrides: Record<string, TokenValue>
 }
 
-export function TokenGroupNode({ group, groupKey, depth }: TokenGroupNodeProps) {
+export function TokenGroupNode({ group, groupKey, depth, activeMode, modeOverrides }: TokenGroupNodeProps) {
   // Top-level groups start expanded, nested groups start collapsed
   const [isExpanded, setIsExpanded] = useState(depth === 0)
   const paddingLeft = depth * 16
@@ -48,6 +50,8 @@ export function TokenGroupNode({ group, groupKey, depth }: TokenGroupNodeProps) 
               itemKey={key}
               item={item}
               depth={depth + 1}
+              activeMode={activeMode}
+              modeOverrides={modeOverrides}
             />
           ))}
         </div>

@@ -42,9 +42,13 @@ export function CompilerView() {
     )
   }
 
-  // Resolve tokens for light and dark modes
-  const lightResult = resolveTokens(activeSet, 'light')
-  const darkResult = resolveTokens(activeSet, 'dark')
+  // Resolve tokens for default (light) and alternate (dark) modes
+  const modeEntries = Object.values(activeSet.modes)
+  const defaultMode = modeEntries.find((m) => m.isDefault) || modeEntries[0]
+  const altMode = modeEntries.find((m) => m.id !== defaultMode?.id)
+
+  const lightResult = resolveTokens(activeSet, defaultMode?.id)
+  const darkResult = altMode ? resolveTokens(activeSet, altMode.id) : lightResult
 
   // Compile to all formats
   const outputs: Record<CompilerFormat, CompilerOutput> = {

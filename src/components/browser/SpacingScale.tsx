@@ -6,7 +6,7 @@ interface SpacingScaleProps {
 
 function parseToPixels(value: string): number {
   const str = String(value).trim()
-  const match = str.match(/^(-?\d+\.?\d*)(px|rem|em|pt)?$/)
+  const match = str.match(/^(-?\d+\.?\d*)(px|rem|em|pt|%)?$/)
   if (!match) return 0
   const num = parseFloat(match[1])
   const unit = match[2] || 'px'
@@ -16,6 +16,8 @@ function parseToPixels(value: string): number {
       return num * 16
     case 'pt':
       return num * 1.333
+    case '%':
+      return num * 0.16 // rough approximation for display
     default:
       return num
   }

@@ -1,15 +1,27 @@
-import { useState } from 'react'
+import { useState, useCallback } from 'react'
 import { useTokenStore } from '@/store/useTokenStore'
 import { EditorHeader } from '@/components/editor/EditorHeader'
 import { TokenTree } from '@/components/editor/TokenTree'
 import { AddTokenDialog } from '@/components/editor/AddTokenDialog'
 import { VersionPanel } from '@/components/versioning/VersionPanel'
+import { ModePanel } from '@/components/modes/ModePanel'
 
 export function EditorView() {
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false)
   const [isVersionPanelOpen, setIsVersionPanelOpen] = useState(false)
+  const [isModePanelOpen, setIsModePanelOpen] = useState(false)
   const activeSet = useTokenStore((state) => state.getActiveTokenSet())
+  const storeSetActiveMode = useTokenStore((s) => s.setActiveMode)
   const versionCount = useTokenStore((s) => s.getVersionsForActiveSet().length)
+
+  const activeMode = activeSet?.activeMode ?? null
+
+  const handleModeChange = useCallback(
+    (modeId: string | null) => {
+      if (activeSet) storeSetActiveMode(activeSet.id, modeId)
+    },
+    [activeSet, storeSetActiveMode]
+  )
 
   if (!activeSet) {
     return (
@@ -27,10 +39,15 @@ export function EditorView() {
       <EditorHeader
         onAddToken={() => setIsAddDialogOpen(true)}
         onOpenVersions={() => setIsVersionPanelOpen(true)}
+        onOpenModes={() => setIsModePanelOpen(true)}
         versionCount={versionCount}
+        modeCount={Object.keys(activeSet.modes).length}
+        modes={activeSet.modes}
+        activeMode={activeMode}
+        onModeChange={handleModeChange}
       />
       <div className="mt-6">
-        <TokenTree tokenSet={activeSet} />
+        <TokenTree tokenSet={activeSet} activeMode={activeMode} />
       </div>
       <AddTokenDialog
         isOpen={isAddDialogOpen}
@@ -39,6 +56,10 @@ export function EditorView() {
       <VersionPanel
         isOpen={isVersionPanelOpen}
         onClose={() => setIsVersionPanelOpen(false)}
+      />
+      <ModePanel
+        isOpen={isModePanelOpen}
+        onClose={() => setIsModePanelOpen(false)}
       />
     </div>
   )
