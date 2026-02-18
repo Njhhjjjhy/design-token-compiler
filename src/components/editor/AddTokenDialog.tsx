@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useRef, useEffect, useCallback } from 'react'
 import { X } from 'lucide-react'
 import type { TokenType, Token } from '@/types'
 import { useTokenStore } from '@/store/useTokenStore'
@@ -13,9 +13,49 @@ export function AddTokenDialog({ isOpen, onClose }: AddTokenDialogProps) {
   const [tokenName, setTokenName] = useState('')
   const [tokenType, setTokenType] = useState<TokenType>('color')
   const [tokenValue, setTokenValue] = useState('')
+  const dialogRef = useRef<HTMLDivElement>(null)
 
   const addToken = useTokenStore((state) => state.addToken)
   const activeSet = useTokenStore((state) => state.getActiveTokenSet())
+
+  // Focus trap and Escape key handler
+  const handleKeyDown = useCallback((e: React.KeyboardEvent) => {
+    if (e.key === 'Escape') {
+      e.stopPropagation()
+      handleCancel()
+      return
+    }
+
+    if (e.key === 'Tab' && dialogRef.current) {
+      const focusable = dialogRef.current.querySelectorAll<HTMLElement>(
+        'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+      )
+      if (focusable.length === 0) return
+
+      const first = focusable[0]
+      const last = focusable[focusable.length - 1]
+
+      if (e.shiftKey) {
+        if (document.activeElement === first) {
+          e.preventDefault()
+          last.focus()
+        }
+      } else {
+        if (document.activeElement === last) {
+          e.preventDefault()
+          first.focus()
+        }
+      }
+    }
+  }, [])
+
+  // Auto-focus the first input when dialog opens
+  useEffect(() => {
+    if (isOpen && dialogRef.current) {
+      const firstInput = dialogRef.current.querySelector<HTMLElement>('select, input')
+      firstInput?.focus()
+    }
+  }, [isOpen])
 
   const handleCreate = () => {
     const trimmedName = tokenName.trim()
@@ -74,11 +114,22 @@ export function AddTokenDialog({ isOpen, onClose }: AddTokenDialogProps) {
   const parentPaths = activeSet ? getParentPaths(activeSet.tokens) : ['']
 
   return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-      <div className="bg-bg-primary border border-border-default rounded-lg p-6 w-full max-w-md">
+    <div
+      className="fixed inset-0 bg-black/50 flex items-center justify-center z-50"
+      onClick={handleCancel}
+    >
+      <div
+        ref={dialogRef}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="add-token-dialog-title"
+        className="bg-bg-primary border border-border-default rounded-lg p-6 w-full max-w-md"
+        onClick={(e) => e.stopPropagation()}
+        onKeyDown={handleKeyDown}
+      >
         {/* Header */}
         <div className="flex items-center justify-between mb-6">
-          <h3 className="font-mono text-lg font-semibold text-text-primary">
+          <h3 id="add-token-dialog-title" className="font-mono text-lg font-semibold text-text-primary">
             Add Token
           </h3>
           <button
