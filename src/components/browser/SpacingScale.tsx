@@ -72,6 +72,13 @@ export function SpacingScale({ tokens }: SpacingScaleProps) {
         </button>
       </div>
       <div className="space-y-1">
+        {sorted.some(([, t]) => /rem|em/.test(String(t.resolvedValue))) && (
+          <div className="px-4 py-1.5 border-b border-border-subtle">
+            <p className="font-mono text-[10px] text-text-tertiary">
+              Pixel conversions assume 1rem = 16px (browser default)
+            </p>
+          </div>
+        )}
         {sorted.map(([path, token]) => {
           const value = String(token.resolvedValue)
           const px = parseToPixels(value)
