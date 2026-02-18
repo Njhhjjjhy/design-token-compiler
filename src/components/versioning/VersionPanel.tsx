@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from 'react'
-import { X, Save, Check } from 'lucide-react'
+import { X, Save, Check, AlertTriangle } from 'lucide-react'
 import { useTokenStore } from '@/store/useTokenStore'
 import { VersionEntry } from './VersionEntry'
 
@@ -11,7 +11,9 @@ interface VersionPanelProps {
 export function VersionPanel({ isOpen, onClose }: VersionPanelProps) {
   const [versionName, setVersionName] = useState('')
   const [justSaved, setJustSaved] = useState(false)
+  const [confirmAction, setConfirmAction] = useState<{ type: 'restore' | 'delete'; versionId: string } | null>(null)
   const saveTimerRef = useRef<ReturnType<typeof setTimeout>>()
+  const confirmBtnRef = useRef<HTMLButtonElement>(null)
   const activeSetId = useTokenStore((s) => s.activeSetId)
   const versions = useTokenStore((s) => s.getVersionsForActiveSet())
   const saveVersion = useTokenStore((s) => s.saveVersion)
@@ -21,6 +23,12 @@ export function VersionPanel({ isOpen, onClose }: VersionPanelProps) {
   useEffect(() => {
     return () => clearTimeout(saveTimerRef.current)
   }, [])
+
+  useEffect(() => {
+    if (confirmAction && confirmBtnRef.current) {
+      confirmBtnRef.current.focus()
+    }
+  }, [confirmAction])
 
   if (!isOpen) return null
 
@@ -34,14 +42,22 @@ export function VersionPanel({ isOpen, onClose }: VersionPanelProps) {
 
   const handleRestore = (versionId: string) => {
     if (!activeSetId) return
-    if (!confirm('This will replace your current tokens. A backup will be saved automatically.')) return
-    restoreVersion(activeSetId, versionId)
+    setConfirmAction({ type: 'restore', versionId })
   }
 
   const handleDelete = (versionId: string) => {
     if (!activeSetId) return
-    if (!confirm('Delete this version? This cannot be undone.')) return
-    deleteVersion(activeSetId, versionId)
+    setConfirmAction({ type: 'delete', versionId })
+  }
+
+  const handleConfirm = () => {
+    if (!confirmAction || !activeSetId) return
+    if (confirmAction.type === 'restore') {
+      restoreVersion(activeSetId, confirmAction.versionId)
+    } else {
+      deleteVersion(activeSetId, confirmAction.versionId)
+    }
+    setConfirmAction(null)
   }
 
   const sortedVersions = [...versions].reverse()
@@ -103,6 +119,59 @@ export function VersionPanel({ isOpen, onClose }: VersionPanelProps) {
           <p className="font-mono text-xs text-text-tertiary">
             {sortedVersions.length} version{sortedVersions.length !== 1 ? 's' : ''} · max 50
           </p>
+        </div>
+      )}
+
+      {confirmAction && (
+        <div
+          className="fixed inset-0 bg-black/50 flex items-center justify-center z-[60]"
+          onClick={() => setConfirmAction(null)}
+          onKeyDown={(e) => { if (e.key === 'Escape') setConfirmAction(null) }}
+        >
+          <div
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="version-confirm-title"
+            className="bg-bg-primary border border-border-default rounded-lg p-6 w-full max-w-sm"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex items-center gap-3 mb-4">
+              <div className={`w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 ${
+                confirmAction.type === 'delete' ? 'bg-red-500/10' : 'bg-warning/10'
+              }`}>
+                <AlertTriangle className={`w-5 h-5 ${
+                  confirmAction.type === 'delete' ? 'text-red-400' : 'text-warning'
+                }`} />
+              </div>
+              <h3 id="version-confirm-title" className="font-mono text-sm font-semibold text-white">
+                {confirmAction.type === 'restore' ? 'Restore Version?' : 'Delete Version?'}
+              </h3>
+            </div>
+            <p className="font-mono text-xs text-text-secondary mb-6 ml-[52px]">
+              {confirmAction.type === 'restore'
+                ? 'This will replace your current tokens. A backup will be saved automatically.'
+                : 'Delete this version? This cannot be undone.'}
+            </p>
+            <div className="flex items-center justify-end gap-3">
+              <button
+                onClick={() => setConfirmAction(null)}
+                className="px-4 py-2 font-mono text-xs text-text-secondary hover:bg-white/10 rounded transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                ref={confirmBtnRef}
+                onClick={handleConfirm}
+                className={`px-4 py-2 text-white font-mono text-xs rounded transition-colors ${
+                  confirmAction.type === 'delete'
+                    ? 'bg-red-600 hover:bg-red-500'
+                    : 'bg-primary hover:bg-primary/90'
+                }`}
+              >
+                {confirmAction.type === 'restore' ? 'Restore' : 'Delete'}
+              </button>
+            </div>
+          </div>
         </div>
       )}
     </div>

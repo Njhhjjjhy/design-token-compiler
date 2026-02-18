@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect, useCallback } from 'react'
-import { Trash2, Check } from 'lucide-react'
+import { Trash2, Check, AlertTriangle } from 'lucide-react'
 import type { Token, TokenValue } from '@/types'
 import { useTokenStore } from '@/store/useTokenStore'
 
@@ -15,10 +15,12 @@ export function TokenValueNode({ token, depth, activeMode, modeOverrides }: Toke
   const [editValue, setEditValue] = useState('')
   const [isInvalid, setIsInvalid] = useState(false)
   const [saveLabel, setSaveLabel] = useState<string | null>(null)
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false)
   const inputRef = useRef<HTMLInputElement>(null)
   const cancelledRef = useRef(false)
   const savedViaEnterRef = useRef(false)
   const saveTimerRef = useRef<ReturnType<typeof setTimeout>>()
+  const deleteConfirmRef = useRef<HTMLButtonElement>(null)
   const updateToken = useTokenStore((state) => state.updateToken)
   const deleteToken = useTokenStore((state) => state.deleteToken)
   const updateModeOverride = useTokenStore((state) => state.updateModeOverride)
@@ -101,10 +103,13 @@ export function TokenValueNode({ token, depth, activeMode, modeOverrides }: Toke
       // In mode context, "delete" removes the override
       removeModeOverride(activeSetId, activeMode, token.id)
     } else if (!activeMode) {
-      if (window.confirm(`Delete token '${token.name}'? This cannot be undone.`)) {
-        deleteToken(token.id)
-      }
+      setShowDeleteConfirm(true)
     }
+  }
+
+  const handleConfirmDelete = () => {
+    deleteToken(token.id)
+    setShowDeleteConfirm(false)
   }
 
   // Auto-focus input when entering edit mode
@@ -119,6 +124,13 @@ export function TokenValueNode({ token, depth, activeMode, modeOverrides }: Toke
   useEffect(() => {
     return () => clearTimeout(saveTimerRef.current)
   }, [])
+
+  // Focus the confirm button when delete modal opens
+  useEffect(() => {
+    if (showDeleteConfirm && deleteConfirmRef.current) {
+      deleteConfirmRef.current.focus()
+    }
+  }, [showDeleteConfirm])
 
   // Render color swatch for color tokens
   const renderPreview = () => {
@@ -233,6 +245,49 @@ export function TokenValueNode({ token, depth, activeMode, modeOverrides }: Toke
       >
         <Trash2 className="w-4 h-4" />
       </button>
+
+      {showDeleteConfirm && (
+        <div
+          className="fixed inset-0 bg-black/50 flex items-center justify-center z-50"
+          onClick={() => setShowDeleteConfirm(false)}
+          onKeyDown={(e) => { if (e.key === 'Escape') setShowDeleteConfirm(false) }}
+        >
+          <div
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="delete-token-confirm-title"
+            className="bg-bg-primary border border-border-default rounded-lg p-6 w-full max-w-sm"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex items-center gap-3 mb-4">
+              <div className="w-10 h-10 rounded-full bg-red-500/10 flex items-center justify-center flex-shrink-0">
+                <AlertTriangle className="w-5 h-5 text-red-400" />
+              </div>
+              <h3 id="delete-token-confirm-title" className="font-mono text-sm font-semibold text-white">
+                Delete Token?
+              </h3>
+            </div>
+            <p className="font-mono text-xs text-text-secondary mb-6 ml-[52px]">
+              Delete token '{token.name}'? This cannot be undone.
+            </p>
+            <div className="flex items-center justify-end gap-3">
+              <button
+                onClick={() => setShowDeleteConfirm(false)}
+                className="px-4 py-2 font-mono text-xs text-text-secondary hover:bg-white/10 rounded transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                ref={deleteConfirmRef}
+                onClick={handleConfirmDelete}
+                className="px-4 py-2 bg-red-600 hover:bg-red-500 text-white font-mono text-xs rounded transition-colors"
+              >
+                Delete
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
