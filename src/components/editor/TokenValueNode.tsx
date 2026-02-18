@@ -172,19 +172,25 @@ export function TokenValueNode({ token, depth, activeMode, modeOverrides }: Toke
 
       {/* Value (editable) */}
       {isEditing ? (
-        <input
-          ref={inputRef}
-          type="text"
-          value={editValue}
-          onChange={(e) => setEditValue(e.target.value)}
-          onBlur={handleEditSave}
-          onKeyDown={handleKeyDown}
-          className={`flex-1 px-2 py-1 font-mono text-sm bg-bg-secondary border rounded focus:outline-none focus:ring-1 ${
-            isInvalid
-              ? 'border-red-500 focus:ring-red-500'
-              : 'border-border-default focus:border-primary focus:ring-primary'
-          }`}
-        />
+        <div className="flex-1">
+          <input
+            ref={inputRef}
+            type="text"
+            value={editValue}
+            onChange={(e) => { setEditValue(e.target.value); setIsInvalid(false) }}
+            onBlur={handleEditSave}
+            onKeyDown={handleKeyDown}
+            aria-invalid={isInvalid}
+            className={`w-full px-2 py-1 font-mono text-sm bg-bg-secondary border rounded focus:outline-none focus:ring-1 ${
+              isInvalid
+                ? 'border-red-500 focus:ring-red-500'
+                : 'border-border-default focus:border-primary focus:ring-primary'
+            }`}
+          />
+          {isInvalid && (
+            <p className="font-mono text-xs text-error mt-1">Value cannot be empty</p>
+          )}
+        </div>
       ) : (
         <button
           onClick={handleEditStart}
