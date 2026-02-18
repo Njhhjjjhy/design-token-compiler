@@ -108,9 +108,12 @@ export function SyncDropZone({ onFileLoaded }: SyncDropZoneProps) {
               />
             </label>
 
-            <p className="mt-6 font-mono text-xs text-text-tertiary">
-              Supported: .json (Figma or W3C) · .css · .scss
-            </p>
+            <div className="mt-6 font-mono text-xs text-text-tertiary text-left max-w-xs mx-auto space-y-1">
+              <p className="text-text-secondary mb-2">Supported formats:</p>
+              <p><span className="text-text-secondary">.json</span> -- W3C Design Tokens or Figma variables export</p>
+              <p><span className="text-text-secondary">.css</span> -- CSS custom properties (--variable: value)</p>
+              <p><span className="text-text-secondary">.scss</span> -- SCSS variables ($variable: value)</p>
+            </div>
           </>
         )}
 
