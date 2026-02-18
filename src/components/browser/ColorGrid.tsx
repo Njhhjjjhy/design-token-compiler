@@ -69,11 +69,11 @@ export function ColorGrid({ tokens }: ColorGridProps) {
       </div>
       {Array.from(groups.entries()).map(([category, categoryTokens]) => (
         <div key={category}>
-          <h3 className="font-mono text-xs text-primary uppercase tracking-wider mb-4">
+          <h3 id={`color-category-${category}`} className="font-mono text-xs text-primary uppercase tracking-wider mb-4">
             {category}
             <span className="text-text-tertiary ml-2">({categoryTokens.length})</span>
           </h3>
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3">
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3" role="group" aria-labelledby={`color-category-${category}`}>
             {categoryTokens.map(([path, token]) => {
               const value = String(token.resolvedValue)
               const isReference = /\{[^}]+\}/.test(value)
@@ -87,7 +87,7 @@ export function ColorGrid({ tokens }: ColorGridProps) {
                   {isValidHex ? (
                     <div className="h-20 border-b border-border-subtle" style={{ backgroundColor: value }} role="img" aria-label={`Color swatch: ${value}`} />
                   ) : isReference ? (
-                    <div className="h-20 border-b border-dashed border-warning bg-warning/10 flex items-center justify-center relative">
+                    <div className="h-20 border-b border-dashed border-warning bg-warning/10 flex items-center justify-center relative" role="img" aria-label={`Unresolved reference: ${value}`}>
                       <span className="font-mono text-xs text-warning/60 truncate px-2">{value}</span>
                       <span className="absolute bottom-1 right-1 px-1.5 py-0.5 bg-warning/20 text-warning font-mono text-mini rounded">
                         ref
@@ -96,6 +96,8 @@ export function ColorGrid({ tokens }: ColorGridProps) {
                   ) : (
                     <div
                       className="h-20 border-b border-border-subtle relative"
+                      role="img"
+                      aria-label={`Invalid color value: ${value}`}
                       style={{
                         background: 'repeating-linear-gradient(45deg, rgb(var(--color-surface-elevated)), rgb(var(--color-surface-elevated)) 6px, rgb(var(--color-surface-sunken)) 6px, rgb(var(--color-surface-sunken)) 12px)',
                       }}
@@ -106,7 +108,7 @@ export function ColorGrid({ tokens }: ColorGridProps) {
                     </div>
                   )}
                   <div className="p-2.5">
-                    <p className="font-mono text-xs text-white truncate" title={path}>{shortPath}</p>
+                    <p className="font-mono text-xs text-white truncate" title={path} aria-label={path}>{shortPath}</p>
                     <CopyableValue value={value} className="font-mono text-xs text-text-secondary mt-0.5 block" />
                     {isValidHex && (
                       <div className="flex gap-2 mt-1.5">

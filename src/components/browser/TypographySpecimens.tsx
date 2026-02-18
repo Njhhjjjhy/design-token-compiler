@@ -57,19 +57,29 @@ export function TypographySpecimens({ tokens }: TypographySpecimensProps) {
 
         return (
           <div key={path} className="border border-border-subtle p-5">
-            <p className="font-mono text-xs text-text-secondary mb-3" title={path}>{shortPath}</p>
+            <h3 className="font-mono text-xs text-text-secondary mb-3 font-normal" title={path}>{shortPath}</h3>
             <p className="text-white mb-3 break-words" style={styles}>
               The quick brown fox jumps over the lazy dog
             </p>
-            <div className="flex flex-wrap gap-x-4 gap-y-1">
-              {properties.length > 0 ? (
-                properties.map((prop) => (
-                  <CopyableValue key={prop} value={prop.split(': ')[1] || prop} className="font-mono text-xs text-text-tertiary">{prop}</CopyableValue>
-                ))
-              ) : (
+            {properties.length > 0 ? (
+              <dl className="flex flex-wrap gap-x-4 gap-y-1">
+                {properties.map((prop) => {
+                  const [label, val] = prop.split(': ')
+                  return (
+                    <div key={prop} className="flex gap-1">
+                      <dt className="font-mono text-xs text-text-tertiary">{label}:</dt>
+                      <dd className="font-mono text-xs text-text-tertiary">
+                        <CopyableValue value={val || prop}>{val || prop}</CopyableValue>
+                      </dd>
+                    </div>
+                  )
+                })}
+              </dl>
+            ) : (
+              <div className="flex flex-wrap gap-x-4 gap-y-1">
                 <CopyableValue value={rawValue} className="font-mono text-xs text-text-tertiary" />
-              )}
-            </div>
+              </div>
+            )}
           </div>
         )
       })}

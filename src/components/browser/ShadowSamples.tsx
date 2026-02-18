@@ -29,7 +29,7 @@ export function ShadowSamples({ tokens }: ShadowSamplesProps) {
         return (
           <div
             key={path}
-            className="border border-border-subtle p-4 tablet:p-5 cursor-default focus:outline-none focus:ring-1 focus:ring-primary"
+            className="border border-border-subtle p-4 tablet:p-5 cursor-default focus:outline-none focus:ring-2 focus:ring-primary"
             tabIndex={0}
             role="button"
             aria-label={`Shadow preview: ${shortPath}`}
