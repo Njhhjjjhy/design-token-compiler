@@ -17,16 +17,14 @@ import { createSampleDesignSystem } from './lib/sample-data'
 
 function TourUI() {
   const { isActive } = useTour()
-  const addTokenSet = useTokenStore((s) => s.addTokenSet)
-  const tokenSets = useTokenStore((s) => s.tokenSets)
-  const deleteTokenSet = useTokenStore((s) => s.deleteTokenSet)
 
   const handleLoadSample = useCallback(() => {
+    const { tokenSets, deleteTokenSet, addTokenSet } = useTokenStore.getState()
     for (const id of Object.keys(tokenSets)) {
       deleteTokenSet(id)
     }
     addTokenSet(createSampleDesignSystem())
-  }, [tokenSets, deleteTokenSet, addTokenSet])
+  }, [])
 
   if (!isActive) return null
   return (
