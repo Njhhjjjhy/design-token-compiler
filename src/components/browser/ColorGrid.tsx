@@ -74,7 +74,20 @@ export function ColorGrid({ tokens }: ColorGridProps) {
 
               return (
                 <div key={path} className="border border-border-subtle">
-                  <div className="h-20 border-b border-border-subtle" style={{ backgroundColor: isValidHex ? value : '#000' }} />
+                  {isValidHex ? (
+                    <div className="h-20 border-b border-border-subtle" style={{ backgroundColor: value }} />
+                  ) : (
+                    <div
+                      className="h-20 border-b border-border-subtle relative"
+                      style={{
+                        background: 'repeating-linear-gradient(45deg, #2a2a2a, #2a2a2a 6px, #1a1a1a 6px, #1a1a1a 12px)',
+                      }}
+                    >
+                      <span className="absolute bottom-1 right-1 px-1.5 py-0.5 bg-red-900/80 text-red-300 font-mono text-[10px] rounded">
+                        invalid
+                      </span>
+                    </div>
+                  )}
                   <div className="p-2.5">
                     <p className="font-mono text-xs text-white truncate" title={path}>{shortPath}</p>
                     <CopyableValue value={value} className="font-mono text-xs text-text-secondary mt-0.5 block" />
