@@ -1,5 +1,5 @@
-import { useState, useRef, useEffect } from 'react'
-import { Trash2 } from 'lucide-react'
+import { useState, useRef, useEffect, useCallback } from 'react'
+import { Trash2, Check } from 'lucide-react'
 import type { Token, TokenValue } from '@/types'
 import { useTokenStore } from '@/store/useTokenStore'
 
@@ -14,8 +14,10 @@ export function TokenValueNode({ token, depth, activeMode, modeOverrides }: Toke
   const [isEditing, setIsEditing] = useState(false)
   const [editValue, setEditValue] = useState('')
   const [isInvalid, setIsInvalid] = useState(false)
+  const [justSaved, setJustSaved] = useState(false)
   const inputRef = useRef<HTMLInputElement>(null)
   const cancelledRef = useRef(false)
+  const saveTimerRef = useRef<ReturnType<typeof setTimeout>>()
   const updateToken = useTokenStore((state) => state.updateToken)
   const deleteToken = useTokenStore((state) => state.deleteToken)
   const updateModeOverride = useTokenStore((state) => state.updateModeOverride)
@@ -70,6 +72,11 @@ export function TokenValueNode({ token, depth, activeMode, modeOverrides }: Toke
     }
     setIsEditing(false)
     setIsInvalid(false)
+
+    // Flash save indicator
+    setJustSaved(true)
+    clearTimeout(saveTimerRef.current)
+    saveTimerRef.current = setTimeout(() => setJustSaved(false), 1500)
   }
 
   const handleEditCancel = () => {
@@ -104,6 +111,11 @@ export function TokenValueNode({ token, depth, activeMode, modeOverrides }: Toke
       inputRef.current.select()
     }
   }, [isEditing])
+
+  // Cleanup save indicator timer
+  useEffect(() => {
+    return () => clearTimeout(saveTimerRef.current)
+  }, [])
 
   // Render color swatch for color tokens
   const renderPreview = () => {
@@ -191,6 +203,17 @@ export function TokenValueNode({ token, depth, activeMode, modeOverrides }: Toke
       <div className="w-16 flex items-center justify-center">
         {renderPreview()}
       </div>
+
+      {/* Save indicator */}
+      <span
+        className={`flex items-center gap-1 font-mono text-xs text-success transition-opacity duration-300 ${
+          justSaved ? 'opacity-100' : 'opacity-0'
+        }`}
+        aria-live="polite"
+      >
+        <Check className="w-3 h-3" />
+        Saved
+      </span>
 
       {/* Delete / Remove Override Button */}
       <button
