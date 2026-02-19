@@ -1,5 +1,6 @@
 import { useEffect, useCallback, useState } from 'react'
 import { AlertTriangle, X } from 'lucide-react'
+import { AnimatePresence, motion } from 'framer-motion'
 import { Header } from './components/Header'
 import { BinarySeparator } from './components/BinarySeparator'
 import { DashboardView } from './pages/DashboardView'
@@ -14,6 +15,7 @@ import { TourProvider, useTour } from './components/onboarding/TourProvider'
 import { TourOverlay } from './components/onboarding/TourOverlay'
 import { TourTooltip } from './components/onboarding/TourTooltip'
 import { createSampleDesignSystem } from './lib/sample-data'
+import { viewVariants, motionConfig } from './lib/motion'
 
 function TourUI() {
   const { isActive } = useTour()
@@ -130,23 +132,33 @@ function AppShell() {
         Skip to main content
       </a>
 
-      {storageWarning && (
-        <div className="bg-warning/20 border-b border-warning px-4 py-2 flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <AlertTriangle className="w-4 h-4 text-warning flex-shrink-0" />
-            <p className="font-mono text-xs text-white">
-              Storage quota exceeded. Some changes may not be saved. Consider exporting your token sets and clearing old data.
-            </p>
-          </div>
-          <button
-            onClick={() => setStorageWarning(false)}
-            className="p-1 hover:bg-white/10 rounded transition-colors flex-shrink-0"
-            aria-label="Dismiss storage warning"
+      <AnimatePresence>
+        {storageWarning && (
+          <motion.div
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: 'auto', opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={motionConfig.enter}
+            style={{ overflow: 'hidden' }}
           >
-            <X className="w-4 h-4 text-warning" />
-          </button>
-        </div>
-      )}
+            <div className="bg-warning/20 border-b border-warning px-4 py-2 flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <AlertTriangle className="w-4 h-4 text-warning flex-shrink-0" />
+                <p className="font-mono text-xs text-white">
+                  Storage quota exceeded. Some changes may not be saved. Consider exporting your token sets and clearing old data.
+                </p>
+              </div>
+              <button
+                onClick={() => setStorageWarning(false)}
+                className="p-1 hover:bg-white/10 rounded transition-colors flex-shrink-0"
+                aria-label="Dismiss storage warning"
+              >
+                <X className="w-4 h-4 text-warning" />
+              </button>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       <Header
         activeView={activeView}
@@ -161,7 +173,18 @@ function AppShell() {
       <BinarySeparator />
 
       <main id="main-content" className="min-h-[calc(100vh-10rem)]">
-        {renderView()}
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={activeView}
+            variants={viewVariants}
+            initial="initial"
+            animate="animate"
+            exit="exit"
+            transition={motionConfig.enter}
+          >
+            {renderView()}
+          </motion.div>
+        </AnimatePresence>
       </main>
 
       <BinarySeparator />
