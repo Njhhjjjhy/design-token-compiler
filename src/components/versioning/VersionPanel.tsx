@@ -1,6 +1,8 @@
 import { useState, useRef, useEffect } from 'react'
+import { AnimatePresence, motion } from 'framer-motion'
 import { useFocusTrap } from '@/hooks/useFocusTrap'
 import { X, Save, Check, AlertTriangle } from 'lucide-react'
+import { motionConfig } from '@/lib/motion'
 import { useTokenStore } from '@/store/useTokenStore'
 import { VersionEntry } from './VersionEntry'
 
@@ -124,18 +126,27 @@ export function VersionPanel({ isOpen, onClose }: VersionPanelProps) {
         </div>
       )}
 
+      <AnimatePresence>
       {confirmAction && (
-        <div
+        <motion.div
           className="fixed inset-0 bg-black/50 flex items-center justify-center z-overlay"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={motionConfig.exit}
           onClick={(e) => { if (e.target === e.currentTarget) setConfirmAction(null) }}
         >
-          <div
+          <motion.div
             ref={confirmTrap.dialogRef}
             role="dialog"
             aria-modal="true"
             aria-labelledby="version-confirm-title"
             aria-describedby="version-confirm-desc"
             className="bg-surface border border-border rounded-lg p-6 w-full max-w-sm"
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.95 }}
+            transition={{ duration: 0.15, ease: [0, 0, 0.2, 1] }}
             onKeyDown={confirmTrap.handleKeyDown}
           >
             <div className="flex items-center gap-3 mb-4">
@@ -173,9 +184,10 @@ export function VersionPanel({ isOpen, onClose }: VersionPanelProps) {
                 {confirmAction.type === 'restore' ? 'Restore' : 'Delete'}
               </button>
             </div>
-          </div>
-        </div>
+          </motion.div>
+        </motion.div>
       )}
+      </AnimatePresence>
     </div>
   )
 }

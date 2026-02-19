@@ -1,5 +1,7 @@
+import { AnimatePresence, motion } from 'framer-motion'
 import { Plus, Upload, Database, Trash2, AlertTriangle } from 'lucide-react'
 import { nanoid } from 'nanoid'
+import { motionConfig } from '@/lib/motion'
 import { useTokenStore } from '@/store/useTokenStore'
 import { TokenSetCard } from '@/components/dashboard/TokenSetCard'
 import { createSampleDesignSystem } from '@/lib/sample-data'
@@ -180,18 +182,27 @@ export function DashboardView() {
       <input ref={fileInputRef} type="file" accept=".json,.css,.scss" onChange={handleFileSelected} className="hidden" />
 
       {/* Clear All Confirmation Modal */}
+      <AnimatePresence>
       {showClearConfirm && (
-        <div
+        <motion.div
           className="fixed inset-0 bg-black/50 flex items-center justify-center z-modal"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={motionConfig.exit}
           onClick={(e) => { if (e.target === e.currentTarget) setShowClearConfirm(false) }}
         >
-          <div
+          <motion.div
             ref={clearTrap.dialogRef}
             role="dialog"
             aria-modal="true"
             aria-labelledby="clear-confirm-title"
             aria-describedby="clear-confirm-desc"
             className="bg-surface border border-border rounded-lg p-6 w-full max-w-sm"
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.95 }}
+            transition={{ duration: 0.15, ease: [0, 0, 0.2, 1] }}
             onKeyDown={clearTrap.handleKeyDown}
           >
             <div className="flex items-center gap-3 mb-4">
@@ -219,23 +230,33 @@ export function DashboardView() {
                 Clear All
               </button>
             </div>
-          </div>
-        </div>
+          </motion.div>
+        </motion.div>
       )}
+      </AnimatePresence>
 
       {/* Load Sample Data Confirmation Modal */}
+      <AnimatePresence>
       {showSampleConfirm && (
-        <div
+        <motion.div
           className="fixed inset-0 bg-black/50 flex items-center justify-center z-modal"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={motionConfig.exit}
           onClick={(e) => { if (e.target === e.currentTarget) setShowSampleConfirm(false) }}
         >
-          <div
+          <motion.div
             ref={sampleTrap.dialogRef}
             role="dialog"
             aria-modal="true"
             aria-labelledby="sample-confirm-title"
             aria-describedby="sample-confirm-desc"
             className="bg-surface border border-border rounded-lg p-6 w-full max-w-sm"
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.95 }}
+            transition={{ duration: 0.15, ease: [0, 0, 0.2, 1] }}
             onKeyDown={sampleTrap.handleKeyDown}
           >
             <div className="flex items-center gap-3 mb-4">
@@ -263,9 +284,10 @@ export function DashboardView() {
                 Load Sample Data
               </button>
             </div>
-          </div>
-        </div>
+          </motion.div>
+        </motion.div>
       )}
+      </AnimatePresence>
     </div>
   )
 }
