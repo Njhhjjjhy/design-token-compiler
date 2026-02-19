@@ -1,4 +1,5 @@
 import { useState, useCallback } from 'react'
+import { AnimatePresence } from 'framer-motion'
 import { useTokenStore } from '@/store/useTokenStore'
 import { EditorHeader } from '@/components/editor/EditorHeader'
 import { TokenTree } from '@/components/editor/TokenTree'
@@ -89,14 +90,22 @@ export function EditorView() {
         isOpen={isAddDialogOpen}
         onClose={() => setIsAddDialogOpen(false)}
       />
-      <VersionPanel
-        isOpen={isVersionPanelOpen}
-        onClose={() => setIsVersionPanelOpen(false)}
-      />
-      <ModePanel
-        isOpen={isModePanelOpen}
-        onClose={() => setIsModePanelOpen(false)}
-      />
+      <AnimatePresence>
+        {isVersionPanelOpen && (
+          <VersionPanel
+            isOpen={isVersionPanelOpen}
+            onClose={() => setIsVersionPanelOpen(false)}
+          />
+        )}
+      </AnimatePresence>
+      <AnimatePresence>
+        {isModePanelOpen && (
+          <ModePanel
+            isOpen={isModePanelOpen}
+            onClose={() => setIsModePanelOpen(false)}
+          />
+        )}
+      </AnimatePresence>
     </div>
   )
 }

@@ -1,5 +1,7 @@
 import { useState } from 'react'
+import { motion } from 'framer-motion'
 import { X, Plus, Pencil, Trash2, Check } from 'lucide-react'
+import { motionConfig } from '@/lib/motion'
 import { nanoid } from 'nanoid'
 import { useTokenStore } from '@/store/useTokenStore'
 import type { Mode } from '@/types'
@@ -20,7 +22,7 @@ export function ModePanel({ isOpen, onClose }: ModePanelProps) {
   const renameMode = useTokenStore((s) => s.renameMode)
   const deleteMode = useTokenStore((s) => s.deleteMode)
 
-  if (!isOpen || !activeSet || !activeSetId) return null
+  if (!activeSet || !activeSetId) return null
 
   const modes = Object.values(activeSet.modes)
 
@@ -64,7 +66,13 @@ export function ModePanel({ isOpen, onClose }: ModePanelProps) {
   }
 
   return (
-    <div className="fixed inset-y-0 right-0 w-sidebar bg-surface border-l border-border z-modal flex flex-col shadow-2xl">
+    <motion.div
+      className="fixed inset-y-0 right-0 w-sidebar bg-surface border-l border-border z-modal flex flex-col shadow-2xl"
+      initial={{ x: '100%' }}
+      animate={{ x: 0 }}
+      exit={{ x: '100%' }}
+      transition={motionConfig.slide}
+    >
       <div className="flex items-center justify-between px-4 py-3 border-b border-border">
         <h3 className="section-title text-primary">MODES</h3>
         <button onClick={onClose} className="p-1 text-text-tertiary hover:text-white transition-colors">
@@ -176,6 +184,6 @@ export function ModePanel({ isOpen, onClose }: ModePanelProps) {
           </p>
         </div>
       )}
-    </div>
+    </motion.div>
   )
 }

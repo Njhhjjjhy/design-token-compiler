@@ -28,8 +28,6 @@ export function VersionPanel({ isOpen, onClose }: VersionPanelProps) {
   }, [])
 
 
-  if (!isOpen) return null
-
   const handleSave = () => {
     saveVersion(versionName.trim() || undefined)
     setVersionName('')
@@ -61,7 +59,13 @@ export function VersionPanel({ isOpen, onClose }: VersionPanelProps) {
   const sortedVersions = [...versions].reverse()
 
   return (
-    <div className="fixed inset-y-0 right-0 w-sidebar bg-surface border-l border-border z-modal flex flex-col shadow-2xl">
+    <motion.div
+      className="fixed inset-y-0 right-0 w-sidebar bg-surface border-l border-border z-modal flex flex-col shadow-2xl"
+      initial={{ x: '100%' }}
+      animate={{ x: 0 }}
+      exit={{ x: '100%' }}
+      transition={motionConfig.slide}
+    >
       <div className="flex items-center justify-between px-4 py-3 border-b border-border">
         <h3 className="section-title text-primary">VERSIONS</h3>
         <button onClick={onClose} className="p-1 text-text-tertiary hover:text-white transition-colors" aria-label="Close versions panel">
@@ -188,6 +192,6 @@ export function VersionPanel({ isOpen, onClose }: VersionPanelProps) {
         </motion.div>
       )}
       </AnimatePresence>
-    </div>
+    </motion.div>
   )
 }
