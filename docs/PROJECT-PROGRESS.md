@@ -1,7 +1,7 @@
 # Design Token Compiler — Project Progress
 
-**Last Updated:** February 18, 2026
-**Current Status:** Phases 1–3 Complete, Phase 5A–5C Complete (Dashboard, Browser, Versioning) — Merged to main
+**Last Updated:** February 19, 2026
+**Current Status:** Phases 1–3 Complete, Phase 5A–5C Complete, Motion System Complete — All merged to main
 **Dev Server:** http://localhost:5176/
 **Branch:** `main`
 
@@ -157,6 +157,28 @@
 
 ---
 
+### Motion System (100% Complete)
+
+Full Framer Motion animation pass across every view. All animations are data-driven from a shared config (`src/lib/motion.ts`). Reduced motion via CSS global override.
+
+| Animation | Location | Pattern |
+|-----------|----------|---------|
+| View transitions | `src/App.tsx` | AnimatePresence mode="wait", fade + y offset |
+| Storage banner | `src/App.tsx` | Height + opacity slide-down |
+| Modal dialogs | AddTokenDialog, DashboardView, VersionPanel | Scale 0.95→1 + backdrop fade |
+| Version panel | VersionPanel + EditorView | x: 100%→0 slide-in |
+| Mode panel | ModePanel + EditorView | x: 100%→0 slide-in |
+| Dashboard cards | DashboardView | Stagger grid (50ms between cards, y: 12→0) |
+| Tree expand/collapse | TokenGroupNode | Height 0→auto + opacity |
+| Browser tab fade | BrowserView | AnimatePresence mode="wait", opacity |
+| Compiler tab indicator | CompilerView | layoutId sliding underline |
+| Copy icon swap | CompilerView | AnimatePresence mode="wait", scale+fade |
+| Tour tooltip | TourTooltip | scale 0.96→1, key={currentStep} crossfade |
+
+**Full documentation:** `docs/motion-system.md`
+
+---
+
 ### Phase 5C — Versioning (100% Complete)
 
 #### Version Snapshots
@@ -256,6 +278,7 @@ src/
 │   ├── CompilerView.tsx   (complete)
 │   └── SyncView.tsx       (complete)
 ├── lib/
+│   ├── motion.ts          (shared animation config)
 │   ├── resolver.ts        (tested)
 │   ├── flatten-tokens.ts
 │   ├── diff-engine.ts
@@ -290,6 +313,7 @@ src/
 - **Lucide React** — Icons
 - **date-fns** — Date formatting
 - **nanoid** — ID generation
+- **Framer Motion 11** — Animation (view transitions, modals, panels, stagger, layoutId)
 
 ---
 
@@ -314,6 +338,26 @@ src/
 ---
 
 ## Recent Updates
+
+### February 19, 2026 — Motion System Complete
+
+**Completed:** Full Framer Motion animation pass — 9 commits, 13 files changed
+
+- Motion foundation: CSS tokens (`--motion-duration-*`, `--motion-ease-*`), global `prefers-reduced-motion` override, shared config in `src/lib/motion.ts`
+- View transitions: `AnimatePresence mode="wait"` on all view switches (fade + y offset, 200ms)
+- Storage banner: height + opacity slide-down on conditional mount
+- Modal dialogs: scale 0.95→1 + backdrop fade for all 4 confirm dialogs
+- Side panels: x: 100%→0 slide-in for VersionPanel and ModePanel, controlled from parent AnimatePresence
+- Dashboard card stagger: 50ms stagger between grid cards, empty state fade
+- Token tree: height 0→auto collapse/expand with AnimatePresence initial={false}
+- Browser tabs: crossfade between tab panels (AnimatePresence mode="wait")
+- Compiler tab indicator: layoutId-based sliding underline between format tabs
+- Copy button: scale+fade icon swap between Copy/Check (120ms)
+- Tour tooltip: scale 0.96→1 entrance, re-animates on step change via key={currentStep}
+
+**Branch:** All 9 commits merged to `main`
+
+---
 
 ### February 18, 2026 — Phase 5C Versioning Complete
 **Completed:** Manual version snapshots with save, restore, and delete
