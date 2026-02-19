@@ -51,6 +51,13 @@ export const backdropVariants = {
   exit: { opacity: 0 },
 }
 
+// Tab content transition variants (fade only)
+export const tabVariants = {
+  initial: { opacity: 0 },
+  animate: { opacity: 1 },
+  exit: { opacity: 0 },
+}
+
 // Stagger container for lists/grids
 export const staggerContainer = {
   hidden: {},
