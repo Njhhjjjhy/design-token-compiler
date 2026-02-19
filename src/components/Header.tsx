@@ -1,6 +1,7 @@
 import { Sun, Moon, HelpCircle } from 'lucide-react'
+import type { ViewMode } from '@/types'
 
-type NavItem = 'dashboard' | 'editor' | 'browser' | 'compiler' | 'sync'
+type NavItem = ViewMode
 type Theme = 'light' | 'dark'
 
 interface HeaderProps {
@@ -22,8 +23,9 @@ export function Header({ activeView, onViewChange, activeSetName, activeModeName
     { id: 'dashboard', label: 'HOME', shortcut: 'Meta+1' },
     { id: 'editor', label: 'EDITOR', shortcut: 'Meta+2' },
     { id: 'browser', label: 'BROWSER', shortcut: 'Meta+3' },
-    { id: 'compiler', label: 'COMPILER', shortcut: 'Meta+4' },
-    { id: 'sync', label: 'SYNC', shortcut: 'Meta+5' },
+    { id: 'components', label: 'COMPONENTS', shortcut: 'Meta+4' },
+    { id: 'compiler', label: 'COMPILER', shortcut: 'Meta+5' },
+    { id: 'sync', label: 'SYNC', shortcut: 'Meta+6' },
   ]
 
   const statusColors = {

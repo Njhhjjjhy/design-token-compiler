@@ -6,6 +6,7 @@ import { BinarySeparator } from './components/BinarySeparator'
 import { DashboardView } from './pages/DashboardView'
 import { EditorView } from './pages/EditorView'
 import { BrowserView } from './pages/BrowserView'
+import { ComponentsView } from './pages/ComponentsView'
 import { CompilerView } from './pages/CompilerView'
 import { SyncView } from './pages/SyncView'
 import { useTokenStore, STORAGE_ERROR_EVENT } from './store/useTokenStore'
@@ -74,8 +75,9 @@ function AppShell() {
     '1': 'dashboard',
     '2': 'editor',
     '3': 'browser',
-    '4': 'compiler',
-    '5': 'sync',
+    '4': 'components',
+    '5': 'compiler',
+    '6': 'sync',
   }
 
   const handleKeyDown = useCallback((e: KeyboardEvent) => {
@@ -109,6 +111,8 @@ function AppShell() {
         return <EditorView />
       case 'browser':
         return <BrowserView />
+      case 'components':
+        return <ComponentsView />
       case 'compiler':
         return <CompilerView />
       case 'sync':
