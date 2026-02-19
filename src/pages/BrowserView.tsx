@@ -1,4 +1,5 @@
 import { useState, useMemo, useCallback } from 'react'
+import { AnimatePresence, motion } from 'framer-motion'
 import { useTokenStore } from '@/store/useTokenStore'
 import { resolveTokens } from '@/lib/resolver'
 import { BrowserHeader, type BrowserTab } from '@/components/browser/BrowserHeader'
@@ -90,10 +91,20 @@ export function BrowserView() {
         aria-labelledby={`browser-tab-${activeTab}`}
         data-tour="browser-content"
       >
-        {activeTab === 'colors' && <ColorGrid tokens={filtered.colors} />}
-        {activeTab === 'spacing' && <SpacingScale tokens={filtered.spacing} />}
-        {activeTab === 'typography' && <TypographySpecimens tokens={filtered.typography} />}
-        {activeTab === 'shadows' && <ShadowSamples tokens={filtered.shadows} />}
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={activeTab}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.15 }}
+          >
+            {activeTab === 'colors' && <ColorGrid tokens={filtered.colors} />}
+            {activeTab === 'spacing' && <SpacingScale tokens={filtered.spacing} />}
+            {activeTab === 'typography' && <TypographySpecimens tokens={filtered.typography} />}
+            {activeTab === 'shadows' && <ShadowSamples tokens={filtered.shadows} />}
+          </motion.div>
+        </AnimatePresence>
       </div>
     </div>
   )
