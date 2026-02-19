@@ -1,4 +1,4 @@
-import { useMemo } from 'react'
+import { useMemo, useEffect } from 'react'
 import { useTokenStore } from '@/store/useTokenStore'
 import { resolveTokens } from '@/lib/resolver'
 import { ComponentsSidebar } from '@/components/components/ComponentsSidebar'
@@ -21,12 +21,14 @@ export function ComponentsView() {
     return result.tokens
   }, [activeSet])
 
-  const selectedComponent = components.find((c) => c.id === selectedComponentId) || components[0] || null
+  // Auto-select first component if none selected (must be in useEffect — not during render)
+  useEffect(() => {
+    if (!selectedComponentId && components.length > 0) {
+      setSelectedComponent(components[0].id)
+    }
+  }, [selectedComponentId, components, setSelectedComponent])
 
-  // Auto-select first component if none selected
-  if (!selectedComponentId && components.length > 0) {
-    setSelectedComponent(components[0].id)
-  }
+  const selectedComponent = components.find((c) => c.id === selectedComponentId) || components[0] || null
 
   return (
     <div className="flex min-h-[calc(100vh-10rem)]">
