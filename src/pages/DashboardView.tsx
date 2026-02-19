@@ -1,7 +1,7 @@
 import { AnimatePresence, motion } from 'framer-motion'
 import { Plus, Upload, Database, Trash2, AlertTriangle } from 'lucide-react'
 import { nanoid } from 'nanoid'
-import { motionConfig } from '@/lib/motion'
+import { motionConfig, staggerContainer, staggerItem } from '@/lib/motion'
 import { useTokenStore } from '@/store/useTokenStore'
 import { TokenSetCard } from '@/components/dashboard/TokenSetCard'
 import { createSampleDesignSystem } from '@/lib/sample-data'
@@ -115,7 +115,7 @@ export function DashboardView() {
     return (
       <div className="p-8">
         <h2 className="section-title text-primary mb-8">DASHBOARD</h2>
-        <div className="flex flex-col items-center justify-center py-24">
+        <motion.div className="flex flex-col items-center justify-center py-24" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.2 }}>
           <h3 className="font-mono text-lg text-white mb-3">Create Your First Token Set</h3>
           <p className="font-mono text-sm text-text-secondary mb-8 max-w-md text-center">
             A token set is a collection of design tokens — colors, spacing, typography, and more — that define your design system.
@@ -134,7 +134,7 @@ export function DashboardView() {
               Load Sample Data
             </button>
           </div>
-        </div>
+        </motion.div>
         <input ref={fileInputRef} type="file" accept=".json,.css,.scss" onChange={handleFileSelected} className="hidden" />
       </div>
     )
@@ -164,20 +164,27 @@ export function DashboardView() {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4" data-tour="dashboard-grid">
+      <motion.div
+        className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"
+        data-tour="dashboard-grid"
+        variants={staggerContainer}
+        initial="hidden"
+        animate="show"
+      >
         {sets.map((tokenSet) => (
-          <TokenSetCard
-            key={tokenSet.id}
-            tokenSet={tokenSet}
-            versionCount={(versions[tokenSet.id] || []).length}
-            onClick={() => navigateTo(tokenSet.id, 'browser')}
-            onEdit={() => navigateTo(tokenSet.id, 'editor')}
-            onBrowse={() => navigateTo(tokenSet.id, 'browser')}
-            onExport={() => navigateTo(tokenSet.id, 'compiler')}
-            onVersions={() => navigateTo(tokenSet.id, 'editor')}
-          />
+          <motion.div key={tokenSet.id} variants={staggerItem}>
+            <TokenSetCard
+              tokenSet={tokenSet}
+              versionCount={(versions[tokenSet.id] || []).length}
+              onClick={() => navigateTo(tokenSet.id, 'browser')}
+              onEdit={() => navigateTo(tokenSet.id, 'editor')}
+              onBrowse={() => navigateTo(tokenSet.id, 'browser')}
+              onExport={() => navigateTo(tokenSet.id, 'compiler')}
+              onVersions={() => navigateTo(tokenSet.id, 'editor')}
+            />
+          </motion.div>
         ))}
-      </div>
+      </motion.div>
 
       <input ref={fileInputRef} type="file" accept=".json,.css,.scss" onChange={handleFileSelected} className="hidden" />
 
