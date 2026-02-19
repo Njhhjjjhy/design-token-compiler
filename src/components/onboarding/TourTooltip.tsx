@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback, useRef } from 'react'
+import { motion } from 'framer-motion'
 import { ChevronDown } from 'lucide-react'
 import { useTour } from './TourProvider'
 import { useFocusTrap } from '@/hooks/useFocusTrap'
@@ -130,7 +131,8 @@ export function TourTooltip({ onLoadSample }: TourTooltipProps) {
         Step {currentStep + 1} of {totalSteps}: {step.title}
       </div>
 
-      <div
+      <motion.div
+        key={currentStep}
         ref={(el) => {
           // Share ref between tooltip positioning and focus trap
           (tooltipRef as React.MutableRefObject<HTMLDivElement | null>).current = el
@@ -142,6 +144,9 @@ export function TourTooltip({ onLoadSample }: TourTooltipProps) {
         aria-describedby="tour-step-description"
         onKeyDown={trap.handleKeyDown}
         className="fixed z-tour-tooltip bg-surface-elevated border border-border rounded-lg shadow-lg"
+        initial={{ opacity: 0, scale: 0.96 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ duration: 0.15, ease: [0, 0, 0.2, 1] }}
         style={{
           top: position.top,
           left: position.left,
@@ -239,7 +244,7 @@ export function TourTooltip({ onLoadSample }: TourTooltipProps) {
         {position.actualPlacement !== 'center' && step.target && (
           <TourArrow placement={position.actualPlacement} target={step.target} tooltipLeft={position.left} />
         )}
-      </div>
+      </motion.div>
     </>
   )
 }
