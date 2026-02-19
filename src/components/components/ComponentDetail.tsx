@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { AnimatePresence, motion } from 'framer-motion'
+import { motion } from 'framer-motion'
 import type { Component, ResolvedTokenMap, TokenBinding } from '@/types'
 import { tabVariants, motionConfig } from '@/lib/motion'
 import { OverviewTab } from './OverviewTab'
@@ -74,40 +74,37 @@ export function ComponentDetail({
 
       {/* Tab content */}
       <div className="flex-1 overflow-auto">
-        <AnimatePresence mode="wait">
-          <motion.div
-            key={activeTab}
-            variants={tabVariants}
-            initial="initial"
-            animate="animate"
-            exit="exit"
-            transition={motionConfig.enter}
-            className="h-full"
-          >
-            {activeTab === 'overview' && (
-              <OverviewTab
-                component={component}
-                resolvedTokens={resolvedTokens}
-                onUpdateMeta={onUpdateMeta}
-              />
-            )}
-            {activeTab === 'anatomy' && (
-              <AnatomyTab component={component} />
-            )}
-            {activeTab === 'tokens' && (
-              <TokenBindingTab
-                component={component}
-                resolvedTokens={resolvedTokens}
-                onAddBinding={onAddBinding}
-                onUpdateBinding={onUpdateBinding}
-                onRemoveBinding={onRemoveBinding}
-              />
-            )}
-            {activeTab === 'code' && (
-              <CodeTab component={component} resolvedTokens={resolvedTokens} />
-            )}
-          </motion.div>
-        </AnimatePresence>
+        <motion.div
+          key={activeTab}
+          variants={tabVariants}
+          initial="initial"
+          animate="animate"
+          transition={motionConfig.enter}
+          className="h-full"
+        >
+          {activeTab === 'overview' && (
+            <OverviewTab
+              component={component}
+              resolvedTokens={resolvedTokens}
+              onUpdateMeta={onUpdateMeta}
+            />
+          )}
+          {activeTab === 'anatomy' && (
+            <AnatomyTab component={component} />
+          )}
+          {activeTab === 'tokens' && (
+            <TokenBindingTab
+              component={component}
+              resolvedTokens={resolvedTokens}
+              onAddBinding={onAddBinding}
+              onUpdateBinding={onUpdateBinding}
+              onRemoveBinding={onRemoveBinding}
+            />
+          )}
+          {activeTab === 'code' && (
+            <CodeTab component={component} resolvedTokens={resolvedTokens} />
+          )}
+        </motion.div>
       </div>
     </div>
   )

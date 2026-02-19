@@ -378,7 +378,7 @@ export const ATOM_DEFINITIONS: Component[] = [
   {
     id: 'card',
     name: 'Card',
-    atomicLevel: 'atom',
+    atomicLevel: 'molecule',
     description: 'A contained surface for grouping related content. Can be flat, elevated, or outlined.',
     usageGuidelines: 'Use cards to group related items into scannable units. Keep card content focused on a single topic. Avoid nesting cards inside cards. Interactive cards should have a clear hover/focus state.',
     parts: [

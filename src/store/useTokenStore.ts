@@ -7,8 +7,9 @@ import type { ImportFormat } from '@/lib/parsers'
 import { flattenTokens, toFlatTokenList } from '@/lib/flatten-tokens'
 import { parseFile } from '@/lib/parsers'
 import { diffTokens } from '@/lib/diff-engine'
-import { getSeedComponents } from '@/lib/atoms'
+
 import { nanoid } from 'nanoid'
+import { getSeedComponents } from '@/lib/atoms'
 
 interface TokenStoreState extends AppState {
   // UI State
@@ -730,13 +731,16 @@ export const useTokenStore = create<TokenStoreState>()(
     }),
     {
       name: 'token-compiler-storage',
-      version: 2,
+      version: 4,
       storage: safeStorage,
       migrate: (persistedState: unknown, version: number) => {
         const state = persistedState as Record<string, unknown>
-        if (version < 2) {
-          // Seed components on upgrade from v1
-          state.components = getSeedComponents()
+        if (version < 4) {
+          // Seed atom definitions into components
+          const components = state.components as unknown[] | undefined
+          if (!components || components.length === 0) {
+            state.components = getSeedComponents()
+          }
           state.selectedComponentId = null
         }
         return state
