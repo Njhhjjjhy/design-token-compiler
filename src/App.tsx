@@ -16,7 +16,7 @@ import { TourProvider, useTour } from './components/onboarding/TourProvider'
 import { TourOverlay } from './components/onboarding/TourOverlay'
 import { TourTooltip } from './components/onboarding/TourTooltip'
 import { createSampleDesignSystem } from './lib/sample-data'
-import { viewVariants, motionConfig } from './lib/motion'
+import { motionConfig } from './lib/motion'
 
 function TourUI() {
   const { isActive } = useTour()
@@ -177,18 +177,14 @@ function AppShell() {
       <BinarySeparator />
 
       <main id="main-content" className="min-h-[calc(100vh-10rem)]">
-        <AnimatePresence initial={false}>
-          <motion.div
-            key={activeView}
-            variants={viewVariants}
-            initial="initial"
-            animate="animate"
-            exit="exit"
-            transition={motionConfig.enter}
-          >
-            {renderView()}
-          </motion.div>
-        </AnimatePresence>
+        <motion.div
+          key={activeView}
+          initial={{ opacity: 0, y: 6 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={motionConfig.enter}
+        >
+          {renderView()}
+        </motion.div>
       </main>
 
       <BinarySeparator />
