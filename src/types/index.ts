@@ -212,7 +212,7 @@ export interface ExportOptions {
 // UI STATE TYPES
 // ============================================================================
 
-export type ViewMode = 'dashboard' | 'editor' | 'browser' | 'compiler' | 'sync'
+export type ViewMode = 'dashboard' | 'editor' | 'browser' | 'components' | 'compiler' | 'sync'
 
 export interface EditorState {
   selectedTokenId: string | null
@@ -237,4 +237,50 @@ export interface SyncState {
   source: SyncSource | null
   syncResult: SyncResult | null
   resolveConflicts: Record<string, 'design' | 'code'> // tokenId -> chosen value
+}
+
+// ============================================================================
+// COMPONENT SYSTEM TYPES
+// ============================================================================
+
+export type AtomicLevel = 'atom' | 'molecule' | 'organism'
+
+export interface ComponentPart {
+  id: string        // kebab-case: 'container', 'label', 'icon-leading'
+  name: string      // display name: 'Container', 'Label', 'Leading Icon'
+  description?: string
+}
+
+export interface ComponentState {
+  id: string        // kebab-case: 'default', 'hover', 'pressed', 'disabled', 'focus', 'error'
+  name: string
+}
+
+export interface ComponentVariant {
+  id: string        // kebab-case: 'primary', 'secondary', 'size-sm', 'size-md'
+  name: string
+  category: 'appearance' | 'size' | 'type'
+}
+
+export interface TokenBinding {
+  id: string
+  partId: string           // references ComponentPart.id
+  stateId: string          // references ComponentState.id
+  variantId: string | null // null = applies to all variants
+  tokenPath: string        // e.g. 'color.interactive.default'
+  cssProperty: string      // e.g. 'background-color'
+}
+
+export interface Component {
+  id: string
+  name: string
+  atomicLevel: AtomicLevel
+  description: string
+  usageGuidelines: string
+  parts: ComponentPart[]
+  states: ComponentState[]
+  variants: ComponentVariant[]
+  bindings: TokenBinding[]
+  createdAt: number
+  updatedAt: number
 }
