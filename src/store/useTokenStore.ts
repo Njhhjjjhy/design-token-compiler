@@ -1,12 +1,14 @@
 import { create } from 'zustand'
 import { persist, createJSONStorage } from 'zustand/middleware'
-import type { AppState, Mode, Token, TokenGroup, TokenSet, TokenValue, Version, ViewMode } from '@/types'
+import type { AppState, Component, Mode, Token, TokenBinding, TokenGroup, TokenSet, TokenValue, Version, ViewMode } from '@/types'
 import type { FlatToken } from '@/lib/flatten-tokens'
 import type { DiffResult } from '@/lib/diff-engine'
 import type { ImportFormat } from '@/lib/parsers'
 import { flattenTokens, toFlatTokenList } from '@/lib/flatten-tokens'
 import { parseFile } from '@/lib/parsers'
 import { diffTokens } from '@/lib/diff-engine'
+import { getSeedComponents } from '@/lib/atoms'
+import { nanoid } from 'nanoid'
 
 interface TokenStoreState extends AppState {
   // UI State
@@ -64,6 +66,17 @@ interface TokenStoreState extends AppState {
   restoreVersion: (setId: string, versionId: string) => void
   deleteVersion: (setId: string, versionId: string) => void
   getVersionsForActiveSet: () => Version[]
+
+  // Component state
+  components: Component[]
+  selectedComponentId: string | null
+
+  // Component actions
+  addBinding: (componentId: string, binding: Omit<TokenBinding, 'id'>) => void
+  updateBinding: (componentId: string, bindingId: string, updates: Partial<Pick<TokenBinding, 'tokenPath' | 'cssProperty'>>) => void
+  removeBinding: (componentId: string, bindingId: string) => void
+  updateComponentMeta: (componentId: string, updates: Partial<Pick<Component, 'description' | 'usageGuidelines'>>) => void
+  setSelectedComponent: (id: string | null) => void
 }
 
 // Storage quota error detection
@@ -102,6 +115,8 @@ export const useTokenStore = create<TokenStoreState>()(
       syncResults: {},
       versions: {},
       activeView: 'dashboard',
+      components: getSeedComponents(),
+      selectedComponentId: null,
 
       // Sync initial state
       importedFileName: null,
@@ -659,11 +674,73 @@ export const useTokenStore = create<TokenStoreState>()(
         if (!state.activeSetId) return []
         return state.versions[state.activeSetId] || []
       },
+
+      // Component actions
+      setSelectedComponent: (id) => set({ selectedComponentId: id }),
+
+      addBinding: (componentId, binding) =>
+        set((state) => ({
+          components: state.components.map((c) =>
+            c.id === componentId
+              ? {
+                  ...c,
+                  bindings: [...c.bindings, { ...binding, id: nanoid() }],
+                  updatedAt: Date.now(),
+                }
+              : c
+          ),
+        })),
+
+      updateBinding: (componentId, bindingId, updates) =>
+        set((state) => ({
+          components: state.components.map((c) =>
+            c.id === componentId
+              ? {
+                  ...c,
+                  bindings: c.bindings.map((b) =>
+                    b.id === bindingId ? { ...b, ...updates } : b
+                  ),
+                  updatedAt: Date.now(),
+                }
+              : c
+          ),
+        })),
+
+      removeBinding: (componentId, bindingId) =>
+        set((state) => ({
+          components: state.components.map((c) =>
+            c.id === componentId
+              ? {
+                  ...c,
+                  bindings: c.bindings.filter((b) => b.id !== bindingId),
+                  updatedAt: Date.now(),
+                }
+              : c
+          ),
+        })),
+
+      updateComponentMeta: (componentId, updates) =>
+        set((state) => ({
+          components: state.components.map((c) =>
+            c.id === componentId
+              ? { ...c, ...updates, updatedAt: Date.now() }
+              : c
+          ),
+        })),
     }),
     {
       name: 'token-compiler-storage',
-      version: 1,
+      version: 2,
       storage: safeStorage,
+      migrate: (persistedState: unknown, version: number) => {
+        const state = persistedState as Record<string, unknown>
+        if (version < 2) {
+          // Seed components on upgrade from v1
+          state.components = getSeedComponents()
+          state.selectedComponentId = null
+        }
+        return state
+      },
     }
   )
 )
