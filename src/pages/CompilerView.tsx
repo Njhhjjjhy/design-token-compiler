@@ -1,4 +1,6 @@
 import { useState, useMemo } from 'react'
+import { AnimatePresence, motion } from 'framer-motion'
+import { motionConfig } from '@/lib/motion'
 import { useTokenStore } from '@/store/useTokenStore'
 import { resolveTokens } from '@/lib/resolver'
 import { compileToCssWithModes } from '@/lib/compilers/css'
@@ -165,17 +167,33 @@ export function CompilerView() {
               aria-label={`Copy ${activeFormat} code to clipboard`}
               className="flex items-center gap-2 px-4 py-2 bg-surface-elevated border border-border hover:border-primary transition-colors font-mono text-xs text-white"
             >
-              {copied ? (
-                <>
-                  <Check className="w-4 h-4" aria-hidden="true" />
-                  COPIED
-                </>
-              ) : (
-                <>
-                  <Copy className="w-4 h-4" aria-hidden="true" />
-                  COPY
-                </>
-              )}
+              <AnimatePresence mode="wait">
+                {copied ? (
+                  <motion.span
+                    key="check"
+                    className="flex items-center gap-2"
+                    initial={{ scale: 0.5, opacity: 0 }}
+                    animate={{ scale: 1, opacity: 1 }}
+                    exit={{ scale: 0.5, opacity: 0 }}
+                    transition={{ duration: 0.12 }}
+                  >
+                    <Check className="w-4 h-4" aria-hidden="true" />
+                    COPIED
+                  </motion.span>
+                ) : (
+                  <motion.span
+                    key="copy"
+                    className="flex items-center gap-2"
+                    initial={{ scale: 0.5, opacity: 0 }}
+                    animate={{ scale: 1, opacity: 1 }}
+                    exit={{ scale: 0.5, opacity: 0 }}
+                    transition={{ duration: 0.12 }}
+                  >
+                    <Copy className="w-4 h-4" aria-hidden="true" />
+                    COPY
+                  </motion.span>
+                )}
+              </AnimatePresence>
             </button>
             <span className="sr-only" aria-live="polite">{copied ? 'Code copied to clipboard' : ''}</span>
             <button
@@ -266,7 +284,11 @@ export function CompilerView() {
                 {format === 'json-w3c' && 'JSON (W3C)'}
                 {format === 'style-dictionary' && 'Style Dictionary'}
                 {activeFormat === format && (
-                  <div className="absolute bottom-0 left-0 right-0 h-[2px] bg-primary" />
+                  <motion.div
+                    layoutId="compiler-tab-indicator"
+                    className="absolute bottom-0 left-0 right-0 h-[2px] bg-primary"
+                    transition={motionConfig.enter}
+                  />
                 )}
               </button>
             ))}
