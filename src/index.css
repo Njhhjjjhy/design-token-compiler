@@ -3,6 +3,15 @@
 @tailwind utilities;
 
 :root {
+  /* Motion tokens */
+  --motion-duration-micro: 100ms;
+  --motion-duration-short: 150ms;
+  --motion-duration-medium: 200ms;
+  --motion-duration-long: 300ms;
+  --motion-ease-enter: cubic-bezier(0, 0, 0.2, 1);
+  --motion-ease-exit: cubic-bezier(0.4, 0, 1, 1);
+  --motion-ease-inout: cubic-bezier(0.4, 0, 0.2, 1);
+
   --color-primary: 197 9 53;
   --color-secondary: 250 245 244;
   --color-surface: 255 255 255;
@@ -59,6 +68,14 @@ body {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
 }
 
 @layer base {

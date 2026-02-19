@@ -59,6 +59,17 @@ export default {
       spacing: {
         'indent': '16px',
       },
+      transitionDuration: {
+        'motion-micro': 'var(--motion-duration-micro)',
+        'motion-short': 'var(--motion-duration-short)',
+        'motion-medium': 'var(--motion-duration-medium)',
+        'motion-long': 'var(--motion-duration-long)',
+      },
+      transitionTimingFunction: {
+        'motion-enter': 'var(--motion-ease-enter)',
+        'motion-exit': 'var(--motion-ease-exit)',
+        'motion-inout': 'var(--motion-ease-inout)',
+      },
     },
   },
   plugins: [],
