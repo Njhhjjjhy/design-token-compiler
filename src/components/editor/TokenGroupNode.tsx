@@ -1,4 +1,6 @@
+import { AnimatePresence, motion } from 'framer-motion'
 import { ChevronRight } from 'lucide-react'
+import { motionConfig } from '@/lib/motion'
 import type { TokenGroup, TokenValue } from '@/types'
 import { TokenTreeNode } from './TokenTreeNode'
 import { useTreeNavigationContext } from './TreeNavigationContext'
@@ -51,21 +53,30 @@ export function TokenGroupNode({ group, groupKey, depth, activeMode, modeOverrid
       </button>
 
       {/* Children (when expanded) */}
-      {isExpanded && (
-        <div role="group">
-          {Object.entries(group.tokens).map(([key, item]) => (
-            <TokenTreeNode
-              key={key}
-              itemKey={key}
-              item={item}
-              depth={depth + 1}
-              activeMode={activeMode}
-              modeOverrides={modeOverrides}
-              parentPath={groupPath}
-            />
-          ))}
-        </div>
-      )}
+      <AnimatePresence initial={false}>
+        {isExpanded && (
+          <motion.div
+            role="group"
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: 'auto', opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={motionConfig.collapse}
+            style={{ overflow: 'hidden' }}
+          >
+            {Object.entries(group.tokens).map(([key, item]) => (
+              <TokenTreeNode
+                key={key}
+                itemKey={key}
+                item={item}
+                depth={depth + 1}
+                activeMode={activeMode}
+                modeOverrides={modeOverrides}
+                parentPath={groupPath}
+              />
+            ))}
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   )
 }
