@@ -177,7 +177,7 @@ function AppShell() {
       <BinarySeparator />
 
       <main id="main-content" className="min-h-[calc(100vh-10rem)]">
-        <AnimatePresence mode="wait">
+        <AnimatePresence initial={false}>
           <motion.div
             key={activeView}
             variants={viewVariants}

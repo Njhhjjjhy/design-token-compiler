@@ -13,7 +13,7 @@ export function ComponentsView() {
   const updateBinding = useTokenStore((s) => s.updateBinding)
   const removeBinding = useTokenStore((s) => s.removeBinding)
   const updateComponentMeta = useTokenStore((s) => s.updateComponentMeta)
-  const activeSet = useTokenStore((s) => s.getActiveTokenSet())
+  const activeSet = useTokenStore((s) => s.activeSetId ? s.tokenSets[s.activeSetId] ?? null : null)
 
   const resolvedTokens = useMemo(() => {
     if (!activeSet) return {}
