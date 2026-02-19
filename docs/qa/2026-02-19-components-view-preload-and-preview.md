@@ -1,7 +1,7 @@
 # QA Issue: Components View -- Preloading, Wrong Colors, Non-functional Controls, Card Atom
 
 **Date:** 2026-02-19
-**Status:** Fixed
+**Status:** Partially fixed -- preview overhaul pending (see docs/plans/2026-02-19-component-preview-overhaul.md)
 **Reporter:** QA Review
 
 ## Issue Description
