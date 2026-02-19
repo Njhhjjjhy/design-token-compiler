@@ -12,14 +12,23 @@ interface OverviewTabProps {
 export function OverviewTab({ component, resolvedTokens, onUpdateMeta }: OverviewTabProps) {
   const [activeState, setActiveState] = useState(component.states[0]?.id || 'default')
   const [activeVariant, setActiveVariant] = useState<string | null>(
-    component.variants.find((v) => v.category === 'appearance')?.id || null
+    component.variants[0]?.id || null
   )
   const [editingDescription, setEditingDescription] = useState(false)
   const [editingGuidelines, setEditingGuidelines] = useState(false)
   const [descValue, setDescValue] = useState(component.description)
   const [guideValue, setGuideValue] = useState(component.usageGuidelines)
 
-  const appearanceVariants = component.variants.filter((v) => v.category === 'appearance')
+  // Group variants by category, preserving definition order
+  const variantCategories: { category: string; variants: typeof component.variants }[] = []
+  for (const v of component.variants) {
+    const existing = variantCategories.find((g) => g.category === v.category)
+    if (existing) {
+      existing.variants.push(v)
+    } else {
+      variantCategories.push({ category: v.category, variants: [v] })
+    }
+  }
 
   return (
     <div className="p-6 space-y-6">
@@ -41,10 +50,10 @@ export function OverviewTab({ component, resolvedTokens, onUpdateMeta }: Overvie
               {state.id}
             </button>
           ))}
-          {appearanceVariants.length > 0 && (
-            <>
+          {variantCategories.map((group) => (
+            <span key={group.category} className="contents">
               <div className="w-px h-4 bg-border mx-1" />
-              {appearanceVariants.map((variant) => (
+              {group.variants.map((variant) => (
                 <button
                   key={variant.id}
                   onClick={() => setActiveVariant(variant.id)}
@@ -59,8 +68,8 @@ export function OverviewTab({ component, resolvedTokens, onUpdateMeta }: Overvie
                   {variant.id}
                 </button>
               ))}
-            </>
-          )}
+            </span>
+          ))}
         </div>
         <ComponentPreview
           component={component}

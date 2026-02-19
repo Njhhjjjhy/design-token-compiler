@@ -191,6 +191,11 @@ function autoDeriveCssVars(
       vars['--preview-label-color'] = contrastText(mainColor)
       vars['--preview-container-borderColor'] = mainColor
     }
+
+    // Links are text-only -- label color should be the primary color, not contrast-white
+    if (component.id === 'link') {
+      vars['--preview-label-color'] = mainColor
+    }
   } else if (isInput) {
     vars['--preview-container-backgroundColor'] = surfaceVal
     vars['--preview-container-borderColor'] = borderVal
@@ -347,6 +352,22 @@ function BadgePreview({ cssVars }: PreviewProps) {
       >
         Status
       </span>
+    </div>
+  )
+}
+
+function BadgeDotPreview({ cssVars }: PreviewProps) {
+  return (
+    <div style={cssVars as React.CSSProperties}>
+      <span
+        style={{
+          width: '10px',
+          height: '10px',
+          borderRadius: '50%',
+          backgroundColor: 'var(--preview-dot-backgroundColor, #555)',
+          display: 'inline-block',
+        }}
+      />
     </div>
   )
 }
@@ -747,8 +768,9 @@ function renderAtomPreview(
     case 'button-icon':
       return <IconButtonPreview cssVars={cssVars} activeState={activeState} />
     case 'badge':
-    case 'badge-dot':
       return <BadgePreview cssVars={cssVars} activeState={activeState} />
+    case 'badge-dot':
+      return <BadgeDotPreview cssVars={cssVars} activeState={activeState} />
     case 'tag':
       return <TagPreview cssVars={cssVars} activeState={activeState} />
     case 'link':
@@ -791,6 +813,7 @@ export function ComponentPreview({ component, resolvedTokens, activeState, activ
 
   return (
     <div className="relative flex items-center justify-center min-h-[120px] p-8 bg-surface-elevated/30 rounded border border-border">
+      <style>{`@keyframes spin { to { transform: rotate(360deg) } }`}</style>
       <div style={stateStyle} className="transition-all duration-150">
         {renderAtomPreview(component, cssVars, activeState, activeVariant)}
       </div>
