@@ -31,7 +31,7 @@ export function ComponentsSidebar({ components, selectedId, onSelect }: Componen
               onClick={() => onSelect(component.id)}
               className={`
                 w-full flex items-center justify-between px-4 py-2.5 text-left
-                transition-colors border-b border-border/50
+                transition-colors
                 ${isSelected
                   ? 'bg-surface-elevated text-white'
                   : 'text-text-secondary hover:text-white hover:bg-surface-elevated/50'

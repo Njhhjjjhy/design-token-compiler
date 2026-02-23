@@ -11,9 +11,15 @@ interface OverviewTabProps {
 
 export function OverviewTab({ component, resolvedTokens, onUpdateMeta }: OverviewTabProps) {
   const [activeState, setActiveState] = useState(component.states[0]?.id || 'default')
-  const [activeVariant, setActiveVariant] = useState<string | null>(
-    component.variants[0]?.id || null
-  )
+  const [activeVariants, setActiveVariants] = useState<Record<string, string>>(() => {
+    const initial: Record<string, string> = {}
+    for (const v of component.variants) {
+      if (!(v.category in initial)) {
+        initial[v.category] = v.id
+      }
+    }
+    return initial
+  })
   const [editingDescription, setEditingDescription] = useState(false)
   const [editingGuidelines, setEditingGuidelines] = useState(false)
   const [descValue, setDescValue] = useState(component.description)
@@ -56,10 +62,10 @@ export function OverviewTab({ component, resolvedTokens, onUpdateMeta }: Overvie
               {group.variants.map((variant) => (
                 <button
                   key={variant.id}
-                  onClick={() => setActiveVariant(variant.id)}
+                  onClick={() => setActiveVariants(prev => ({ ...prev, [variant.category]: variant.id }))}
                   className={`
                     px-2.5 py-1 font-mono text-xs rounded border transition-colors
-                    ${activeVariant === variant.id
+                    ${activeVariants[variant.category] === variant.id
                       ? 'border-primary/60 text-primary bg-primary/10'
                       : 'border-border text-text-tertiary hover:text-text-secondary hover:border-border-strong'
                     }
@@ -75,7 +81,7 @@ export function OverviewTab({ component, resolvedTokens, onUpdateMeta }: Overvie
           component={component}
           resolvedTokens={resolvedTokens}
           activeState={activeState}
-          activeVariant={activeVariant}
+          activeVariants={activeVariants}
         />
       </div>
 

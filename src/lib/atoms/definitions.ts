@@ -329,53 +329,6 @@ export const ATOM_DEFINITIONS: Component[] = [
     updatedAt: NOW,
   },
   {
-    id: 'text-heading',
-    name: 'Heading',
-    atomicLevel: 'atom',
-    description: 'Section headings that establish visual hierarchy. Maps to HTML h1–h6 elements.',
-    usageGuidelines: 'Follow document outline order (h1 → h2 → h3). Do not skip heading levels for visual styling — use CSS classes instead. One h1 per page.',
-    parts: [
-      { id: 'text', name: 'Text' },
-    ],
-    states: [
-      { id: 'default', name: 'Default' },
-    ],
-    variants: [
-      { id: 'h1', name: 'H1', category: 'type' },
-      { id: 'h2', name: 'H2', category: 'type' },
-      { id: 'h3', name: 'H3', category: 'type' },
-      { id: 'h4', name: 'H4', category: 'type' },
-      { id: 'h5', name: 'H5', category: 'type' },
-      { id: 'h6', name: 'H6', category: 'type' },
-    ],
-    bindings: [],
-    createdAt: NOW,
-    updatedAt: NOW,
-  },
-  {
-    id: 'text-body',
-    name: 'Body Text',
-    atomicLevel: 'atom',
-    description: 'Paragraph and supporting text. Covers body sizes, captions, and overlines.',
-    usageGuidelines: 'Body-md is the default reading size. Use caption for supplementary information below images or data cells. Use overline (all-caps, letter-spaced) sparingly for category labels above headings.',
-    parts: [
-      { id: 'text', name: 'Text' },
-    ],
-    states: [
-      { id: 'default', name: 'Default' },
-    ],
-    variants: [
-      { id: 'size-lg', name: 'Body Large', category: 'size' },
-      { id: 'size-md', name: 'Body Medium', category: 'size' },
-      { id: 'size-sm', name: 'Body Small', category: 'size' },
-      { id: 'caption', name: 'Caption', category: 'type' },
-      { id: 'overline', name: 'Overline', category: 'type' },
-    ],
-    bindings: [],
-    createdAt: NOW,
-    updatedAt: NOW,
-  },
-  {
     id: 'card',
     name: 'Card',
     atomicLevel: 'molecule',

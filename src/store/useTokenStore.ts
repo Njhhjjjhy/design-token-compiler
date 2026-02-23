@@ -9,7 +9,7 @@ import { parseFile } from '@/lib/parsers'
 import { diffTokens } from '@/lib/diff-engine'
 
 import { nanoid } from 'nanoid'
-import { getSeedComponents } from '@/lib/atoms'
+import { getSeedComponents, ATOM_DEFINITIONS } from '@/lib/atoms'
 
 interface TokenStoreState extends AppState {
   // UI State
@@ -731,7 +731,7 @@ export const useTokenStore = create<TokenStoreState>()(
     }),
     {
       name: 'token-compiler-storage',
-      version: 4,
+      version: 6,
       storage: safeStorage,
       migrate: (persistedState: unknown, version: number) => {
         const state = persistedState as Record<string, unknown>
@@ -742,6 +742,40 @@ export const useTokenStore = create<TokenStoreState>()(
             state.components = getSeedComponents()
           }
           state.selectedComponentId = null
+        }
+        if (version < 6) {
+          // Full reconciliation: remove stale, update existing from definitions,
+          // add missing -- preserving user bindings/timestamps
+          const defMap = new Map(ATOM_DEFINITIONS.map((d) => [d.id, d]))
+          const existing = (state.components as Component[] | undefined) || []
+          const existingMap = new Map(existing.map((c) => [c.id, c]))
+
+          const reconciled: Component[] = []
+          for (const [id, def] of defMap) {
+            const stored = existingMap.get(id)
+            if (stored) {
+              // Update definition fields, preserve user data
+              reconciled.push({
+                ...stored,
+                name: def.name,
+                atomicLevel: def.atomicLevel,
+                description: stored.description !== def.description && stored.updatedAt > 0
+                  ? stored.description
+                  : def.description,
+                usageGuidelines: stored.usageGuidelines !== def.usageGuidelines && stored.updatedAt > 0
+                  ? stored.usageGuidelines
+                  : def.usageGuidelines,
+                parts: def.parts,
+                states: def.states,
+                variants: def.variants,
+              })
+            } else {
+              // New definition not yet in storage
+              const seed = JSON.parse(JSON.stringify(def)) as Component
+              reconciled.push(seed)
+            }
+          }
+          state.components = reconciled
         }
         return state
       },

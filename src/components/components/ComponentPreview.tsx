@@ -6,7 +6,7 @@ interface ComponentPreviewProps {
   component: Component
   resolvedTokens: ResolvedTokenMap
   activeState: string
-  activeVariant: string | null
+  activeVariants: Record<string, string>
 }
 
 // ---- Binding-driven CSS vars (when user has explicit bindings) ----
@@ -15,12 +15,13 @@ function deriveCssVars(
   component: Component,
   resolvedTokens: ResolvedTokenMap,
   activeState: string,
-  activeVariant: string | null
+  activeVariants: Record<string, string>
 ): Record<string, string> {
+  const activeVariantValues = new Set(Object.values(activeVariants))
   const vars: Record<string, string> = {}
   for (const binding of component.bindings) {
     if (binding.stateId !== activeState) continue
-    if (binding.variantId !== null && binding.variantId !== activeVariant) continue
+    if (binding.variantId !== null && !activeVariantValues.has(binding.variantId)) continue
     const token = resolvedTokens[binding.tokenPath]
     if (!token) continue
     const prop = binding.cssProperty.replace(/-([a-z])/g, (_, c: string) => c.toUpperCase())
@@ -113,7 +114,7 @@ function autoDeriveCssVars(
   component: Component,
   resolvedTokens: ResolvedTokenMap,
   activeState: string,
-  activeVariant: string | null
+  activeVariants: Record<string, string>
 ): Record<string, string> {
   const vars: Record<string, string> = {}
   const colors = collectColors(resolvedTokens)
@@ -154,22 +155,24 @@ function autoDeriveCssVars(
   const isInteractive = INTERACTIVE_IDS.includes(component.id)
   const isInput = INPUT_IDS.includes(component.id)
 
+  const appearanceVariant = activeVariants['appearance'] || null
+
   if (isInteractive) {
     // Pick color based on active appearance variant
     let bg = mainColor
-    if (activeVariant === 'secondary' && secondary) {
-      bg = secondary.value
-    } else if (activeVariant === 'ghost' || activeVariant === 'outlined') {
+    if (appearanceVariant === 'secondary') {
+      bg = secondary?.value || '#6b7280'
+    } else if (appearanceVariant === 'ghost' || appearanceVariant === 'outlined') {
       bg = 'transparent'
-    } else if (activeVariant === 'destructive' || activeVariant === 'error') {
+    } else if (appearanceVariant === 'destructive' || appearanceVariant === 'error') {
       bg = destructive?.value || '#dc2626'
-    } else if (activeVariant === 'success') {
+    } else if (appearanceVariant === 'success') {
       bg = success?.value || '#22c55e'
-    } else if (activeVariant === 'warning') {
+    } else if (appearanceVariant === 'warning') {
       bg = warning?.value || '#f59e0b'
-    } else if (activeVariant === 'neutral') {
+    } else if (appearanceVariant === 'neutral') {
       bg = neutral?.value || '#6b7280'
-    } else if (activeVariant === 'filled') {
+    } else if (appearanceVariant === 'filled') {
       bg = mainColor
     }
 
@@ -224,7 +227,7 @@ function autoDeriveCssVars(
       vars['--preview-container-borderColor'] = mainColor
     }
   } else {
-    // Content / container components (card, text-heading, text-body, etc.)
+    // Content / container components (card, etc.)
     vars['--preview-container-backgroundColor'] = surfaceVal
     vars['--preview-container-borderColor'] = borderVal
     vars['--preview-text-color'] = textVal
@@ -266,10 +269,19 @@ const PREVIEW_SANS = 'system-ui, -apple-system, sans-serif'
 interface PreviewProps {
   cssVars: Record<string, string>
   activeState: string
+  activeVariants: Record<string, string>
 }
 
-function ButtonPreview({ cssVars, activeState }: PreviewProps) {
+const BUTTON_SIZES: Record<string, { padding: string; fontSize: string; spinnerSize: string }> = {
+  'size-sm': { padding: '4px 10px', fontSize: '12px', spinnerSize: '12px' },
+  'size-md': { padding: '8px 16px', fontSize: '14px', spinnerSize: '14px' },
+  'size-lg': { padding: '12px 24px', fontSize: '16px', spinnerSize: '16px' },
+}
+
+function ButtonPreview({ cssVars, activeState, activeVariants }: PreviewProps) {
   const isLoading = activeState === 'loading'
+  const sizeKey = activeVariants['size'] || 'size-md'
+  const size = BUTTON_SIZES[sizeKey] || BUTTON_SIZES['size-md']
   return (
     <div style={cssVars as React.CSSProperties}>
       <button
@@ -277,10 +289,10 @@ function ButtonPreview({ cssVars, activeState }: PreviewProps) {
           backgroundColor: 'var(--preview-container-backgroundColor, #555)',
           color: 'var(--preview-label-color, #fff)',
           borderRadius: 'var(--preview-container-borderRadius, 6px)',
-          padding: '8px 16px',
+          padding: size.padding,
           border: '1px solid var(--preview-container-borderColor, transparent)',
           fontFamily: PREVIEW_SANS,
-          fontSize: '14px',
+          fontSize: size.fontSize,
           fontWeight: 500,
           cursor: activeState === 'disabled' ? 'not-allowed' : 'pointer',
           display: 'inline-flex',
@@ -292,8 +304,8 @@ function ButtonPreview({ cssVars, activeState }: PreviewProps) {
         {isLoading && (
           <span
             style={{
-              width: '14px',
-              height: '14px',
+              width: size.spinnerSize,
+              height: size.spinnerSize,
               border: '2px solid currentColor',
               borderTopColor: 'transparent',
               borderRadius: '50%',
@@ -308,7 +320,15 @@ function ButtonPreview({ cssVars, activeState }: PreviewProps) {
   )
 }
 
-function IconButtonPreview({ cssVars, activeState }: PreviewProps) {
+const ICON_BUTTON_SIZES: Record<string, { box: string; icon: number }> = {
+  'size-sm': { box: '28px', icon: 14 },
+  'size-md': { box: '36px', icon: 16 },
+  'size-lg': { box: '48px', icon: 22 },
+}
+
+function IconButtonPreview({ cssVars, activeState, activeVariants }: PreviewProps) {
+  const sizeKey = activeVariants['size'] || 'size-md'
+  const size = ICON_BUTTON_SIZES[sizeKey] || ICON_BUTTON_SIZES['size-md']
   return (
     <div style={cssVars as React.CSSProperties}>
       <button
@@ -316,8 +336,8 @@ function IconButtonPreview({ cssVars, activeState }: PreviewProps) {
           backgroundColor: 'var(--preview-container-backgroundColor, #555)',
           color: 'var(--preview-label-color, #fff)',
           borderRadius: 'var(--preview-container-borderRadius, 6px)',
-          width: '36px',
-          height: '36px',
+          width: size.box,
+          height: size.box,
           padding: 0,
           border: '1px solid var(--preview-container-borderColor, transparent)',
           cursor: activeState === 'disabled' ? 'not-allowed' : 'pointer',
@@ -327,13 +347,20 @@ function IconButtonPreview({ cssVars, activeState }: PreviewProps) {
           boxShadow: 'var(--preview-container-boxShadow, none)',
         }}
       >
-        <Plus size={16} />
+        <Plus size={size.icon} />
       </button>
     </div>
   )
 }
 
-function BadgePreview({ cssVars }: PreviewProps) {
+const BADGE_SIZES: Record<string, { padding: string; fontSize: string }> = {
+  'size-sm': { padding: '1px 6px', fontSize: '10px' },
+  'size-md': { padding: '2px 8px', fontSize: '11px' },
+}
+
+function BadgePreview({ cssVars, activeVariants }: PreviewProps) {
+  const sizeKey = activeVariants['size'] || 'size-md'
+  const size = BADGE_SIZES[sizeKey] || BADGE_SIZES['size-md']
   return (
     <div style={cssVars as React.CSSProperties}>
       <span
@@ -341,9 +368,9 @@ function BadgePreview({ cssVars }: PreviewProps) {
           backgroundColor: 'var(--preview-container-backgroundColor, #55555520)',
           color: 'var(--preview-label-color, #aaa)',
           borderRadius: 'var(--preview-container-borderRadius, 4px)',
-          padding: '2px 8px',
+          padding: size.padding,
           fontFamily: PREVIEW_SANS,
-          fontSize: '11px',
+          fontSize: size.fontSize,
           fontWeight: 600,
           letterSpacing: '0.05em',
           textTransform: 'uppercase' as const,
@@ -372,8 +399,15 @@ function BadgeDotPreview({ cssVars }: PreviewProps) {
   )
 }
 
-function TagPreview({ cssVars, activeState }: PreviewProps) {
+const TAG_SIZES: Record<string, { padding: string; fontSize: string; iconSize: number }> = {
+  'size-sm': { padding: '2px 8px', fontSize: '11px', iconSize: 10 },
+  'size-md': { padding: '4px 10px', fontSize: '12px', iconSize: 12 },
+}
+
+function TagPreview({ cssVars, activeState, activeVariants }: PreviewProps) {
   const isSelected = activeState === 'selected'
+  const sizeKey = activeVariants['size'] || 'size-md'
+  const size = TAG_SIZES[sizeKey] || TAG_SIZES['size-md']
   return (
     <div style={cssVars as React.CSSProperties}>
       <span
@@ -383,9 +417,9 @@ function TagPreview({ cssVars, activeState }: PreviewProps) {
             : 'transparent',
           color: 'var(--preview-label-color, #ccc)',
           borderRadius: 'var(--preview-container-borderRadius, 12px)',
-          padding: '4px 10px',
+          padding: size.padding,
           fontFamily: PREVIEW_SANS,
-          fontSize: '12px',
+          fontSize: size.fontSize,
           fontWeight: 500,
           border: '1px solid var(--preview-container-borderColor, #555)',
           display: 'inline-flex',
@@ -395,7 +429,7 @@ function TagPreview({ cssVars, activeState }: PreviewProps) {
         }}
       >
         Category
-        <X size={12} style={{ opacity: 0.6 }} />
+        <X size={size.iconSize} style={{ opacity: 0.6 }} />
       </span>
     </div>
   )
@@ -423,14 +457,23 @@ function LinkPreview({ cssVars, activeState }: PreviewProps) {
   )
 }
 
-function AvatarPreview({ cssVars, activeState }: PreviewProps) {
+const AVATAR_SIZES: Record<string, { box: string; icon: number; spinner: string }> = {
+  'size-sm': { box: '24px', icon: 12, spinner: '10px' },
+  'size-md': { box: '32px', icon: 16, spinner: '14px' },
+  'size-lg': { box: '40px', icon: 20, spinner: '18px' },
+  'size-xl': { box: '56px', icon: 28, spinner: '24px' },
+}
+
+function AvatarPreview({ cssVars, activeState, activeVariants }: PreviewProps) {
   const isLoading = activeState === 'loading'
+  const sizeKey = activeVariants['size'] || 'size-lg'
+  const size = AVATAR_SIZES[sizeKey] || AVATAR_SIZES['size-lg']
   return (
     <div style={cssVars as React.CSSProperties}>
       <div
         style={{
-          width: '40px',
-          height: '40px',
+          width: size.box,
+          height: size.box,
           borderRadius: '50%',
           backgroundColor: 'var(--preview-container-backgroundColor, #333)',
           border: '2px solid var(--preview-container-borderColor, #555)',
@@ -444,8 +487,8 @@ function AvatarPreview({ cssVars, activeState }: PreviewProps) {
         {isLoading ? (
           <span
             style={{
-              width: '18px',
-              height: '18px',
+              width: size.spinner,
+              height: size.spinner,
               border: '2px solid #888',
               borderTopColor: 'transparent',
               borderRadius: '50%',
@@ -454,16 +497,17 @@ function AvatarPreview({ cssVars, activeState }: PreviewProps) {
             }}
           />
         ) : (
-          <User size={20} style={{ color: 'var(--preview-label-color, #888)' }} />
+          <User size={size.icon} style={{ color: 'var(--preview-label-color, #888)' }} />
         )}
       </div>
     </div>
   )
 }
 
-function DividerPreview({ cssVars, activeVariant }: PreviewProps & { activeVariant: string | null }) {
-  const isVertical = activeVariant === 'vertical'
-  const hasLabel = activeVariant === 'with-label'
+function DividerPreview({ cssVars, activeVariants }: PreviewProps) {
+  const typeVariant = activeVariants['type'] || null
+  const isVertical = typeVariant === 'vertical'
+  const hasLabel = typeVariant === 'with-label'
 
   if (isVertical) {
     return (
@@ -504,12 +548,20 @@ function DividerPreview({ cssVars, activeVariant }: PreviewProps & { activeVaria
   )
 }
 
-function SelectPreview({ cssVars, activeState }: PreviewProps) {
+const INPUT_SIZES: Record<string, { padding: string; fontSize: string; labelSize: string }> = {
+  'size-sm': { padding: '6px 10px', fontSize: '12px', labelSize: '11px' },
+  'size-md': { padding: '8px 12px', fontSize: '14px', labelSize: '12px' },
+  'size-lg': { padding: '10px 14px', fontSize: '16px', labelSize: '13px' },
+}
+
+function SelectPreview({ cssVars, activeState, activeVariants }: PreviewProps) {
   const isOpen = activeState === 'open'
   const isFocus = activeState === 'focus'
+  const sizeKey = activeVariants['size'] || 'size-md'
+  const size = INPUT_SIZES[sizeKey] || INPUT_SIZES['size-md']
   return (
     <div style={{ ...cssVars as React.CSSProperties, display: 'flex', flexDirection: 'column' as const, gap: '6px' }}>
-      <label style={{ fontFamily: PREVIEW_SANS, fontSize: '12px', color: 'var(--preview-label-color, #aaa)' }}>
+      <label style={{ fontFamily: PREVIEW_SANS, fontSize: size.labelSize, color: 'var(--preview-label-color, #aaa)' }}>
         Label
       </label>
       <div
@@ -517,9 +569,9 @@ function SelectPreview({ cssVars, activeState }: PreviewProps) {
           backgroundColor: 'var(--preview-container-backgroundColor, #1a0a0a)',
           border: '1px solid var(--preview-container-borderColor, #3d1515)',
           borderRadius: 'var(--preview-container-borderRadius, 6px)',
-          padding: '8px 12px',
+          padding: size.padding,
           fontFamily: PREVIEW_SANS,
-          fontSize: '14px',
+          fontSize: size.fontSize,
           color: 'var(--preview-placeholder-color, #666)',
           display: 'flex',
           alignItems: 'center',
@@ -547,12 +599,14 @@ function SelectPreview({ cssVars, activeState }: PreviewProps) {
   )
 }
 
-function InputTextPreview({ cssVars, activeState }: PreviewProps) {
+function InputTextPreview({ cssVars, activeState, activeVariants }: PreviewProps) {
   const isFilled = activeState === 'filled'
   const isFocus = activeState === 'focus'
+  const sizeKey = activeVariants['size'] || 'size-md'
+  const size = INPUT_SIZES[sizeKey] || INPUT_SIZES['size-md']
   return (
     <div style={{ ...cssVars as React.CSSProperties, display: 'flex', flexDirection: 'column' as const, gap: '6px' }}>
-      <label style={{ fontFamily: PREVIEW_SANS, fontSize: '12px', color: 'var(--preview-label-color, #aaa)' }}>
+      <label style={{ fontFamily: PREVIEW_SANS, fontSize: size.labelSize, color: 'var(--preview-label-color, #aaa)' }}>
         Label
       </label>
       <div
@@ -560,9 +614,9 @@ function InputTextPreview({ cssVars, activeState }: PreviewProps) {
           backgroundColor: 'var(--preview-container-backgroundColor, #1a0a0a)',
           border: '1px solid var(--preview-container-borderColor, #3d1515)',
           borderRadius: 'var(--preview-container-borderRadius, 6px)',
-          padding: '8px 12px',
+          padding: size.padding,
           fontFamily: PREVIEW_SANS,
-          fontSize: '14px',
+          fontSize: size.fontSize,
           color: isFilled
             ? 'var(--preview-label-color, #ccc)'
             : 'var(--preview-placeholder-color, #666)',
@@ -685,51 +739,6 @@ function CardPreview({ cssVars, activeState }: PreviewProps) {
   )
 }
 
-function TextHeadingPreview({ cssVars, activeVariant }: PreviewProps & { activeVariant: string | null }) {
-  const level = activeVariant || 'h2'
-  const sizes: Record<string, string> = { h1: '32px', h2: '24px', h3: '20px', h4: '18px', h5: '16px', h6: '14px' }
-  const weights: Record<string, number> = { h1: 700, h2: 700, h3: 600, h4: 600, h5: 500, h6: 500 }
-  return (
-    <div style={cssVars as React.CSSProperties}>
-      <span style={{
-        display: 'block',
-        fontFamily: 'var(--preview-text-fontFamily, serif)',
-        fontSize: `var(--preview-text-fontSize, ${sizes[level] || '24px'})`,
-        fontWeight: `var(--preview-text-fontWeight, ${weights[level] || 700})` as React.CSSProperties['fontWeight'],
-        color: 'var(--preview-text-color, #fff)',
-        lineHeight: 1.2,
-      }}>
-        {level.toUpperCase()} Heading Text
-      </span>
-    </div>
-  )
-}
-
-function TextBodyPreview({ cssVars, activeVariant }: PreviewProps & { activeVariant: string | null }) {
-  const sizes: Record<string, string> = {
-    'size-lg': '18px', 'size-md': '14px', 'size-sm': '12px',
-    caption: '11px', overline: '11px',
-  }
-  const variant = activeVariant || 'size-md'
-  const isOverline = variant === 'overline'
-  return (
-    <div style={cssVars as React.CSSProperties}>
-      <span style={{
-        display: 'block',
-        fontFamily: 'var(--preview-text-fontFamily, sans-serif)',
-        fontSize: `var(--preview-text-fontSize, ${sizes[variant] || '14px'})`,
-        fontWeight: 'var(--preview-text-fontWeight, 400)' as React.CSSProperties['fontWeight'],
-        color: 'var(--preview-text-color, #ccc)',
-        textTransform: isOverline ? 'uppercase' : 'none',
-        letterSpacing: isOverline ? '0.1em' : 'normal',
-        lineHeight: 1.5,
-      }}>
-        {isOverline ? 'OVERLINE TEXT' : 'The quick brown fox jumps over the lazy dog.'}
-      </span>
-    </div>
-  )
-}
-
 function GenericPreview({ component, cssVars }: { component: Component; cssVars: Record<string, string> }) {
   return (
     <div style={cssVars as React.CSSProperties}>
@@ -760,52 +769,49 @@ function renderAtomPreview(
   component: Component,
   cssVars: Record<string, string>,
   activeState: string,
-  activeVariant: string | null
+  activeVariants: Record<string, string>
 ) {
+  const props: PreviewProps = { cssVars, activeState, activeVariants }
   switch (component.id) {
     case 'button':
-      return <ButtonPreview cssVars={cssVars} activeState={activeState} />
+      return <ButtonPreview {...props} />
     case 'button-icon':
-      return <IconButtonPreview cssVars={cssVars} activeState={activeState} />
+      return <IconButtonPreview {...props} />
     case 'badge':
-      return <BadgePreview cssVars={cssVars} activeState={activeState} />
+      return <BadgePreview {...props} />
     case 'badge-dot':
-      return <BadgeDotPreview cssVars={cssVars} activeState={activeState} />
+      return <BadgeDotPreview {...props} />
     case 'tag':
-      return <TagPreview cssVars={cssVars} activeState={activeState} />
+      return <TagPreview {...props} />
     case 'link':
-      return <LinkPreview cssVars={cssVars} activeState={activeState} />
+      return <LinkPreview {...props} />
     case 'avatar':
-      return <AvatarPreview cssVars={cssVars} activeState={activeState} />
+      return <AvatarPreview {...props} />
     case 'divider':
-      return <DividerPreview cssVars={cssVars} activeState={activeState} activeVariant={activeVariant} />
+      return <DividerPreview {...props} />
     case 'input-text':
-      return <InputTextPreview cssVars={cssVars} activeState={activeState} />
+      return <InputTextPreview {...props} />
     case 'input-select':
-      return <SelectPreview cssVars={cssVars} activeState={activeState} />
+      return <SelectPreview {...props} />
     case 'checkbox':
-      return <CheckboxPreview cssVars={cssVars} activeState={activeState} />
+      return <CheckboxPreview {...props} />
     case 'radio':
-      return <RadioPreview cssVars={cssVars} activeState={activeState} />
+      return <RadioPreview {...props} />
     case 'card':
-      return <CardPreview cssVars={cssVars} activeState={activeState} />
-    case 'text-heading':
-      return <TextHeadingPreview cssVars={cssVars} activeState={activeState} activeVariant={activeVariant} />
-    case 'text-body':
-      return <TextBodyPreview cssVars={cssVars} activeState={activeState} activeVariant={activeVariant} />
+      return <CardPreview {...props} />
     default:
       return <GenericPreview component={component} cssVars={cssVars} />
   }
 }
 
-export function ComponentPreview({ component, resolvedTokens, activeState, activeVariant }: ComponentPreviewProps) {
+export function ComponentPreview({ component, resolvedTokens, activeState, activeVariants }: ComponentPreviewProps) {
   const hasBindings = component.bindings.length > 0
 
   const cssVars = useMemo(
     () => hasBindings
-      ? deriveCssVars(component, resolvedTokens, activeState, activeVariant)
-      : autoDeriveCssVars(component, resolvedTokens, activeState, activeVariant),
-    [component, resolvedTokens, activeState, activeVariant, hasBindings]
+      ? deriveCssVars(component, resolvedTokens, activeState, activeVariants)
+      : autoDeriveCssVars(component, resolvedTokens, activeState, activeVariants),
+    [component, resolvedTokens, activeState, activeVariants, hasBindings]
   )
 
   // Apply CSS filter-based state transforms when no explicit bindings
@@ -815,7 +821,7 @@ export function ComponentPreview({ component, resolvedTokens, activeState, activ
     <div className="relative flex items-center justify-center min-h-[120px] p-8 bg-surface-elevated/30 rounded border border-border">
       <style>{`@keyframes spin { to { transform: rotate(360deg) } }`}</style>
       <div style={stateStyle} className="transition-all duration-150">
-        {renderAtomPreview(component, cssVars, activeState, activeVariant)}
+        {renderAtomPreview(component, cssVars, activeState, activeVariants)}
       </div>
       {!hasBindings && (
         <span className="absolute bottom-2 right-3 font-mono text-[10px] text-text-tertiary/60">
